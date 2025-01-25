@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { MainNav } from "@/components/shared/main-nav";
 import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,23 +15,42 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Settings, ShoppingBag } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
     userId?: string | null;
 }
 
 export const Header = ({ userId }: HeaderProps) => {
-    const [scrolled, setScrolled] = useState(false);
     const isLoggedIn = !!userId;
+    const pathname = usePathname();
+
+    const routes = [
+        {
+            href: "/",
+            label: "Home",
+            active: pathname === "/",
+        },
+        {
+            href: "/menu",
+            label: "Menu",
+            active: pathname === "/menu" || pathname.includes("/menu"),
+        },
+        {
+            href: "/orders",
+            label: "orders",
+            active: pathname === "/orders" || pathname.includes("/orders"),
+        },
+        {
+            href: "/about",
+            label: "about",
+            active: pathname === "/about" || pathname.includes("/about"),
+        },
+    ];
 
     return (
         <header
-            className={cn(
-                "w-full z-50 transition",
-                scrolled
-                    ? "fixed top-0 left-0 bg-white shadow-lg"
-                    : "bg-transparent"
-            )}
+            className="w-full z-50 transition bg-transparent"
         >
             <Container>
                 <div className="relative px-4 sm:px-6 lg:px-12 flex h-16 items-center">
@@ -43,7 +61,34 @@ export const Header = ({ userId }: HeaderProps) => {
                         Foodie
                     </Link>
 
-                    <MainNav scrolled={scrolled} className="mr-8" />
+                    <div className="ml-auto flex items-center">
+                        <div className="relative w-64 mr-4">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full rounded-full border-2 px-4 py-2 text-sm outline-none transition-colors border-black/30 bg-white/20 placeholder:text-black focus:border-black"
+                            />
+                        </div>
+
+                        <nav
+                            className="flex items-center space-x-4 lg:space-x-12 mr-4"
+                        >
+                            {routes.map((route) => (
+                                <Link
+                                    href={route.href}
+                                    key={route.href}
+                                    className={cn(
+                                        "text-base capitalize font-medium transition-colors hover:text-primary duration-200",
+                                        route.active
+                                            ? "text-black dark:text-white"
+                                            : "text-white"
+                                    )}
+                                >
+                                    {route.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
 
                     <div className="flex items-center justify-between space-x-2 md:justify-end">
                         {isLoggedIn ? (

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/shared/header";
 
 export const metadata: Metadata = {
-    title: "Foodie",
-    description: "Foodie is a food delivery app",
+    title: "Foodie admin",
+    description: "Foodie admin dashboard",
 };
 
 const urbanist = Urbanist({ subsets: ["latin"], variable: "--font-urbanist" });
 
-export default function RootLayout({
+export default function AdminLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
