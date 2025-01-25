@@ -10,6 +10,19 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+			emerald: {
+				DEFAULT: '#48D1CC', // Base color
+				50: '#E6F9F8', // Lightest shade
+				100: '#CFF3F1',
+				200: '#A6E8E3',
+				300: '#7DDED5',
+				400: '#5CD7CA',
+				500: '#48D1CC', // Main color
+				600: '#3CB8B4',
+				700: '#309F9B',
+				800: '#258682',
+				900: '#1B6D69', // Darkest shade
+			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
