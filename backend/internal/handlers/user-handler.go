@@ -17,6 +17,14 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 }
 
 // Register user handler
+// @Summary Register a new user
+// @Description Register a new user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User object"
+// @Success 200 {object} models.User
+// @Router /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
 	var input struct {
 		Name     string `json:"name" validate:"required"`
@@ -47,6 +55,14 @@ func (h *UserHandler) Register(c *gin.Context) {
 }
 
 // Login user handler
+// @Summary Login a user
+// @Description Login a user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User object"
+// @Success 200 {object} models.User
+// @Router /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" validate:"required"`
