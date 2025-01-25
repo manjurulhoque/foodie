@@ -60,7 +60,7 @@ func TranslateError(model interface{}) (errs []IError) {
 	})
 
 	if registerValidationError := vl.RegisterValidation("emailExists", func(fl validator.FieldLevel) bool {
-		exists := userRepo.FindUserByEmail(fl.Field().String())
+		exists := userRepo.EmailExists(fl.Field().String())
 		slog.Info("Email exists", "exists", exists)
 		return !exists
 	}); registerValidationError != nil {

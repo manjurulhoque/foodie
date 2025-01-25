@@ -63,6 +63,7 @@ func (s *userService) RegisterUser(name, email, password, phone string) error {
 		Email:   email,
 		Password: hashedPassword,
 		Phone:   phone,
+		Role:    models.RoleCustomer,
 	}
 
 	return s.userRepo.CreateUser(user)
@@ -90,6 +91,9 @@ func (s *userService) LoginUser(email, password string) (string, string, error) 
 		return "", "", err
 	}
 
+	user.LastLoginAt = time.Now()
+	s.userRepo.UpdateUser(user.ID, map[string]interface{}{"last_login_at": user.LastLoginAt})
+
 	return accessToken, refreshToken, nil
 }
 
@@ -102,9 +106,10 @@ func (s *userService) generateToken(user *models.User, expiry time.Duration) (st
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ID:        uuid.New().String(),
 		},
-		Name:    user.Name,
-		Email:   user.Email,
-		UserId:  user.ID,
+		Role:   user.Role,
+		Name:   user.Name,
+		Email:  user.Email,
+		UserId: user.ID,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
