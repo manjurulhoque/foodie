@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -28,7 +30,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false);
-
+    const [errorMessage, setErrorMessage] = useState("");
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -39,9 +41,23 @@ const SignIn = () => {
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
+        setErrorMessage("");
         try {
-            // Handle sign in logic here
-            console.log(values);
+            const result = await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                redirect: false,
+            });
+
+            if (result?.status === 401) {
+                // If there is an error, update the state to display the error message
+                setErrorMessage("Invalid credentials");
+            } else {
+                toast.success("Logged in successfully");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -80,6 +96,12 @@ const SignIn = () => {
                             </span>
                         </div>
                     </div>
+
+                    {errorMessage && (
+                        <div className="text-red-500 text-center">
+                            {errorMessage}
+                        </div>
+                    )}
 
                     <Form {...form}>
                         <form
