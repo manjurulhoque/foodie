@@ -1,7 +1,12 @@
 import SignUp from "@/components/signup";
+import { Container } from "@/components/shared/container";
 
 const SignUpPage = () => {
-    return <SignUp />;
+    return (
+        <Container>
+            <SignUp />
+        </Container>
+    );
 };
 
 export default SignUpPage;
