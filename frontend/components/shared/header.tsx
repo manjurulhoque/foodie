@@ -47,9 +47,9 @@ export const Header = ({ userId }: HeaderProps) => {
                     <MainNav scrolled={scrolled} className="mr-8" />
 
                     <div className="flex items-center space-x-4 ml-4">
-                        <Link href={"/login"}>
+                        <Link href={"/signin"}>
                             <Button size="sm" variant="outline">
-                                Log In
+                                Sign In
                             </Button>
                         </Link>
                         <Link href={"/signup"}>
