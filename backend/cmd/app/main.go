@@ -6,7 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/config"
 	"github.com/manjurulhoque/foodie/backend/internal/db"
+	"github.com/manjurulhoque/foodie/backend/internal/handlers"
 	"github.com/manjurulhoque/foodie/backend/internal/models"
+	"github.com/manjurulhoque/foodie/backend/internal/repositories"
+	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"log/slog"
 	"net/http"
 	"time"
@@ -36,6 +39,15 @@ func main() {
 	router := gin.Default()
 	defer db.CloseDB(db.DB)
 
+	// Initialize repositories with pointer receivers
+	userRepo := repositories.NewUserRepository(db.DB)
+
+	// Initialize services with pointer receivers
+	userService := services.NewUserService(userRepo)
+
+	// Initialize handlers with pointer receivers
+	userHandler := handlers.NewUserHandler(userService)
+
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
@@ -55,6 +67,10 @@ func main() {
 				"message": "pong",
 			})
 		})
+
+		// Auth routes
+		api.POST("/register", userHandler.Register)
+		api.POST("/login", userHandler.Login)
 	}
 
 	// run the server

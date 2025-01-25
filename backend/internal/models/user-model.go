@@ -16,7 +16,6 @@ type User struct {
 	BaseModel
 	Email           string    `json:"email" gorm:"unique;not null"`
 	Name            string    `json:"name" gorm:"not null"`
-	Username        string    `json:"username" gorm:"unique;not null"`
 	Password        string    `json:"-" gorm:"not null"`
 	Phone           string    `json:"phone" gorm:"unique;not null"`
 	Role            string    `json:"role" gorm:"not null"`
@@ -36,8 +35,9 @@ func (u *User) TableName() string {
 type PublicUser struct {
 	Id       uint   `json:"id"`
 	Name     string `json:"name"`
-	Username string `json:"username"`
 	Image    string `json:"image"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
 }
 
 func (u *PublicUser) TableName() string {
