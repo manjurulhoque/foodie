@@ -38,13 +38,13 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
+	slog.Info("Input", "input", input)
+
 	errs := utils.TranslateError(input)
 	if errs != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"errors": errs})
 		return
 	}
-
-	slog.Info("Input", "input", input)
 
 	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password, input.Phone); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

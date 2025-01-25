@@ -10,6 +10,7 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
+	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	"github.com/manjurulhoque/foodie/backend/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -97,6 +98,9 @@ func main() {
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Set the user repository in the utils package
+	utils.SetUserRepo(userRepo)
 
 	// run the server
 	if err := router.Run(":9000"); err != nil {

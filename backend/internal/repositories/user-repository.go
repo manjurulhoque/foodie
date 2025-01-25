@@ -9,7 +9,7 @@ type UserRepository interface {
 	CreateUser(user *models.User) error
 	GetUserById(id uint) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
-	FindUserByEmail(email string) bool
+	EmailExists(email string) bool
 	UpdateUser(uint, map[string]interface{}) error
 	GetDB() *gorm.DB
 }
@@ -42,10 +42,10 @@ func (r *userRepository) GetUserByEmail(email string) (*models.User, error) {
 	return &user, err
 }
 
-func (r *userRepository) FindUserByEmail(email string) bool {
-	var user models.User
-	err := r.db.Where("email = ?", email).First(&user).Error
-	return err == nil
+func (r *userRepository) EmailExists(email string) bool {
+	var exists bool
+	r.db.Model(&models.User{}).Select("count(*) > 0").Where("email = ?", email).Find(&exists)
+	return exists
 }
 
 func (r *userRepository) UpdateUser(userId uint, updates map[string]interface{}) error {
