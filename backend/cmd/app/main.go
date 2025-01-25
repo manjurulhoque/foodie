@@ -10,6 +10,9 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
+	"github.com/manjurulhoque/foodie/backend/docs"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log/slog"
 	"net/http"
 	"time"
@@ -34,6 +37,21 @@ func init() {
 	}
 }
 
+// @title Foodie API
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:9000
+// @BasePath /api
+// @schemes http
 func main() {
 	// create a new gin server and run it
 	router := gin.Default()
@@ -59,6 +77,11 @@ func main() {
 	}
 	router.Use(cors.New(corsConfig))
 
+	docs.SwaggerInfo.BasePath = "/api"
+	docs.SwaggerInfo.Host = "localhost:9000"
+	docs.SwaggerInfo.Title = "Foodie API"
+	docs.SwaggerInfo.Description = "Foodie API"
+
 	// Group API routes for better organization and middleware reuse
 	api := router.Group("/api")
 	{
@@ -72,6 +95,8 @@ func main() {
 		api.POST("/register", userHandler.Register)
 		api.POST("/login", userHandler.Login)
 	}
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// run the server
 	if err := router.Run(":9000"); err != nil {

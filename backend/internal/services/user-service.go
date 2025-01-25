@@ -72,11 +72,11 @@ func (s *userService) RegisterUser(name, email, password, phone string) error {
 func (s *userService) LoginUser(email, password string) (string, string, error) {
 	user, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
-		return "", "", errors.New("user not found")
+		return "", "", errors.New("invalid email or password")
 	}
 
 	if !checkPasswordHash(password, user.Password) {
-		return "", "", errors.New("incorrect password")
+		return "", "", errors.New("invalid email or password")
 	}
 
 	// Generate Access and Refresh Tokens
