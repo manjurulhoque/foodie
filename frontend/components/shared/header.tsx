@@ -16,17 +16,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Settings, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useMeQuery } from "@/store/reducers/user/api";
+import { Skeleton } from "../ui/skeleton";
 
-interface HeaderProps {
-    userId?: string | null;
-}
-
-export const Header = ({ userId }: HeaderProps) => {
-    const isLoggedIn = !!userId;
+export const Header = () => {
     const pathname = usePathname();
-    const session = useSession();
-    console.log("session", session);
+
+    const { data, isLoading } = useMeQuery(null, {});
+    const isLoggedIn = !!data?.data;
+    const user = data?.data;
+
     const routes = [
         {
             href: "/",
@@ -89,7 +88,7 @@ export const Header = ({ userId }: HeaderProps) => {
                     </div>
 
                     <div className="flex items-center justify-between space-x-2 md:justify-end">
-                        {isLoggedIn ? (
+                        {isLoggedIn && user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
@@ -98,8 +97,8 @@ export const Header = ({ userId }: HeaderProps) => {
                                     >
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage
-                                                src="/avatars/01.png"
-                                                alt="@username"
+                                                src={user?.image}
+                                                alt={user?.name}
                                             />
                                             <AvatarFallback>UN</AvatarFallback>
                                         </Avatar>
@@ -113,10 +112,10 @@ export const Header = ({ userId }: HeaderProps) => {
                                     <DropdownMenuLabel className="font-normal">
                                         <div className="flex flex-col space-y-1">
                                             <p className="text-sm font-medium leading-none">
-                                                username
+                                                {user?.name}
                                             </p>
                                             <p className="text-xs leading-none text-muted-foreground">
-                                                user@example.com
+                                                {user?.email}
                                             </p>
                                         </div>
                                     </DropdownMenuLabel>
@@ -142,14 +141,20 @@ export const Header = ({ userId }: HeaderProps) => {
                             </DropdownMenu>
                         ) : (
                             <div className="flex items-center space-x-4">
-                                <Link href="/signin">
-                                    <Button size="sm" variant="outline">
-                                        Sign In
-                                    </Button>
-                                </Link>
-                                <Link href="/signup">
-                                    <Button size="sm">Sign Up</Button>
-                                </Link>
+                                {isLoading ? (
+                                    <Skeleton className="h-8 w-24" />
+                                ) : (
+                                    <>
+                                        <Link href="/signin">
+                                            <Button size="sm" variant="outline">
+                                                Sign In
+                                            </Button>
+                                        </Link>
+                                        <Link href="/signup">
+                                            <Button size="sm">Sign Up</Button>
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>

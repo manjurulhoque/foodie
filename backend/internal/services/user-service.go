@@ -20,6 +20,9 @@ const (
 type UserService interface {
 	RegisterUser(name, email, password, phone string) error
 	LoginUser(email, password string) (string, string, error)
+	GetUserById(id uint) (*models.PublicUser, error)
+	GetUserByEmail(email string) (*models.PublicUser, error)
+	VerifyToken(token string) (*JWTCustomClaims, error)
 }
 
 var jwtSecret = []byte("ABC1234567890")
@@ -114,4 +117,50 @@ func (s *userService) generateToken(user *models.User, expiry time.Duration) (st
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
+}
+
+func (s *userService) GetUserById(id uint) (*models.PublicUser, error) {
+	user, err := s.userRepo.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.PublicUser{
+		Id:        user.ID,
+		Name:      user.Name,
+		Image:     user.Image,
+		Email:     user.Email,
+		Phone:     user.Phone,
+	}, nil
+}
+
+func (s *userService) GetUserByEmail(email string) (*models.PublicUser, error) {
+	user, err := s.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.PublicUser{
+		Id:        user.ID,
+		Name:      user.Name,
+		Image:     user.Image,
+		Email:     user.Email,
+		Phone:     user.Phone,
+	}, nil
+}
+
+// VerifyToken Verify token
+func (s *userService) VerifyToken(tokenString string) (*JWTCustomClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &JWTCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(*JWTCustomClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("unauthorized")
+	}
+	return claims, nil
 }

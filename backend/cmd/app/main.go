@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/manjurulhoque/foodie/backend/docs"
 	"github.com/manjurulhoque/foodie/backend/internal/config"
 	"github.com/manjurulhoque/foodie/backend/internal/db"
 	"github.com/manjurulhoque/foodie/backend/internal/handlers"
+	"github.com/manjurulhoque/foodie/backend/internal/middlewares"
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
-	"github.com/manjurulhoque/foodie/backend/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log/slog"
@@ -85,6 +86,7 @@ func main() {
 
 	// Group API routes for better organization and middleware reuse
 	api := router.Group("/api")
+	authMiddleware := middlewares.AuthMiddleware(userRepo, userService)
 	{
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
@@ -95,6 +97,7 @@ func main() {
 		// Auth routes
 		api.POST("/register", userHandler.Register)
 		api.POST("/login", userHandler.Login)
+		api.GET("/me", authMiddleware, userHandler.Me)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

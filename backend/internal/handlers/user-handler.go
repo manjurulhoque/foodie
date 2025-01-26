@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	"log/slog"
@@ -37,7 +38,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusBadRequest,
 			Message:    "Invalid request",
 			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
 		})
@@ -57,7 +57,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 		}
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusBadRequest,
 			Message:    "Invalid request",
 			Errors:     newErrs,
 		})
@@ -67,7 +66,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 	if input.Password1 != input.Password2 {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusBadRequest,
 			Message:    "Passwords do not match",
 			Errors:     []utils.ErrorDetail{{Message: "Passwords do not match"}},
 		})
@@ -77,16 +75,14 @@ func (h *UserHandler) Register(c *gin.Context) {
 	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password1, input.Phone); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusInternalServerError,
 			Message:    "Failed to register user",
 			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+	c.JSON(http.StatusCreated, utils.GenericResponse[any]{
 		Success:    true,
-		StatusCode: http.StatusOK,
 		Message:    "User registered successfully",
 	})
 }
@@ -109,7 +105,6 @@ func (h *UserHandler) Login(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusBadRequest,
 			Message:    "Invalid request",
 			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
 		})
@@ -120,7 +115,6 @@ func (h *UserHandler) Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, utils.GenericResponse[any]{
 			Success:    false,
-			StatusCode: http.StatusUnauthorized,
 			Message:    "Invalid credentials",
 			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
 		})
@@ -129,11 +123,29 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success:    true,
-		StatusCode: http.StatusOK,
 		Message:    "Login successful",
 		Data: gin.H{
 			"access":  accessToken,
 			"refresh": refreshToken,
 		},
+	})
+}
+
+func (h *UserHandler) Me(c *gin.Context) {
+	userEmail := c.GetString("email")
+	user, err := h.userService.GetUserByEmail(userEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success:    false,
+			Message:    "Failed to get user",
+			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[models.PublicUser]{
+		Success:    true,
+		Message:    "User fetched successfully",
+		Data:       *user,
 	})
 }
