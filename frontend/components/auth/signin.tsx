@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -15,7 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
+import Spinner from "@/components/shared/spinner";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -29,6 +30,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignIn = () => {
+    const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const form = useForm<FormValues>({
@@ -38,6 +40,18 @@ const SignIn = () => {
             password: "",
         },
     });
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Spinner />
+            </div>
+        );
+    }
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
@@ -52,6 +66,7 @@ const SignIn = () => {
             if (result?.status === 401) {
                 // If there is an error, update the state to display the error message
                 setErrorMessage("Invalid credentials");
+                toast.error("Invalid credentials");
             } else {
                 toast.success("Logged in successfully");
                 setTimeout(() => {

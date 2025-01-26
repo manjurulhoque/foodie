@@ -27,10 +27,11 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 // @Router /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
 	var input struct {
-		Name     string `json:"name" validate:"required"`
-		Email    string `json:"email" validate:"required,email,emailExists"`
-		Password string `json:"password" validate:"required"`
-		Phone    string `json:"phone" validate:"required"`
+		Name      string `json:"name" validate:"required"`
+		Email     string `json:"email" validate:"required,email,emailExists"`
+		Password1 string `json:"password1" validate:"required"`
+		Password2 string `json:"password2" validate:"required"`
+		Phone     string `json:"phone" validate:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -46,7 +47,12 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password, input.Phone); err != nil {
+	if input.Password1 != input.Password2 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		return
+	}
+
+	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password1, input.Phone); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

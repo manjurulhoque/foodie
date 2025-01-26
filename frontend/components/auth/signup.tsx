@@ -11,12 +11,15 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useState } from "react";
+import { Checkbox } from "../ui/checkbox";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Label } from "./ui/label";
+import { Label } from "../ui/label";
+import Spinner from "../shared/spinner";
+
+
 type FormValues = z.infer<typeof formSchema>;
 
 const formSchema = z.object({
@@ -32,17 +35,21 @@ const formSchema = z.object({
     confirmPassword: z.string().min(6, {
         message: "Password must be at least 6 characters.",
     }),
-    phone: z.string().min(3, {
-        message: "Phone number must be at least 3 characters.",
-    }).regex(/^[0-9]*$/, {
-        message: "Phone number must contain only numbers.",
-    }),
+    phone: z
+        .string()
+        .min(3, {
+            message: "Phone number must be at least 3 characters.",
+        })
+        .regex(/^[0-9]*$/, {
+            message: "Phone number must contain only numbers.",
+        }),
     terms: z.boolean().refine((data) => data === true, {
         message: "You must agree to the terms and conditions.",
     }),
 });
 
 const SignUp = () => {
+    const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -55,6 +62,18 @@ const SignUp = () => {
             terms: false,
         },
     });
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Spinner />
+            </div>
+        );
+    }
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);

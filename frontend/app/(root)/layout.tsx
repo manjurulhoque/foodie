@@ -3,6 +3,7 @@ import { Urbanist } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/shared/header";
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
     title: "Foodie",
@@ -28,6 +29,7 @@ export default function RootLayout({
                 />
                 <Header/>
                 {children}
+                <Toaster position="bottom-center" />
             </body>
         </html>
     );
