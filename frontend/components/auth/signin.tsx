@@ -17,6 +17,8 @@ import * as z from "zod";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import Spinner from "@/components/shared/spinner";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -33,6 +35,8 @@ const SignIn = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const session = useSession();
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -51,6 +55,10 @@ const SignIn = () => {
                 <Spinner />
             </div>
         );
+    }
+
+    if (session.status === "authenticated") {
+        return redirect("/");
     }
 
     const onSubmit = async (values: FormValues) => {

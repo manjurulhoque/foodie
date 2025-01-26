@@ -27,37 +27,68 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 // @Router /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
 	var input struct {
-		Name      string `json:"name" validate:"required"`
+		Name      string `json:"name" validate:"required,min=3,max=32"`
 		Email     string `json:"email" validate:"required,email,emailExists"`
-		Password1 string `json:"password1" validate:"required"`
-		Password2 string `json:"password2" validate:"required"`
-		Phone     string `json:"phone" validate:"required"`
+		Password1 string `json:"password1" validate:"required,min=6,max=32"`
+		Password2 string `json:"password2" validate:"required,min=6,max=32"`
+		Phone     string `json:"phone" validate:"required,min=4,max=15"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid request",
+			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+		})
 		return
 	}
 
 	slog.Info("Input", "input", input)
 
 	errs := utils.TranslateError(input)
-	if errs != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"errors": errs})
+	if len(errs) > 0 {
+		newErrs := make([]utils.ErrorDetail, len(errs))
+		for i, err := range errs {
+			newErrs[i] = utils.ErrorDetail{
+				Message: err.Message,
+				Code:    err.Field,
+			}
+		}
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid request",
+			Errors:     newErrs,
+		})
 		return
 	}
 
 	if input.Password1 != input.Password2 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "Passwords do not match",
+			Errors:     []utils.ErrorDetail{{Message: "Passwords do not match"}},
+		})
 		return
 	}
 
 	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password1, input.Phone); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to register user",
+			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success:    true,
+		StatusCode: http.StatusOK,
+		Message:    "User registered successfully",
+	})
 }
 
 // Login user handler
@@ -76,18 +107,33 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid request",
+			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+		})
 		return
 	}
 
 	accessToken, refreshToken, err := h.userService.LoginUser(input.Email, input.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, utils.GenericResponse[any]{
+			Success:    false,
+			StatusCode: http.StatusUnauthorized,
+			Message:    "Invalid credentials",
+			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"access":  accessToken,
-		"refresh": refreshToken,
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success:    true,
+		StatusCode: http.StatusOK,
+		Message:    "Login successful",
+		Data: gin.H{
+			"access":  accessToken,
+			"refresh": refreshToken,
+		},
 	})
 }

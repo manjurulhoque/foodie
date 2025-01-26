@@ -1,20 +1,20 @@
 package services
 
 import (
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
-	"github.com/manjurulhoque/foodie/backend/internal/models"
-	"github.com/manjurulhoque/foodie/backend/internal/repositories"
-	"time"
 	"errors"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+	"github.com/manjurulhoque/foodie/backend/internal/models"
+	"github.com/manjurulhoque/foodie/backend/internal/repositories"
+	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 // Define constants for token expiration
 const (
-	accessTokenExpiry  = time.Hour * 24 * 7
-	refreshTokenExpiry = time.Hour * 24 * 30
+	accessTokenExpiry  = time.Hour * 24 * 7  // 7 days
+	refreshTokenExpiry = time.Hour * 24 * 30 // 30 days
 )
 
 type UserService interface {
@@ -26,10 +26,10 @@ var jwtSecret = []byte("ABC1234567890")
 
 type JWTCustomClaims struct {
 	jwt.RegisteredClaims
-	Role   string `json:"role"`
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-	UserId uint   `json:"user_id"`
+	Role  string `json:"role"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Id    uint   `json:"id"`
 }
 
 type userService struct {
@@ -59,11 +59,11 @@ func (s *userService) RegisterUser(name, email, password, phone string) error {
 	}
 
 	user := &models.User{
-		Name:    name,
-		Email:   email,
+		Name:     name,
+		Email:    email,
 		Password: hashedPassword,
-		Phone:   phone,
-		Role:    models.RoleCustomer,
+		Phone:    phone,
+		Role:     models.RoleCustomer,
 	}
 
 	return s.userRepo.CreateUser(user)
@@ -106,10 +106,10 @@ func (s *userService) generateToken(user *models.User, expiry time.Duration) (st
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ID:        uuid.New().String(),
 		},
-		Role:   user.Role,
-		Name:   user.Name,
-		Email:  user.Email,
-		UserId: user.ID,
+		Role:  user.Role,
+		Name:  user.Name,
+		Email: user.Email,
+		Id:    user.ID,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

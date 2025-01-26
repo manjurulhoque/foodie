@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Settings, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface HeaderProps {
     userId?: string | null;
@@ -24,7 +25,8 @@ interface HeaderProps {
 export const Header = ({ userId }: HeaderProps) => {
     const isLoggedIn = !!userId;
     const pathname = usePathname();
-
+    const session = useSession();
+    console.log("session", session);
     const routes = [
         {
             href: "/",
@@ -49,9 +51,7 @@ export const Header = ({ userId }: HeaderProps) => {
     ];
 
     return (
-        <header
-            className="w-full z-50 transition bg-transparent"
-        >
+        <header className="w-full z-50 transition bg-transparent">
             <Container>
                 <div className="relative px-4 sm:px-6 lg:px-12 flex h-16 items-center">
                     <Link
@@ -70,9 +70,7 @@ export const Header = ({ userId }: HeaderProps) => {
                             />
                         </div>
 
-                        <nav
-                            className="flex items-center space-x-4 lg:space-x-12 mr-4"
-                        >
+                        <nav className="flex items-center space-x-4 lg:space-x-12 mr-4">
                             {routes.map((route) => (
                                 <Link
                                     href={route.href}
