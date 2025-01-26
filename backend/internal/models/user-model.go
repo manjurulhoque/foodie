@@ -38,6 +38,7 @@ type PublicUser struct {
 	Image    string `json:"image"`
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
+	Role     string `json:"role"`
 }
 
 func (u *PublicUser) TableName() string {

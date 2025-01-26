@@ -14,14 +14,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, User, Settings, ShoppingBag } from "lucide-react";
+import { LogOut, User, Settings, ShoppingBag, Shield } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMeQuery } from "@/store/reducers/user/api";
 import { Skeleton } from "../ui/skeleton";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
     const pathname = usePathname();
-
+    const router = useRouter();
     const { data, isLoading } = useMeQuery(null, {});
     const isLoggedIn = !!data?.data;
     const user = data?.data;
@@ -48,6 +50,8 @@ export const Header = () => {
             active: pathname === "/about" || pathname.includes("/about"),
         },
     ];
+
+    const isAdmin = user?.role === "admin";
 
     return (
         <header className="w-full z-50 transition bg-transparent">
@@ -120,20 +124,51 @@ export const Header = () => {
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
+                                    {isAdmin && (
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                router.push("/admin");
+                                            }}
+                                        >
+                                            <Shield className="mr-2 h-4 w-4" />
+                                            <span>Admin dashboard</span>
+                                        </DropdownMenuItem>
+                                    )}
+                                    <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            router.push("/profile");
+                                        }}
+                                    >
                                         <User className="mr-2 h-4 w-4" />
                                         <span>Profile</span>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            router.push("/orders");
+                                        }}
+                                    >
                                         <ShoppingBag className="mr-2 h-4 w-4" />
                                         <span>Orders</span>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            router.push("/settings");
+                                        }}
+                                    >
                                         <Settings className="mr-2 h-4 w-4" />
                                         <span>Settings</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-red-600">
+                                    <DropdownMenuItem
+                                        className="text-red-600 cursor-pointer"
+                                        onClick={() => {
+                                            signOut();
+                                        }}
+                                    >
                                         <LogOut className="mr-2 h-4 w-4" />
                                         <span>Log out</span>
                                     </DropdownMenuItem>

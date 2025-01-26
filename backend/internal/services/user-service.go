@@ -131,6 +131,7 @@ func (s *userService) GetUserById(id uint) (*models.PublicUser, error) {
 		Image:     user.Image,
 		Email:     user.Email,
 		Phone:     user.Phone,
+		Role:      user.Role,
 	}, nil
 }
 
@@ -146,6 +147,7 @@ func (s *userService) GetUserByEmail(email string) (*models.PublicUser, error) {
 		Image:     user.Image,
 		Email:     user.Email,
 		Phone:     user.Phone,
+		Role:      user.Role,
 	}, nil
 }
 
