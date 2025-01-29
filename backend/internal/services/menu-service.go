@@ -5,38 +5,47 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
 )
 
-type MenuService struct {
-	repo *repositories.MenuRepository
+type MenuService interface {
+	GetAllMenuItems() ([]models.MenuItem, error)
+	CreateMenuItem(menuItem *models.MenuItem) error
+	GetMenuItem(id uint) (*models.MenuItem, error)
+	UpdateMenuItem(menuItem *models.MenuItem) error
+	DeleteMenuItem(id uint) error
+	GetMenuItemsByCategory(restaurantID uint, category string) ([]models.MenuItem, error)
 }
 
-func NewMenuService(repo *repositories.MenuRepository) *MenuService {
-	return &MenuService{repo: repo}
+type menuService struct {
+	repo repositories.MenuRepository
 }
 
-func (s *MenuService) GetAllMenuItems() ([]models.MenuItem, error) {
+func NewMenuService(repo repositories.MenuRepository) MenuService {
+	return &menuService{repo: repo}
+}
+
+func (s *menuService) GetAllMenuItems() ([]models.MenuItem, error) {
 	return s.repo.FindAll()
 }
 
-func (s *MenuService) CreateMenuItem(menuItem *models.MenuItem) error {
+func (s *menuService) CreateMenuItem(menuItem *models.MenuItem) error {
 	return s.repo.Create(menuItem)
 }
 
-func (s *MenuService) GetMenuItem(id uint) (*models.MenuItem, error) {
+func (s *menuService) GetMenuItem(id uint) (*models.MenuItem, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *MenuService) GetRestaurantMenu(restaurantID uint) ([]models.MenuItem, error) {
+func (s *menuService) GetRestaurantMenu(restaurantID uint) ([]models.MenuItem, error) {
 	return s.repo.FindByRestaurant(restaurantID)
 }
 
-func (s *MenuService) UpdateMenuItem(menuItem *models.MenuItem) error {
+func (s *menuService) UpdateMenuItem(menuItem *models.MenuItem) error {
 	return s.repo.Update(menuItem)
 }
 
-func (s *MenuService) DeleteMenuItem(id uint) error {
+func (s *menuService) DeleteMenuItem(id uint) error {
 	return s.repo.Delete(id)
 }
 
-func (s *MenuService) GetMenuItemsByCategory(restaurantID uint, category string) ([]models.MenuItem, error) {
+func (s *menuService) GetMenuItemsByCategory(restaurantID uint, category string) ([]models.MenuItem, error) {
 	return s.repo.FindByCategory(restaurantID, category)
 }

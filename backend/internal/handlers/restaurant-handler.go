@@ -8,14 +8,16 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 
+	"log/slog"
+
 	"github.com/gin-gonic/gin"
 )
 
 type RestaurantHandler struct {
-	service *services.RestaurantService
+	service services.RestaurantService
 }
 
-func NewRestaurantHandler(service *services.RestaurantService) *RestaurantHandler {
+func NewRestaurantHandler(service services.RestaurantService) *RestaurantHandler {
 	return &RestaurantHandler{service: service}
 }
 
@@ -31,9 +33,9 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 	var restaurant models.Restaurant
 	if err := c.ShouldBindJSON(&restaurant); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -48,9 +50,9 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 			}
 		}
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     newErrs,
+			Success: false,
+			Message: "Invalid request",
+			Errors:  newErrs,
 		})
 		return
 	}
@@ -61,28 +63,27 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 
 	if err := h.service.CreateRestaurant(&restaurant); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to create restaurant",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Failed to create restaurant",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
-
 	c.JSON(http.StatusCreated, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Restaurant created successfully",
-		Data:    map[string]any{
-			"id": restaurant.ID,
-			"name": restaurant.Name,
+		Data: map[string]any{
+			"id":          restaurant.ID,
+			"name":        restaurant.Name,
 			"description": restaurant.Description,
-			"address": restaurant.Address,
-			"phone": restaurant.Phone,
-			"email": restaurant.Email,
-			"cuisine": restaurant.Cuisine,
-			"rating": restaurant.Rating,
-			"image": restaurant.Image,
-			"is_active": restaurant.IsActive,
+			"address":     restaurant.Address,
+			"phone":       restaurant.Phone,
+			"email":       restaurant.Email,
+			"cuisine":     restaurant.Cuisine,
+			"rating":      restaurant.Rating,
+			"image":       restaurant.Image,
+			"is_active":   restaurant.IsActive,
 		},
 	})
 }
@@ -99,9 +100,9 @@ func (h *RestaurantHandler) GetRestaurant(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -109,9 +110,9 @@ func (h *RestaurantHandler) GetRestaurant(c *gin.Context) {
 	restaurant, err := h.service.GetRestaurant(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Restaurant not found",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Restaurant not found",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -135,9 +136,9 @@ func (h *RestaurantHandler) GetAllRestaurants(c *gin.Context) {
 	restaurants, err := h.service.GetAllRestaurants()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to get restaurants",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Failed to get restaurants",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -161,37 +162,73 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
-	var restaurant models.Restaurant
-	if err := c.ShouldBindJSON(&restaurant); err != nil {
+	var restaurantInput struct {
+		ID          uint   `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Address     string `json:"address"`
+		Phone       string `json:"phone"`
+		Email       string `json:"email"`
+		Cuisine     string `json:"cuisine"`
+	}
+
+	if err := c.ShouldBindJSON(&restaurantInput); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
-	restaurant.ID = uint(id)
-	if err := h.service.UpdateRestaurant(&restaurant); err != nil {
-		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to update restaurant",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+	errs := utils.TranslateError(restaurantInput)
+	if len(errs) > 0 {
+		newErrs := make([]utils.ErrorDetail, len(errs))
+		for i, err := range errs {
+			newErrs[i] = utils.ErrorDetail{
+				Message: err.Message,
+				Code:    err.Field,
+			}
+		}
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+			Errors:  newErrs,
 		})
 		return
 	}
+
+	restaurantInput.ID = uint(id)
+	if err := h.service.UpdateRestaurant(restaurantInput, uint(id)); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to update restaurant",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	slog.Info("Restaurant updated successfully", "restaurant", restaurantInput)
 
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Restaurant updated successfully",
-		Data:    restaurant,
+		Data: map[string]any{
+			"id":          restaurantInput.ID,
+			"name":        restaurantInput.Name,
+			"description": restaurantInput.Description,
+			"address":     restaurantInput.Address,
+			"phone":       restaurantInput.Phone,
+			"email":       restaurantInput.Email,
+			"cuisine":     restaurantInput.Cuisine,
+		},
 	})
 }
 
@@ -207,18 +244,18 @@ func (h *RestaurantHandler) DeleteRestaurant(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
 	if err := h.service.DeleteRestaurant(uint(id)); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to delete restaurant",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Failed to delete restaurant",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}

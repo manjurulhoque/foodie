@@ -5,9 +5,9 @@ import (
 )
 
 type OrderHandler struct {
-	service *services.OrderService
+	service services.OrderService
 }
 
-func NewOrderHandler(service *services.OrderService) *OrderHandler {
+func NewOrderHandler(service services.OrderService) *OrderHandler {
 	return &OrderHandler{service: service}
 }

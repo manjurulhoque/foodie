@@ -9,8 +9,8 @@ type MenuRepository struct {
 	db *gorm.DB
 }
 
-func NewMenuRepository(db *gorm.DB) *MenuRepository {
-	return &MenuRepository{db: db}
+func NewMenuRepository(db *gorm.DB) MenuRepository {
+	return MenuRepository{db: db}
 }
 
 func (r *MenuRepository) FindAll() ([]models.MenuItem, error) {

@@ -10,10 +10,10 @@ import (
 )
 
 type MenuHandler struct {
-	service *services.MenuService
+	service services.MenuService
 }
 
-func NewMenuHandler(service *services.MenuService) *MenuHandler {
+func NewMenuHandler(service services.MenuService) *MenuHandler {
 	return &MenuHandler{service: service}
 }
 
