@@ -7,6 +7,7 @@ import {
     Users,
     Palette,
     Command,
+    Citrus,
 } from "lucide-react";
 import { type SidebarData } from "@/components/layout/types";
 
@@ -36,6 +37,22 @@ export const sidebarData: SidebarData = {
                     title: "Customers",
                     url: "/admin/customers",
                     icon: Users,
+                },
+                {
+                    title: "Restaurants",
+                    icon: Citrus,
+                    items: [
+                        {
+                            title: "Restaurants",
+                            url: "/admin/restaurants",
+                            icon: Citrus,
+                        },
+                        {
+                            title: "Create Restaurant",
+                            url: "/admin/restaurants/new",
+                            icon: Citrus,
+                        },
+                    ],
                 },
             ],
         },
