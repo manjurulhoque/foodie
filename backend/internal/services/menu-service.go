@@ -7,11 +7,12 @@ import (
 
 type MenuService interface {
 	GetAllMenuItems() ([]models.MenuItem, error)
-	CreateMenuItem(menuItem *models.MenuItem) error
+	CreateMenuItem(menuItem map[string]interface{}, restaurantID uint) error
 	GetMenuItem(id uint) (*models.MenuItem, error)
 	UpdateMenuItem(menuItem *models.MenuItem) error
 	DeleteMenuItem(id uint) error
 	GetMenuItemsByCategory(restaurantID uint, category string) ([]models.MenuItem, error)
+	GetRestaurantMenuItems(restaurantID uint) ([]models.MenuItem, error)
 }
 
 type menuService struct {
@@ -26,7 +27,8 @@ func (s *menuService) GetAllMenuItems() ([]models.MenuItem, error) {
 	return s.repo.FindAll()
 }
 
-func (s *menuService) CreateMenuItem(menuItem *models.MenuItem) error {
+func (s *menuService) CreateMenuItem(menuItem map[string]interface{}, restaurantID uint) error {
+	menuItem["restaurant_id"] = restaurantID
 	return s.repo.Create(menuItem)
 }
 
@@ -34,7 +36,7 @@ func (s *menuService) GetMenuItem(id uint) (*models.MenuItem, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *menuService) GetRestaurantMenu(restaurantID uint) ([]models.MenuItem, error) {
+func (s *menuService) GetRestaurantMenuItems(restaurantID uint) ([]models.MenuItem, error) {
 	return s.repo.FindByRestaurant(restaurantID)
 }
 

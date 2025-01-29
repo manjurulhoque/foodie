@@ -42,6 +42,7 @@ export function CellAction({ data }: CellActionProps) {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
+                    className="cursor-pointer"
                     onClick={() =>
                         router.push(`/admin/restaurants/${data.id}/menu`)
                     }
@@ -50,6 +51,7 @@ export function CellAction({ data }: CellActionProps) {
                     Menu
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                    className="cursor-pointer"
                     onClick={() =>
                         router.push(`/admin/restaurants/${data.id}/edit`)
                     }
@@ -57,7 +59,7 @@ export function CellAction({ data }: CellActionProps) {
                     <Edit className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onDelete}>
+                <DropdownMenuItem className="cursor-pointer" onClick={onDelete}>
                     <Trash className="mr-2 h-4 w-4" />
                     Delete
                 </DropdownMenuItem>

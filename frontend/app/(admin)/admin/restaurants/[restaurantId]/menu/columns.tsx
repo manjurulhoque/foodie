@@ -23,9 +23,9 @@ export const columns: ColumnDef<MenuItem>[] = [
         header: "Category",
     },
     {
-        accessorKey: "isAvailable",
+        accessorKey: "is_available",
         header: "Available",
-        cell: ({ row }) => (row.original.isAvailable ? "Yes" : "No"),
+        cell: ({ row }) => (row.original.is_available ? "Yes" : "No"),
     },
     {
         id: "actions",

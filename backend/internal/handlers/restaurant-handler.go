@@ -188,10 +188,10 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		return
 	}
 
-	errs := utils.TranslateError(restaurantInput)
-	if len(errs) > 0 {
-		newErrs := make([]utils.ErrorDetail, len(errs))
-		for i, err := range errs {
+	translateErrors := utils.TranslateError(restaurantInput)
+	if len(translateErrors) > 0 {
+		newErrs := make([]utils.ErrorDetail, len(translateErrors))
+		for i, err := range translateErrors {
 			newErrs[i] = utils.ErrorDetail{
 				Message: err.Message,
 				Code:    err.Field,

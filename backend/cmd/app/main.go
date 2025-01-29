@@ -97,6 +97,7 @@ func main() {
 	// Group API routes for better organization and middleware reuse
 	api := router.Group("/api")
 	authMiddleware := middlewares.AuthMiddleware(userRepo, userService)
+	adminMiddleware := middlewares.AdminMiddleware(userRepo, userService)
 	{
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
@@ -125,6 +126,13 @@ func main() {
 			restaurants.POST("", authMiddleware, restaurantHandler.CreateRestaurant)
 			restaurants.PUT("/:id", authMiddleware, restaurantHandler.UpdateRestaurant)
 			restaurants.DELETE("/:id", authMiddleware, restaurantHandler.DeleteRestaurant)
+
+			restaurantMenu := restaurants.Group("/:id/menu")
+			{
+				restaurantMenu.GET("", menuHandler.GetRestaurantMenuItems)
+				restaurantMenu.POST("", authMiddleware, adminMiddleware, menuHandler.CreateMenuItem)
+				restaurantMenu.GET("/:id", menuHandler.GetMenuItem)
+			}
 		}
 	}
 

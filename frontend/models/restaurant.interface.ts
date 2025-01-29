@@ -22,7 +22,7 @@ export interface MenuItem {
     price: number;
     image: string;
     category: string;
-    isAvailable: boolean;
+    is_available: boolean;
     restaurantId: string;
     createdAt: string;
     updatedAt: string;

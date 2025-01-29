@@ -24,7 +24,7 @@ type MenuItem struct {
 	Description  string     `json:"description"`
 	Price        float64    `json:"price" validate:"required"`
 	Image        string     `json:"image"`
-	Category     string     `json:"category" binding:"required"`
+	Category     string     `json:"category" validate:"required"`
 	IsAvailable  bool       `json:"is_available" gorm:"default:true"`
 	RestaurantID uint       `json:"restaurant_id"`
 	Restaurant   Restaurant `json:"-" gorm:"foreignKey:RestaurantID"`

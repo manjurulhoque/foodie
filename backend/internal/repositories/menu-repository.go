@@ -19,8 +19,8 @@ func (r *MenuRepository) FindAll() ([]models.MenuItem, error) {
 	return menuItems, err
 }
 
-func (r *MenuRepository) Create(menuItem *models.MenuItem) error {
-	return r.db.Create(menuItem).Error
+func (r *MenuRepository) Create(menuItem map[string]interface{}) error {
+	return r.db.Model(&models.MenuItem{}).Create(menuItem).Error
 }
 
 func (r *MenuRepository) FindByID(id uint) (*models.MenuItem, error) {
