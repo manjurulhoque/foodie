@@ -1,6 +1,149 @@
 basePath: /api
 definitions:
+  models.Address:
+    properties:
+      city:
+        type: string
+      created_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      deleted_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_default:
+        type: boolean
+      label:
+        description: e.g., "Home", "Work"
+        type: string
+      postal_code:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      updated_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.MenuItem:
+    properties:
+      category:
+        type: string
+      created_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      deleted_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      description:
+        type: string
+      id:
+        example: 1
+        type: integer
+      image:
+        type: string
+      is_available:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: integer
+      updated_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+    required:
+    - category
+    - name
+    - price
+    type: object
+  models.Restaurant:
+    properties:
+      address:
+        type: string
+      created_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      cuisine:
+        type: string
+      deleted_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        example: 1
+        type: integer
+      image:
+        type: string
+      is_active:
+        type: boolean
+      menu_items:
+        items:
+          $ref: '#/definitions/models.MenuItem'
+        type: array
+      name:
+        type: string
+      phone:
+        type: string
+      rating:
+        type: number
+      updated_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    required:
+    - address
+    - email
+    - name
+    - phone
+    type: object
   models.User:
+    properties:
+      created_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      deleted_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
+      delivery_addresses:
+        description: New fields for multi-restaurant functionality
+        items:
+          $ref: '#/definitions/models.Address'
+        type: array
+      email:
+        type: string
+      id:
+        example: 1
+        type: integer
+      image:
+        type: string
+      is_active:
+        type: boolean
+      is_email_verified:
+        type: boolean
+      last_login_at:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+      updated_at:
+        example: "2024-01-29T17:57:19Z"
+        type: string
     type: object
 host: localhost:9000
 info:
@@ -38,6 +181,49 @@ paths:
       summary: Login a user
       tags:
       - user
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: Get the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Get the current user
+      tags:
+      - user
+  /menu:
+    get:
+      consumes:
+      - application/json
+      description: Get all menu items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Get all menu items
+      tags:
+      - menu
+  /menu/:id:
+    get:
+      consumes:
+      - application/json
+      description: Get a menu item
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Get a menu item
+      tags:
+      - menu
   /register:
     post:
       consumes:
@@ -60,6 +246,80 @@ paths:
       summary: Register a new user
       tags:
       - user
+  /restaurants:
+    get:
+      consumes:
+      - application/json
+      description: Get all restaurants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Restaurant'
+            type: array
+      summary: Get all restaurants
+      tags:
+      - restaurants
+    post:
+      consumes:
+      - application/json
+      description: Create a restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Restaurant'
+      summary: Create a restaurant
+      tags:
+      - restaurants
+  /restaurants/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Restaurant'
+      summary: Delete a restaurant
+      tags:
+      - restaurants
+    get:
+      consumes:
+      - application/json
+      description: Get a restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Restaurant'
+      summary: Get a restaurant
+      tags:
+      - restaurants
+    put:
+      consumes:
+      - application/json
+      description: Update a restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Restaurant'
+      summary: Update a restaurant
+      tags:
+      - restaurants
 schemes:
 - http
 swagger: "2.0"

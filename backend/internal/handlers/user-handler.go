@@ -5,7 +5,6 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
-	"log/slog"
 	"net/http"
 )
 
@@ -43,8 +42,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 		})
 		return
 	}
-
-	slog.Info("Input", "input", input)
 
 	errs := utils.TranslateError(input)
 	if len(errs) > 0 {
@@ -131,6 +128,14 @@ func (h *UserHandler) Login(c *gin.Context) {
 	})
 }
 
+// Me user handler
+// @Summary Get the current user
+// @Description Get the current user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.User
+// @Router /me [get]
 func (h *UserHandler) Me(c *gin.Context) {
 	userEmail := c.GetString("email")
 	user, err := h.userService.GetUserByEmail(userEmail)

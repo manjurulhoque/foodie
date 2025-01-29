@@ -55,6 +55,71 @@
                 }
             }
         },
+        "/me": {
+            "get": {
+                "description": "Get the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get the current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/menu": {
+            "get": {
+                "description": "Get all menu items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "Get all menu items",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/menu/:id": {
+            "get": {
+                "description": "Get a menu item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "Get a menu item",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "Register a new user",
@@ -88,11 +153,328 @@
                     }
                 }
             }
+        },
+        "/restaurants": {
+            "get": {
+                "description": "Get all restaurants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get all restaurants",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Restaurant"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Create a restaurant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Restaurant"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurants/:id": {
+            "get": {
+                "description": "Get a restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get a restaurant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Restaurant"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Update a restaurant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Restaurant"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Delete a restaurant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Restaurant"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.Address": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "label": {
+                    "description": "e.g., \"Home\", \"Work\"",
+                    "type": "string"
+                },
+                "postal_code": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MenuItem": {
+            "type": "object",
+            "required": [
+                "category",
+                "name",
+                "price"
+            ],
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "image": {
+                    "type": "string"
+                },
+                "is_available": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "restaurant_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                }
+            }
+        },
+        "models.Restaurant": {
+            "type": "object",
+            "required": [
+                "address",
+                "email",
+                "name",
+                "phone"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "cuisine": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "image": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "menu_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MenuItem"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.User": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "delivery_addresses": {
+                    "description": "New fields for multi-restaurant functionality",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "image": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_email_verified": {
+                    "type": "boolean"
+                },
+                "last_login_at": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                }
+            }
         }
     }
 }

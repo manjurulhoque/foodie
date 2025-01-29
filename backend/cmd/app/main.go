@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
+	"net/http"
+	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/docs"
@@ -15,9 +19,6 @@ import (
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"log/slog"
-	"net/http"
-	"time"
 )
 
 func init() {
@@ -32,7 +33,7 @@ func init() {
 	}
 
 	err = db.DB.AutoMigrate(
-		&models.User{}, &models.Address{})
+		&models.User{}, &models.Address{}, &models.Restaurant{}, &models.MenuItem{}, &models.Order{})
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())
 		panic(fmt.Sprintf("Error migrating database: %v", err))
@@ -61,12 +62,21 @@ func main() {
 
 	// Initialize repositories with pointer receivers
 	userRepo := repositories.NewUserRepository(db.DB)
+	restaurantRepo := repositories.NewRestaurantRepository(db.DB)
+	menuRepo := repositories.NewMenuRepository(db.DB)
+	orderRepo := repositories.NewOrderRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
+	restaurantService := services.NewRestaurantService(restaurantRepo)
+	menuService := services.NewMenuService(menuRepo)
+	orderService := services.NewOrderService(orderRepo, menuRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService)
+	restaurantHandler := handlers.NewRestaurantHandler(restaurantService)
+	menuHandler := handlers.NewMenuHandler(menuService)
+	_ = handlers.NewOrderHandler(orderService)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -98,6 +108,24 @@ func main() {
 		api.POST("/register", userHandler.Register)
 		api.POST("/login", userHandler.Login)
 		api.GET("/me", authMiddleware, userHandler.Me)
+
+		// Menu routes
+		menu := api.Group("/menu")
+		{
+			menu.GET("", menuHandler.GetAllMenuItems)
+			menu.GET("/:id", menuHandler.GetMenuItem)
+		}
+
+		// Restaurant routes
+		restaurants := api.Group("/restaurants")
+		{
+			restaurants.GET("", restaurantHandler.GetAllRestaurants)
+			restaurants.GET("/:id", restaurantHandler.GetRestaurant)
+
+			restaurants.POST("", authMiddleware, restaurantHandler.CreateRestaurant)
+			restaurants.PUT("/:id", authMiddleware, restaurantHandler.UpdateRestaurant)
+			restaurants.DELETE("/:id", authMiddleware, restaurantHandler.DeleteRestaurant)
+		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
