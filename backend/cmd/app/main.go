@@ -138,6 +138,8 @@ func main() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	router.Static("/web/uploads", "./web/uploads")
+
 	// Set the user repository in the utils package
 	utils.SetUserRepo(userRepo)
 

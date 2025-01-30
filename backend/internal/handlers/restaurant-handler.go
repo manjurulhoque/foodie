@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"net/http"
-	"strconv"
-	"mime/multipart"
-	"os"
-	"path/filepath"
 	"fmt"
 	"github.com/google/uuid"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
 
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
@@ -122,7 +122,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 	c.JSON(http.StatusCreated, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Restaurant created successfully",
-		Data: restaurantMap,
+		Data:    restaurantMap,
 	})
 }
 
@@ -208,16 +208,17 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 	}
 
 	var restaurantInput struct {
-		ID          uint   `json:"id"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		Address     string `json:"address"`
-		Phone       string `json:"phone"`
-		Email       string `json:"email"`
-		Cuisine     string `json:"cuisine"`
+		ID          uint                  `form:"id" json:"id"`
+		Name        string                `form:"name" json:"name"`
+		Description string                `form:"description" json:"description"`
+		Address     string                `form:"address" json:"address"`
+		Phone       string                `form:"phone" json:"phone"`
+		Email       string                `form:"email" json:"email"`
+		Cuisine     string                `form:"cuisine" json:"cuisine"`
+		Image       *multipart.FileHeader `form:"image" json:"image"`
 	}
 
-	if err := c.ShouldBindJSON(&restaurantInput); err != nil {
+	if err := c.ShouldBind(&restaurantInput); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success: false,
 			Message: "Invalid request",
@@ -243,8 +244,33 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		return
 	}
 
+	restaurantMap := map[string]interface{}{
+		"name":        restaurantInput.Name,
+		"description": restaurantInput.Description,
+		"address":     restaurantInput.Address,
+		"phone":       restaurantInput.Phone,
+		"email":       restaurantInput.Email,
+		"cuisine":     restaurantInput.Cuisine,
+	}
+
+	if restaurantInput.Image != nil {
+		uploadsPath := "./web/uploads/restaurants"
+		extension := filepath.Ext(restaurantInput.Image.Filename)
+		newFileName := fmt.Sprintf("%s%s", uuid.New().String(), extension)
+		filePath := filepath.Join(uploadsPath, newFileName)
+		if err := c.SaveUploadedFile(restaurantInput.Image, filePath); err != nil {
+			slog.Error("Error saving file", "error", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			return
+		}
+		// TODO: delete old image
+		// check if the image path exists
+
+		restaurantMap["image"] = filePath
+	}
+
 	restaurantInput.ID = uint(id)
-	if err := h.service.UpdateRestaurant(restaurantInput, uint(id)); err != nil {
+	if err := h.service.UpdateRestaurant(restaurantMap, uint(id)); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,
 			Message: "Failed to update restaurant",
@@ -252,8 +278,6 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		})
 		return
 	}
-
-	slog.Info("Restaurant updated successfully", "restaurant", restaurantInput)
 
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success: true,

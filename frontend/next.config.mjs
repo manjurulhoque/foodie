@@ -5,6 +5,15 @@ const nextConfig = {
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
         BACKEND_BASE_URL: process.env.BACKEND_BASE_URL,
     },
+    images: {
+        remotePatterns: [
+            {
+                protocol: "http",
+                hostname: "localhost",
+                port: "9000",
+            },
+        ],
+    },
 };
 
 export default nextConfig;
