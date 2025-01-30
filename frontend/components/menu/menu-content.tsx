@@ -1,17 +1,18 @@
 "use client";
 
-import { MenuItem } from "@/components/menu/menu-item";
+import { MenuItem as MenuItemType } from "@/components/menu/menu-item";
 import { Box } from "@/components/shared/box";
 import { ChevronRight, Home, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
+import { MenuItem } from "@/models/restaurant.interface";
 
 interface MenuContentProps {
-    menus: any[];
+    menuItems?: MenuItem[];
 }
 
-export const MenuContent = ({ menus }: MenuContentProps) => {
+export const MenuContent = ({ menuItems }: MenuContentProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const currentParams = Object.fromEntries(searchParams.entries());
@@ -79,11 +80,11 @@ export const MenuContent = ({ menus }: MenuContentProps) => {
             </Box>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 w-full h-full gap-4 gap-y-24">
-                {menus.length > 0 ? (
+                {menuItems && menuItems.length > 0 ? (
                     <>
-                        {menus.map((menu) => (
-                            <MenuItem data={menu} key={menu.id} />
-                        ))}
+                        {/* {menuItems.map((menuItem) => (
+                            <MenuItemType data={menuItem} key={menuItem.id} />
+                        ))} */}
                     </>
                 ) : (
                     <>

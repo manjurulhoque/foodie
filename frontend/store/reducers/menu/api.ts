@@ -8,7 +8,11 @@ export const MenuApi = createApi({
     baseQuery: DynamicBaseQuery,
     tagTypes: ["MenuItem"],
     endpoints: (builder) => ({
-        getMenuItems: builder.query<{ data: MenuItem[] }, string>({
+        getAllMenuItems: builder.query<{ data: MenuItem[] }, void>({
+            query: () => `menu`,
+            providesTags: ["MenuItem"],
+        }),
+        getRestaurantMenuItems: builder.query<{ data: MenuItem[] }, string>({
             query: (restaurantId) => `restaurants/${restaurantId}/menu`,
             providesTags: ["MenuItem"],
         }),
@@ -51,7 +55,8 @@ export const MenuApi = createApi({
 });
 
 export const {
-    useGetMenuItemsQuery,
+    useGetAllMenuItemsQuery,
+    useGetRestaurantMenuItemsQuery,
     useGetMenuItemQuery,
     useCreateMenuItemMutation,
     useUpdateMenuItemMutation,

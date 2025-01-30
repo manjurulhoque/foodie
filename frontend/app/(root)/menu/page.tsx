@@ -1,3 +1,6 @@
+"use client";
+
+import { useGetAllMenuItemsQuery } from "@/store/reducers/menu/api";
 import { Box } from "@/components/shared/box";
 import { Container } from "@/components/shared/container";
 import React from "react";
@@ -7,7 +10,7 @@ import { SizeFilter } from "@/components/filters/size-filter";
 import { CategoryFilter } from "@/components/filters/category-filter";
 import { MenuContent } from "@/components/menu/menu-content";
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
 interface MenuPageProps {
     searchParams: {
@@ -19,11 +22,12 @@ interface MenuPageProps {
     };
 }
 
-const MenuPage = async ({ searchParams }: MenuPageProps) => {
+const MenuPage = ({ searchParams }: MenuPageProps) => {
+    const { data: menuItems, isLoading: isLoadingMenuItems } = useGetAllMenuItemsQuery();
     const categories: Category[] = [];
     const sizes: any[] = [];
 
-    const menus: any[] = [];
+    console.log(menuItems);
 
     return (
         <Container className="px-4 md:px-12">
@@ -35,7 +39,7 @@ const MenuPage = async ({ searchParams }: MenuPageProps) => {
                     </FilterContainer>
                 </div>
                 <Box className="col-span-12 md:col-span-10 flex-col items-start justify-start w-full">
-                    <MenuContent menus={menus} />
+                    <MenuContent menuItems={menuItems?.data} />
                 </Box>
             </div>
         </Container>

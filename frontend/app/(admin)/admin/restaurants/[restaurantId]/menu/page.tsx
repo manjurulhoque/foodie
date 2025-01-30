@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetMenuItemsQuery } from "@/store/reducers/menu/api";
+import { useGetRestaurantMenuItemsQuery } from "@/store/reducers/menu/api";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ export default function MenuPage({
 }: {
     params: { restaurantId: string };
 }) {
-    const { data, isLoading } = useGetMenuItemsQuery(params.restaurantId);
+    const { data, isLoading } = useGetRestaurantMenuItemsQuery(params.restaurantId);
     const router = useRouter();
 
     return (
