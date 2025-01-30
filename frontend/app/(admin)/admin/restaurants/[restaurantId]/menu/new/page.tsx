@@ -98,14 +98,17 @@ export default function NewMenuItemPage({
             formData.append("description", data.description);
             formData.append("price", data.price);
             formData.append("category", data.category);
-            formData.append("is_available", data.is_available.toString());
-            if (data.image) {
+            formData.append("is_available", String(data.is_available));
+
+            if (data.image instanceof File) {
                 formData.append("image", data.image);
             }
+
             await createMenuItem({
                 restaurantId: params.restaurantId,
                 body: formData,
             }).unwrap();
+
             toast.success("Menu item created successfully");
             router.push(`/admin/restaurants/${params.restaurantId}/menu`);
             router.refresh();
@@ -267,11 +270,7 @@ export default function NewMenuItemPage({
                                     control={form.control}
                                     name="image"
                                     render={({
-                                        field: {
-                                            value,
-                                            onChange,
-                                            ...field
-                                        },
+                                        field: { value, onChange, ...field },
                                     }) => (
                                         <FormItem>
                                             <FormLabel>Image</FormLabel>
@@ -285,7 +284,8 @@ export default function NewMenuItemPage({
                                                 />
                                             </FormControl>
                                             <FormDescription>
-                                                You can also paste an image from clipboard (Ctrl+V)
+                                                You can also paste an image from
+                                                clipboard (Ctrl+V)
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>

@@ -13,8 +13,8 @@ func NewRestaurantRepository(db *gorm.DB) RestaurantRepository {
 	return RestaurantRepository{db: db}
 }
 
-func (r *RestaurantRepository) Create(restaurant *models.Restaurant) error {
-	return r.db.Create(restaurant).Error
+func (r *RestaurantRepository) Create(restaurant map[string]interface{}) error {
+	return r.db.Model(&models.Restaurant{}).Create(&restaurant).Error
 }
 
 func (r *RestaurantRepository) FindByID(id uint) (*models.Restaurant, error) {

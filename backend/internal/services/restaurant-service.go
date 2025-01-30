@@ -6,7 +6,7 @@ import (
 )
 
 type RestaurantService interface {
-	CreateRestaurant(restaurant *models.Restaurant) error
+	CreateRestaurant(map[string]interface{}) error
 	GetRestaurant(id uint) (*models.Restaurant, error)
 	GetAllRestaurants() ([]models.Restaurant, error)
 	UpdateRestaurant(restaurant interface{}, id uint) error
@@ -22,7 +22,7 @@ func NewRestaurantService(repo repositories.RestaurantRepository) RestaurantServ
 	return &restaurantService{repo: repo}
 }
 
-func (s *restaurantService) CreateRestaurant(restaurant *models.Restaurant) error {
+func (s *restaurantService) CreateRestaurant(restaurant map[string]interface{}) error {
 	return s.repo.Create(restaurant)
 }
 

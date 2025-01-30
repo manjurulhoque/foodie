@@ -3,8 +3,12 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"mime/multipart"
+	"os"
+	"path/filepath"
+	"fmt"
+	"github.com/google/uuid"
 
-	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 
@@ -30,8 +34,17 @@ func NewRestaurantHandler(service services.RestaurantService) *RestaurantHandler
 // @Success 200 {object} models.Restaurant
 // @Router /restaurants [post]
 func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
-	var restaurant models.Restaurant
-	if err := c.ShouldBindJSON(&restaurant); err != nil {
+	var restaurantInput struct {
+		Name        string                `form:"name" validate:"required"`
+		Description string                `form:"description" validate:"required"`
+		Address     string                `form:"address" validate:"required"`
+		Phone       string                `form:"phone" validate:"required"`
+		Email       string                `form:"email" validate:"required"`
+		Cuisine     string                `form:"cuisine" validate:"required"`
+		UserID      uint                  `validate:"required"`
+		Image       *multipart.FileHeader `form:"image" validate:"required"`
+	}
+	if err := c.ShouldBind(&restaurantInput); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success: false,
 			Message: "Invalid request",
@@ -40,10 +53,24 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 		return
 	}
 
-	errs := utils.TranslateError(restaurant)
-	if len(errs) > 0 {
-		newErrs := make([]utils.ErrorDetail, len(errs))
-		for i, err := range errs {
+	// Get user ID from context (set by auth middleware)
+	userID := c.GetUint("userId")
+	restaurantMap := map[string]interface{}{
+		"name":        restaurantInput.Name,
+		"description": restaurantInput.Description,
+		"address":     restaurantInput.Address,
+		"phone":       restaurantInput.Phone,
+		"email":       restaurantInput.Email,
+		"cuisine":     restaurantInput.Cuisine,
+		"user_id":     userID,
+	}
+
+	restaurantInput.UserID = userID
+
+	translateErrors := utils.TranslateError(restaurantInput)
+	if len(translateErrors) > 0 {
+		newErrs := make([]utils.ErrorDetail, len(translateErrors))
+		for i, err := range translateErrors {
 			newErrs[i] = utils.ErrorDetail{
 				Message: err.Message,
 				Code:    err.Field,
@@ -57,11 +84,33 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 		return
 	}
 
-	// Get user ID from context (set by auth middleware)
-	userID := c.GetUint("userId")
-	restaurant.UserID = userID
+	if restaurantInput.Image != nil {
+		// Define the path where files should be saved
+		uploadsPath := "./web/uploads/restaurants"
 
-	if err := h.service.CreateRestaurant(&restaurant); err != nil {
+		// Check if the uploads directory exists; create it if it doesn't
+		if _, err := os.Stat(uploadsPath); os.IsNotExist(err) {
+			err = os.MkdirAll(uploadsPath, os.ModePerm)
+			if err != nil {
+				slog.Error("Failed to create uploads directory", "error", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create uploads directory"})
+				return
+			}
+		}
+		extension := filepath.Ext(restaurantInput.Image.Filename)
+		newFileName := fmt.Sprintf("%s%s", uuid.New().String(), extension)
+		filePath := filepath.Join(uploadsPath, newFileName)
+
+		// Save the uploaded file
+		if err := c.SaveUploadedFile(restaurantInput.Image, filePath); err != nil {
+			slog.Error("Error saving file", "error", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			return
+		}
+		restaurantMap["image"] = filePath
+	}
+
+	if err := h.service.CreateRestaurant(restaurantMap); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,
 			Message: "Failed to create restaurant",
@@ -73,18 +122,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 	c.JSON(http.StatusCreated, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Restaurant created successfully",
-		Data: map[string]any{
-			"id":          restaurant.ID,
-			"name":        restaurant.Name,
-			"description": restaurant.Description,
-			"address":     restaurant.Address,
-			"phone":       restaurant.Phone,
-			"email":       restaurant.Email,
-			"cuisine":     restaurant.Cuisine,
-			"rating":      restaurant.Rating,
-			"image":       restaurant.Image,
-			"is_active":   restaurant.IsActive,
-		},
+		Data: restaurantMap,
 	})
 }
 
