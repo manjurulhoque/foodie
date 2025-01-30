@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { Restaurant } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
 
@@ -17,13 +17,14 @@ export const RestaurantApi = createApi({
             providesTags: ["Restaurant"],
         }),
         createRestaurant: builder.mutation<
-            { data: Restaurant },
-            Partial<Restaurant>
+            { data: Partial<Restaurant> },
+            FormData
         >({
-            query: (body) => ({
+            query: (formData) => ({
                 url: "restaurants",
                 method: "POST",
-                body,
+                body: formData,
+                formData: true,
             }),
             invalidatesTags: ["Restaurant"],
         }),

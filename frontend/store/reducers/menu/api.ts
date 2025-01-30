@@ -24,17 +24,19 @@ export const MenuApi = createApi({
                 url: `restaurants/${restaurantId}/menu`,
                 method: "POST",
                 body,
+                formData: true,
             }),
             invalidatesTags: ["MenuItem"],
         }),
         updateMenuItem: builder.mutation<
             { data: MenuItem },
-            { id: string; body: Partial<MenuItem> }
+            { id: string; body: FormData }
         >({
             query: ({ id, body }) => ({
                 url: `menu/${id}`,
                 method: "PUT",
                 body,
+                formData: true,
             }),
             invalidatesTags: ["MenuItem"],
         }),

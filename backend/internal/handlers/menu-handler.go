@@ -202,13 +202,9 @@ func (h *MenuHandler) CreateMenuItem(c *gin.Context) {
 				return
 			}
 		}
-		slog.Info("Uploads directory created", "Filename", menuItem.Image.Filename)
 		extension := filepath.Ext(menuItem.Image.Filename)
-		slog.Info("Extension", "extension", extension)
 		newFileName := fmt.Sprintf("%s%s", uuid.New().String(), extension)
-		slog.Info("New file name", "newFileName", newFileName)
 		filePath := filepath.Join(uploadsPath, newFileName)
-		slog.Info("File path", "path", filePath)
 
 		// Save the uploaded file
 		if err := c.SaveUploadedFile(menuItem.Image, filePath); err != nil {
