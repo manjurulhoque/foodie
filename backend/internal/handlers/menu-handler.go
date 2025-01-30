@@ -1,9 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
@@ -126,15 +132,15 @@ func (h *MenuHandler) GetRestaurantMenuItems(c *gin.Context) {
 // @Router /menu [post]
 func (h *MenuHandler) CreateMenuItem(c *gin.Context) {
 	var menuItem struct {
-		Name         string  `json:"name" validate:"required"`
-		Description  string  `json:"description"`
-		Price        float64 `json:"price" validate:"required"`
-		Image        string  `json:"image"`
-		Category     string  `json:"category" validate:"required"`
-		RestaurantID uint    `json:"restaurant_id"`
-		IsAvailable  bool    `json:"is_available"`
+		Name         string                `form:"name" validate:"required"`
+		Description  string                `form:"description" json:"description"`
+		Price        float64               `form:"price" validate:"required"`
+		Category     string                `form:"category" validate:"required"`
+		RestaurantID uint                  `form:"restaurant_id" validate:"required"`
+		IsAvailable  bool                  `form:"is_available" validate:"required"`
+		Image        *multipart.FileHeader `form:"image" json:"image"`
 	}
-	if err := c.ShouldBindJSON(&menuItem); err != nil {
+	if err := c.ShouldBind(&menuItem); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
 			Success: false,
 			Message: "Invalid request",
@@ -153,7 +159,7 @@ func (h *MenuHandler) CreateMenuItem(c *gin.Context) {
 		return
 	}
 
-	slog.Info("Restaurant ID", "id", menuItem)
+	menuItem.RestaurantID = uint(restaurantID)
 
 	translateErrors := utils.TranslateError(menuItem)
 	if len(translateErrors) > 0 {
@@ -173,13 +179,44 @@ func (h *MenuHandler) CreateMenuItem(c *gin.Context) {
 	}
 
 	menuItemMap := map[string]interface{}{
-		"name":         menuItem.Name,
-		"description":  menuItem.Description,
-		"price":        menuItem.Price,
-		"image":        menuItem.Image,
-		"category":     menuItem.Category,
+		"name":          menuItem.Name,
+		"description":   menuItem.Description,
+		"price":         menuItem.Price,
+		"image":         menuItem.Image,
+		"category":      menuItem.Category,
 		"restaurant_id": uint(restaurantID),
 		"is_available":  menuItem.IsAvailable,
+	}
+
+	// Handle file upload
+	if menuItem.Image != nil {
+		// Define the path where files should be saved
+		uploadsPath := "./web/uploads"
+
+		// Check if the uploads directory exists; create it if it doesn't
+		if _, err := os.Stat(uploadsPath); os.IsNotExist(err) {
+			err = os.MkdirAll(uploadsPath, os.ModePerm)
+			if err != nil {
+				slog.Error("Failed to create uploads directory", "error", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create uploads directory"})
+				return
+			}
+		}
+		slog.Info("Uploads directory created", "Filename", menuItem.Image.Filename)
+		extension := filepath.Ext(menuItem.Image.Filename)
+		slog.Info("Extension", "extension", extension)
+		newFileName := fmt.Sprintf("%s%s", uuid.New().String(), extension)
+		slog.Info("New file name", "newFileName", newFileName)
+		filePath := filepath.Join(uploadsPath, newFileName)
+		slog.Info("File path", "path", filePath)
+
+		// Save the uploaded file
+		if err := c.SaveUploadedFile(menuItem.Image, filePath); err != nil {
+			slog.Error("Error saving file", "error", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			return
+		}
+		menuItemMap["image"] = filePath
 	}
 
 	if err := h.service.CreateMenuItem(menuItemMap, uint(restaurantID)); err != nil {

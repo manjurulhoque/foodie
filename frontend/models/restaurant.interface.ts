@@ -8,11 +8,11 @@ export interface Restaurant {
     cuisine: string;
     rating: number;
     image: string;
-    isActive: boolean;
-    userId: string;
-    menuItems: MenuItem[];
-    createdAt: string;
-    updatedAt: string;
+    is_active: boolean;
+    user_id: string;
+    menu_items: MenuItem[];
+    created_at: string;
+    updated_at: string;
 }
 
 export interface MenuItem {
@@ -23,7 +23,7 @@ export interface MenuItem {
     image: string;
     category: string;
     is_available: boolean;
-    restaurantId: string;
-    createdAt: string;
-    updatedAt: string;
+    restaurant_id: string;
+    created_at: string;
+    updated_at: string;
 }

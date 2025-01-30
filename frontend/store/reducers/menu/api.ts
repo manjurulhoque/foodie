@@ -18,7 +18,7 @@ export const MenuApi = createApi({
         }),
         createMenuItem: builder.mutation<
             { data: MenuItem },
-            { restaurantId: string; body: Partial<MenuItem> }
+            { restaurantId: string; body: FormData }
         >({
             query: ({ restaurantId, body }) => ({
                 url: `restaurants/${restaurantId}/menu`,

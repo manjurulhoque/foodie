@@ -18,14 +18,8 @@ import { useRouter } from "next/navigation";
 import { useCreateMenuItemMutation } from "@/store/reducers/menu/api";
 import { toast } from "react-hot-toast";
 import { Textarea } from "@/components/ui/textarea";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -34,6 +28,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import Image from "next/image";
+import { useState } from "react";
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -49,6 +45,7 @@ const formSchema = z.object({
         message: "Category is required",
     }),
     is_available: z.boolean().default(true),
+    image: z.instanceof(File).optional(),
 });
 
 const categories = [
@@ -69,6 +66,7 @@ export default function NewMenuItemPage({
 }) {
     const router = useRouter();
     const [createMenuItem, { isLoading }] = useCreateMenuItemMutation();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const form = useForm<MenuFormValues>({
         resolver: zodResolver(formSchema),
@@ -81,14 +79,32 @@ export default function NewMenuItemPage({
         },
     });
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            form.setValue("image", file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     async function onSubmit(data: MenuFormValues) {
         try {
+            const formData = new FormData();
+            formData.append("name", data.name);
+            formData.append("description", data.description);
+            formData.append("price", data.price);
+            formData.append("category", data.category);
+            formData.append("is_available", data.is_available.toString());
+            if (data.image) {
+                formData.append("image", data.image);
+            }
             await createMenuItem({
                 restaurantId: params.restaurantId,
-                body: {
-                    ...data,
-                    price: parseFloat(data.price),
-                },
+                body: formData,
             }).unwrap();
             toast.success("Menu item created successfully");
             router.push(`/admin/restaurants/${params.restaurantId}/menu`);
@@ -246,6 +262,51 @@ export default function NewMenuItemPage({
                                             </FormItem>
                                         )}
                                     />
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="image"
+                                    render={({
+                                        field: {
+                                            value,
+                                            onChange,
+                                            ...field
+                                        },
+                                    }) => (
+                                        <FormItem>
+                                            <FormLabel>Image</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    disabled={isLoading}
+                                                    onChange={handleImageChange}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                You can also paste an image from clipboard (Ctrl+V)
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <div>
+                                    <FormLabel>Image Preview</FormLabel>
+                                    {imagePreview ? (
+                                        <div className="relative h-40 w-40 overflow-hidden rounded-lg border">
+                                            <Image
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex h-40 w-40 items-center justify-center rounded-lg border">
+                                            <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex items-center gap-x-2">

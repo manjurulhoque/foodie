@@ -8,6 +8,8 @@ import {
     Palette,
     Command,
     Citrus,
+    MenuSquare,
+    Kanban,
 } from "lucide-react";
 import { type SidebarData } from "@/components/layout/types";
 
@@ -45,12 +47,12 @@ export const sidebarData: SidebarData = {
                         {
                             title: "Restaurants",
                             url: "/admin/restaurants",
-                            icon: Citrus,
+                            icon: Kanban,
                         },
                         {
                             title: "Create Restaurant",
                             url: "/admin/restaurants/new",
-                            icon: Citrus,
+                            icon: MenuSquare,
                         },
                     ],
                 },
