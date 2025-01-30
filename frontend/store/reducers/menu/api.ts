@@ -30,10 +30,10 @@ export const MenuApi = createApi({
         }),
         updateMenuItem: builder.mutation<
             { data: MenuItem },
-            { id: string; body: FormData }
+            { restaurantId: string; menuId: string; body: FormData }
         >({
-            query: ({ id, body }) => ({
-                url: `menu/${id}`,
+            query: ({ restaurantId, menuId, body }) => ({
+                url: `restaurants/${restaurantId}/menu/${menuId}`,
                 method: "PUT",
                 body,
                 formData: true,

@@ -45,7 +45,7 @@ export function CellAction({ data }: CellActionProps) {
                     className="cursor-pointer"
                     onClick={() =>
                         router.push(
-                            `/admin/restaurants/${data.restaurantId}/menu/${data.id}/edit`
+                            `/admin/restaurants/${data.restaurant_id}/menu/${data.id}/edit`
                         )
                     }
                 >

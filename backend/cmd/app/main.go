@@ -131,6 +131,7 @@ func main() {
 			{
 				restaurantMenu.GET("", menuHandler.GetRestaurantMenuItems)
 				restaurantMenu.POST("", authMiddleware, adminMiddleware, menuHandler.CreateMenuItem)
+				restaurantMenu.PUT("/:id", authMiddleware, adminMiddleware, menuHandler.UpdateMenuItem)
 				restaurantMenu.GET("/:id", menuHandler.GetMenuItem)
 			}
 		}

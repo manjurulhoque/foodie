@@ -7,12 +7,12 @@ import (
 
 type MenuService interface {
 	GetAllMenuItems() ([]models.MenuItem, error)
-	CreateMenuItem(menuItem map[string]interface{}, restaurantID uint) error
-	GetMenuItem(id uint) (*models.MenuItem, error)
-	UpdateMenuItem(menuItem *models.MenuItem) error
-	DeleteMenuItem(id uint) error
-	GetMenuItemsByCategory(restaurantID uint, category string) ([]models.MenuItem, error)
-	GetRestaurantMenuItems(restaurantID uint) ([]models.MenuItem, error)
+	CreateMenuItem(map[string]interface{}, uint) error
+	GetMenuItem(uint) (*models.MenuItem, error)
+	UpdateMenuItem(uint, map[string]interface{}) (*models.MenuItem, error)
+	DeleteMenuItem(uint) error
+	GetMenuItemsByCategory(uint, string) ([]models.MenuItem, error)
+	GetRestaurantMenuItems(uint) ([]models.MenuItem, error)
 }
 
 type menuService struct {
@@ -40,8 +40,8 @@ func (s *menuService) GetRestaurantMenuItems(restaurantID uint) ([]models.MenuIt
 	return s.repo.FindByRestaurant(restaurantID)
 }
 
-func (s *menuService) UpdateMenuItem(menuItem *models.MenuItem) error {
-	return s.repo.Update(menuItem)
+func (s *menuService) UpdateMenuItem(id uint, menuItem map[string]interface{}) (*models.MenuItem, error) {
+	return s.repo.Update(id, menuItem)
 }
 
 func (s *menuService) DeleteMenuItem(id uint) error {

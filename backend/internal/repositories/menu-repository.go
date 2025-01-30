@@ -38,8 +38,10 @@ func (r *MenuRepository) FindByRestaurant(restaurantID uint) ([]models.MenuItem,
 	return menuItems, err
 }
 
-func (r *MenuRepository) Update(menuItem *models.MenuItem) error {
-	return r.db.Save(menuItem).Error
+func (r *MenuRepository) Update(id uint, menuItem map[string]interface{}) (*models.MenuItem, error) {
+	var updatedMenuItem models.MenuItem
+	err := r.db.Model(&models.MenuItem{}).Where("id = ?", id).Updates(menuItem).Error
+	return &updatedMenuItem, err
 }
 
 func (r *MenuRepository) Delete(id uint) error {

@@ -230,3 +230,82 @@ func (h *MenuHandler) CreateMenuItem(c *gin.Context) {
 		Data:    menuItem,
 	})
 }
+
+// UpdateMenuItem menu handler
+// @Summary Update a menu item
+// @Description Update a menu item
+// @Tags menu
+// @Accept json
+// @Produce json
+// @Success 200 {object} any
+// @Router /menu/:id [put]
+func (h *MenuHandler) UpdateMenuItem(c *gin.Context) {
+	var menuItemInput struct {
+		ID          uint                  `form:"id" validate:"required"`
+		Name        string                `form:"name" validate:"required"`
+		Description string                `form:"description" json:"description"`
+		Price       float64               `form:"price" validate:"required"`
+		Category    string                `form:"category" validate:"required"`
+		IsAvailable bool                  `form:"is_available" validate:"required"`
+		Image       *multipart.FileHeader `form:"image" json:"image"`
+	}
+	if err := c.ShouldBind(&menuItemInput); err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	menuItemMap := map[string]interface{}{
+		"name":          menuItemInput.Name,
+		"description":   menuItemInput.Description,
+		"price":         menuItemInput.Price,
+		"category":      menuItemInput.Category,
+		"is_available":  menuItemInput.IsAvailable,
+	}
+
+	// Handle file upload
+	if menuItemInput.Image != nil {
+		// Define the path where files should be saved
+		uploadsPath := "./web/uploads"
+
+		// Check if the uploads directory exists; create it if it doesn't
+		if _, err := os.Stat(uploadsPath); os.IsNotExist(err) {
+			err = os.MkdirAll(uploadsPath, os.ModePerm)
+			if err != nil {
+				slog.Error("Failed to create uploads directory", "error", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create uploads directory"})
+				return
+			}
+		}
+		extension := filepath.Ext(menuItemInput.Image.Filename)
+		newFileName := fmt.Sprintf("%s%s", uuid.New().String(), extension)
+		filePath := filepath.Join(uploadsPath, newFileName)
+
+		// Save the uploaded file
+		if err := c.SaveUploadedFile(menuItemInput.Image, filePath); err != nil {
+			slog.Error("Error saving file", "error", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			return
+		}
+
+		menuItemMap["image"] = filePath
+	}
+
+	menuItem, err := h.service.UpdateMenuItem(menuItemInput.ID, menuItemMap)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to update menu item",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success: true,
+		Message: "Menu item updated",
+		Data:    menuItem,
+	})
+}
