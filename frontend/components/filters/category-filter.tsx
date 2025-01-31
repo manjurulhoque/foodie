@@ -6,12 +6,14 @@ import { Check } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
 import { Category } from "@/models/category.interface";
+import Spinner from "../shared/spinner";
 
 interface CategoryFilterProps {
+    isLoading: boolean;
     categories: Category[];
 }
 
-export const CategoryFilter = ({ categories }: CategoryFilterProps) => {
+export const CategoryFilter = ({ categories, isLoading }: CategoryFilterProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -37,10 +39,15 @@ export const CategoryFilter = ({ categories }: CategoryFilterProps) => {
                 Categories
             </h2>
             <Box className="flex-col gap-2 mt-2">
-                {categories.map((category) => (
-                    <div
-                        onClick={() => handleClick(category.name)}
-                        className={cn(
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-10">
+                        <Spinner />
+                    </div>
+                ) : (
+                    categories.map((category) => (
+                        <div
+                            onClick={() => handleClick(category.name)}
+                            className={cn(
                             "text-sm font-semibold text-neutral-500 flex items-center gap-2",
                             category.name === searchParams.get("category") &&
                                 "text-hero"
@@ -51,8 +58,9 @@ export const CategoryFilter = ({ categories }: CategoryFilterProps) => {
                         {category.name === searchParams.get("category") && (
                             <Check className="w-4 h-4 text-hero" />
                         )}
-                    </div>
-                ))}
+                        </div>
+                    ))
+                )}
             </Box>
         </Box>
     );

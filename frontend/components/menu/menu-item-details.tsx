@@ -1,18 +1,11 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Heart, HeartCrack, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/models/restaurant.interface";
 
@@ -25,8 +18,25 @@ export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
     const IsLikedIcon = isLiked ? Heart : HeartCrack;
 
     const getImageUrl = () => {
-        return `${process.env.BACKEND_BASE_URL}/${menuItem.image}`;
+        if (!menuItem.image) {
+            return fetch(`https://foodish-api.com/api/`)
+                .then((response) => response.json())
+                .then((data) => data.image)
+                .catch((error) => {
+                    console.error("Error fetching image:", error);
+                    return null;
+                });
+        }
+        return Promise.resolve(
+            `${process.env.BACKEND_BASE_URL}/${menuItem.image}`
+        );
     };
+
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        getImageUrl().then((url) => setImageUrl(url));
+    }, [menuItem.image]);
 
     const handleAddToCart = () => {
         console.log("add to cart");
@@ -37,15 +47,19 @@ export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
             <div className="absolute -top-[4%] md:-top-[20%] overflow-hidden w-24 md:w-40 h-24 md:h-40 rounded-full bg-emerald-500 flex items-center justify-center p-1 md:p-2">
                 <div className="w-full h-full rounded-full bg-white relative">
                     <Image
-                        src={getImageUrl()}
+                        src={imageUrl || ""}
+                        width={100}
+                        height={100}
                         className="w-full h-full object-contain rounded-full"
-                        fill
                         alt={menuItem.name}
                     />
                 </div>
             </div>
 
-            <Link href={`/menu/${menuItem.id}`} className="w-full px-2 text-center">
+            <Link
+                href={`/menu/${menuItem.id}`}
+                className="w-full px-2 text-center"
+            >
                 <CardTitle className="text-neutral-700 truncate w-full text-lg">
                     {menuItem.name}
                 </CardTitle>
@@ -63,7 +77,6 @@ export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
                         {menuItem.category}
                     </div>
                 )}
-
 
                 {/* {menuItem.kitchen && (
                     <div className="rounded-md bg-red-500/10 px-2 py-[2px] text-[11px] font-semibold  capitalize">

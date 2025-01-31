@@ -57,7 +57,7 @@ const MenuPage = ({ searchParams }: MenuPageProps) => {
             <div className="grid grid-cols-1 md:grid-cols-12 py-12 gap-2">
                 <div className="hidden md:block col-span-2 border-r border-gray-100 top-24">
                     <FilterContainer>
-                        <CategoryFilter categories={categories} />
+                        <CategoryFilter categories={categories} isLoading={isLoadingCategories} />
                         <SizeFilter sizes={sizes} />
                     </FilterContainer>
                 </div>

@@ -12,6 +12,10 @@ const nextConfig = {
                 hostname: "localhost",
                 port: "9000",
             },
+            {
+                protocol: "https",
+                hostname: "foodish-api.com",
+            },  
         ],
     },
 };
