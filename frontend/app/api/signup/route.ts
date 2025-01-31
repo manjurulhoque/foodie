@@ -9,20 +9,21 @@ interface RequestBody {
     name: string;
     phone: string;
     email: string;
-    password: string;
+    password1: string;
+    password2: string;
 }
 
 export async function POST(req: Request) {
-    const { name, phone, email, password }: RequestBody = await req.json();
+    const { name, phone, email, password1, password2 }: RequestBody = await req.json();
 
     const response = await fetch(
-        `${process.env.BACKEND_DOCKER_BASE_URL}/signup`,
+        `${process.env.BACKEND_BASE_URL}/api/register`,
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name, email, password, phone }),
+            body: JSON.stringify({ name, email, password1, password2, phone }),
         }
     );
 

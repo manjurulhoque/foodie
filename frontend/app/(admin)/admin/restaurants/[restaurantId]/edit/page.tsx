@@ -30,6 +30,8 @@ import {
 import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useGetCuisinesQuery } from "@/store/reducers/cuisine/api";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -47,7 +49,9 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    cuisine: z.string(),
+    cuisine_id: z.number({
+        message: "Please select a cuisine.",
+    }),
     image: z
         .union([z.instanceof(File), z.string(), z.null(), z.undefined()])
         .optional(),
@@ -61,10 +65,9 @@ export default function EditRestaurantPage({
     params: { restaurantId: string };
 }) {
     const router = useRouter();
-    const { data: restaurantData, isLoading: isLoadingRestaurant } =
-        useGetRestaurantQuery(params.restaurantId);
-    const [updateRestaurant, { isLoading: isUpdating }] =
-        useUpdateRestaurantMutation();
+    const { data: restaurantData, isLoading: isLoadingRestaurant } = useGetRestaurantQuery(params.restaurantId);
+    const [updateRestaurant, { isLoading: isUpdating }] = useUpdateRestaurantMutation();
+    const { data: cuisineData, isLoading: isLoadingCuisine } = useGetCuisinesQuery();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     useEffect(() => {
@@ -83,7 +86,7 @@ export default function EditRestaurantPage({
             address: "",
             phone: "",
             email: "",
-            cuisine: "",
+            cuisine_id: 0,
         },
     });
 
@@ -102,7 +105,7 @@ export default function EditRestaurantPage({
             formData.append("address", data.address);
             formData.append("phone", data.phone);
             formData.append("email", data.email);
-            formData.append("cuisine", data.cuisine);
+            formData.append("cuisine_id", data.cuisine_id.toString());
             if (data.image && data.image instanceof File) {
                 formData.append("image", data.image);
             }
@@ -191,17 +194,34 @@ export default function EditRestaurantPage({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="cuisine"
+                                    name="cuisine_id"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Cuisine</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    disabled={isUpdating}
-                                                    placeholder="Restaurant cuisine"
-                                                    {...field}
-                                                />
-                                            </FormControl>
+                                            <Select
+                                                disabled={isUpdating}
+                                                onValueChange={(value) => field.onChange(Number(value))}
+                                                value={field.value?.toString() || ""}
+                                                defaultValue={field.value?.toString() || ""}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a cuisine" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {cuisineData?.data?.map(
+                                                        (cuisine) => (
+                                                            <SelectItem
+                                                                key={cuisine.id}
+                                                                value={cuisine.id.toString()}
+                                                            >
+                                                                {cuisine.name}
+                                                            </SelectItem>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}

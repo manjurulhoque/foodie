@@ -1,3 +1,5 @@
+import { Cuisine } from "./cuisine.interface";
+
 export interface Restaurant {
     id: string;
     name: string;
@@ -5,12 +7,13 @@ export interface Restaurant {
     address: string;
     phone: string;
     email: string;
-    cuisine: string;
     rating: number;
     image: string;
     is_active: boolean;
     user_id: string;
     menu_items: MenuItem[];
+    cuisine_id: number;
+    cuisine?: Cuisine;
     created_at: string;
     updated_at: string;
 }

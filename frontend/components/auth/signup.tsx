@@ -18,7 +18,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Label } from "../ui/label";
 import Spinner from "../shared/spinner";
-
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -29,10 +30,10 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    password: z.string().min(6, {
+    password1: z.string().min(6, {
         message: "Password must be at least 6 characters.",
     }),
-    confirmPassword: z.string().min(6, {
+    password2: z.string().min(6, {
         message: "Password must be at least 6 characters.",
     }),
     phone: z
@@ -46,18 +47,22 @@ const formSchema = z.object({
     terms: z.boolean().refine((data) => data === true, {
         message: "You must agree to the terms and conditions.",
     }),
+}).refine((data) => data.password1 === data.password2, {
+    message: "Passwords don't match",
+    path: ["password2"],
 });
 
 const SignUp = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
             email: "",
-            password: "",
-            confirmPassword: "",
+            password1: "",
+            password2: "",
             phone: "",
             terms: false,
         },
@@ -78,8 +83,16 @@ const SignUp = () => {
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         try {
-            // Handle sign up logic here
-            console.log(values);
+            const response = await fetch("/api/signup", {
+                method: "POST",
+                body: JSON.stringify(values),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                router.push("/signin");
+            } else {
+                toast.error(data.message || "Something went wrong. Please try again.");
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -141,7 +154,7 @@ const SignUp = () => {
                             />
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="password1"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
@@ -159,7 +172,7 @@ const SignUp = () => {
                             />
                             <FormField
                                 control={form.control}
-                                name="confirmPassword"
+                                name="password2"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Confirm Password</FormLabel>
@@ -194,13 +207,19 @@ const SignUp = () => {
                                 control={form.control}
                                 name="terms"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="flex items-center gap-x-2">
-                                            <Checkbox id="terms" />
-                                            <Label htmlFor="terms">
-                                                Terms and Conditions
-                                            </Label>
-                                        </FormLabel>
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>
+                                                Accept terms and conditions
+                                            </FormLabel>
+                                            <FormMessage />
+                                        </div>
                                     </FormItem>
                                 )}
                             />

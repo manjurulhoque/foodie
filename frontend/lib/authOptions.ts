@@ -5,7 +5,7 @@ import {jwtDecode} from "jwt-decode";
 
 async function customAuthenticationFunction(credentials: any) {
     try {
-        const response = await fetch(`${process.env.BACKEND_BASE_URL}/login`, {
+        const response = await fetch(`${process.env.BACKEND_BASE_URL}/api/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

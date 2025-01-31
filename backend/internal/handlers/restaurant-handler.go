@@ -214,7 +214,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		Address     string                `form:"address" json:"address"`
 		Phone       string                `form:"phone" json:"phone"`
 		Email       string                `form:"email" json:"email"`
-		Cuisine     string                `form:"cuisine" json:"cuisine"`
+		CuisineID   uint                  `form:"cuisine_id" json:"cuisine_id"`
 		Image       *multipart.FileHeader `form:"image" json:"image"`
 	}
 
@@ -250,7 +250,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		"address":     restaurantInput.Address,
 		"phone":       restaurantInput.Phone,
 		"email":       restaurantInput.Email,
-		"cuisine":     restaurantInput.Cuisine,
+		"cuisine_id":  restaurantInput.CuisineID,
 	}
 
 	if restaurantInput.Image != nil {
@@ -289,7 +289,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			"address":     restaurantInput.Address,
 			"phone":       restaurantInput.Phone,
 			"email":       restaurantInput.Email,
-			"cuisine":     restaurantInput.Cuisine,
+			"cuisine_id":  restaurantInput.CuisineID,
 		},
 	})
 }
