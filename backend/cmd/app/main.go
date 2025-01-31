@@ -33,7 +33,10 @@ func init() {
 	}
 
 	err = db.DB.AutoMigrate(
-		&models.User{}, &models.Address{}, &models.Restaurant{}, &models.MenuItem{}, &models.Order{})
+		&models.User{}, &models.Address{},
+		&models.Restaurant{}, &models.MenuItem{}, &models.Order{},
+		&models.Category{},
+	)
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())
 		panic(fmt.Sprintf("Error migrating database: %v", err))
