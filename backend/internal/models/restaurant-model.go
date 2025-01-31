@@ -13,13 +13,14 @@ type Restaurant struct {
 	Address     string  `json:"address" validate:"required"`
 	Phone       string  `json:"phone" validate:"required"`
 	Email       string  `json:"email" validate:"required,email"`
-	Cuisine     string  `json:"cuisine"`
 	Rating      float32 `json:"rating" gorm:"default:0"`
 	Image       string  `json:"image"`
 	IsActive    bool    `json:"is_active" gorm:"default:true"`
-	UserID      uint    `json:"user_id"`
+	UserID      uint    `json:"user_id,omitempty" gorm:"default:null;null"`
+	CuisineID   uint    `json:"cuisine_id,omitempty" gorm:"default:null;null"`
 
-	User      User       `json:"user" gorm:"foreignKey:UserID"`
+	Cuisine   *Cuisine   `json:"cuisine,omitempty" gorm:"foreignKey:CuisineID"`
+	User      *User      `json:"user,omitempty" gorm:"foreignKey:UserID"`
 	MenuItems []MenuItem `json:"menu_items" gorm:"foreignKey:RestaurantID"`
 }
 
@@ -36,14 +37,17 @@ func (Restaurant) BeforeUpdate(tx *gorm.DB) (err error) {
 
 type MenuItem struct {
 	BaseModel
-	Name         string     `json:"name" validate:"required"`
-	Description  string     `json:"description"`
-	Price        float64    `json:"price" validate:"required"`
-	Image        string     `json:"image"`
-	Category     string     `json:"category" validate:"required"`
-	IsAvailable  bool       `json:"is_available" gorm:"default:true"`
-	RestaurantID uint       `json:"restaurant_id"`
-	Restaurant   Restaurant `json:"-" gorm:"foreignKey:RestaurantID"`
+	Name         string  `json:"name" validate:"required"`
+	Description  string  `json:"description"`
+	Price        float64 `json:"price" validate:"required"`
+	Image        string  `json:"image"`
+	Category     string  `json:"category" validate:"required"`
+	IsAvailable  bool    `json:"is_available" gorm:"default:true"`
+	RestaurantID uint    `json:"restaurant_id"`
+	CuisineID    uint    `json:"cuisine_id,omitempty" gorm:"default:null;null"`
+
+	Cuisine    *Cuisine   `json:"cuisine,omitempty" gorm:"foreignKey:CuisineID"`
+	Restaurant Restaurant `json:"restaurant,omitempty" gorm:"foreignKey:RestaurantID"`
 }
 
 func (MenuItem) BeforeCreate(tx *gorm.DB) (err error) {
