@@ -3,6 +3,7 @@ import { UserApi } from "@/store/reducers/user/api";
 import { RestaurantApi } from "@/store/reducers/restaurant/api";
 import { MenuApi } from "@/store/reducers/menu/api";
 import { CategoryApi } from "@/store/reducers/category/api";
+import { CuisineApi } from "@/store/reducers/cuisine/api";
 
 export const store: any = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store: any = configureStore({
         [RestaurantApi.reducerPath]: RestaurantApi.reducer,
         [MenuApi.reducerPath]: MenuApi.reducer,
         [CategoryApi.reducerPath]: CategoryApi.reducer,
+        [CuisineApi.reducerPath]: CuisineApi.reducer,
     },
     devTools: true,
     middleware: (getDefaultMiddleware: any) =>
@@ -18,6 +20,7 @@ export const store: any = configureStore({
             RestaurantApi.middleware,
             MenuApi.middleware,
             CategoryApi.middleware,
+            CuisineApi.middleware,
         ),
 });
 

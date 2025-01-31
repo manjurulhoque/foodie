@@ -10,6 +10,7 @@ import {
     Citrus,
     MenuSquare,
     Kanban,
+    UtensilsCrossed,
 } from "lucide-react";
 import { type SidebarData } from "@/components/layout/types";
 
@@ -55,6 +56,11 @@ export const sidebarData: SidebarData = {
                     title: "Categories",
                     url: "/admin/categories",
                     icon: Palette,
+                },
+                {
+                    title: "Cuisines",
+                    url: "/admin/cuisines",
+                    icon: UtensilsCrossed,
                 },
             ],
         },

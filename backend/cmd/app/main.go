@@ -35,7 +35,7 @@ func init() {
 	err = db.DB.AutoMigrate(
 		&models.User{}, &models.Address{},
 		&models.Restaurant{}, &models.MenuItem{}, &models.Order{},
-		&models.Category{},
+		&models.Category{}, &models.Cuisine{},
 	)
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())
@@ -69,6 +69,7 @@ func main() {
 	menuRepo := repositories.NewMenuRepository(db.DB)
 	orderRepo := repositories.NewOrderRepository(db.DB)
 	categoryRepo := repositories.NewCategoryRepository(db.DB)
+	cuisineRepo := repositories.NewCuisineRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
@@ -76,6 +77,7 @@ func main() {
 	menuService := services.NewMenuService(menuRepo)
 	orderService := services.NewOrderService(orderRepo, menuRepo)
 	categoryService := services.NewCategoryService(categoryRepo)
+	cuisineService := services.NewCuisineService(cuisineRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService)
@@ -83,6 +85,7 @@ func main() {
 	menuHandler := handlers.NewMenuHandler(menuService)
 	_ = handlers.NewOrderHandler(orderService)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
+	cuisineHandler := handlers.NewCuisineHandler(cuisineService)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -149,6 +152,15 @@ func main() {
 			categories.GET("/:id", categoryHandler.GetCategory)
 			categories.POST("", authMiddleware, adminMiddleware, categoryHandler.CreateCategory)
 			categories.PUT("/:id", authMiddleware, adminMiddleware, categoryHandler.UpdateCategory)
+		}
+
+		// Cuisine routes
+		cuisines := api.Group("/cuisines")
+		{
+			cuisines.GET("", cuisineHandler.GetAllCuisines)
+			cuisines.GET("/:id", cuisineHandler.GetCuisine)
+			cuisines.POST("", authMiddleware, adminMiddleware, cuisineHandler.CreateCuisine)
+			cuisines.PUT("/:id", authMiddleware, adminMiddleware, cuisineHandler.UpdateCuisine)
 		}
 	}
 
