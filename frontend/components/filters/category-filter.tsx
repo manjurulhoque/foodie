@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
 import { Category } from "@/models/category.interface";
+
 interface CategoryFilterProps {
     categories: Category[];
 }

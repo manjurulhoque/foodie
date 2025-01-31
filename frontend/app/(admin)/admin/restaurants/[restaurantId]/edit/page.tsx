@@ -28,7 +28,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
@@ -149,22 +148,15 @@ export default function EditRestaurantPage({
                     <div className="flex items-center gap-2">
                         <Button
                             onClick={() => router.back()}
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                         >
                             <ArrowLeft className="h-4 w-4" />
+                            Back
                         </Button>
-                        <h2 className="text-3xl font-bold tracking-tight">
-                            Edit Restaurant
-                        </h2>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                        Update your restaurant information
-                    </p>
                 </div>
             </div>
-
-            <Separator />
 
             <Card>
                 <CardHeader>

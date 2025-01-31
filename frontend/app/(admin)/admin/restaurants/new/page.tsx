@@ -25,7 +25,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import Image from "next/image";
 
@@ -72,7 +71,6 @@ export default function NewRestaurantPage() {
 
     async function onSubmit(data: RestaurantFormValues) {
         try {
-            console.log(data);
             const formData = new FormData();
             formData.append("name", data.name);
             formData.append("description", data.description);
@@ -114,22 +112,15 @@ export default function NewRestaurantPage() {
                     <div className="flex items-center gap-2">
                         <Button
                             onClick={() => router.back()}
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                         >
                             <ArrowLeft className="h-4 w-4" />
+                            Back
                         </Button>
-                        <h2 className="text-3xl font-bold tracking-tight">
-                            New Restaurant
-                        </h2>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                        Add a new restaurant to your platform
-                    </p>
                 </div>
             </div>
-
-            <Separator />
 
             <Card>
                 <CardHeader>

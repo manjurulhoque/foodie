@@ -11,7 +11,7 @@ import { CategoryFilter } from "@/components/filters/category-filter";
 import { MenuContent } from "@/components/menu/menu-content";
 import { Size } from "@/models/size.interface";
 import Spinner from "@/components/shared/spinner";
-
+import { useGetCategoriesQuery } from "@/store/reducers/category/api";
 // export const revalidate = 0;
 
 interface MenuPageProps {
@@ -26,32 +26,9 @@ interface MenuPageProps {
 
 const MenuPage = ({ searchParams }: MenuPageProps) => {
     const { data: menuItems, isLoading: isLoadingMenuItems } = useGetAllMenuItemsQuery();
-    const categories: Category[] = [
-        {
-            id: "1",
-            name: "Burger",
-        },
-        {
-            id: "2",
-            name: "Pizza",
-        },
-        {
-            id: "3",
-            name: "Salad",
-        },
-        {
-            id: "4",
-            name: "Dessert",
-        },
-        {
-            id: "5",
-            name: "Drink",
-        },
-        {
-            id: "6",
-            name: "Soup",
-        },
-    ];
+    const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
+
+    const categories = categoriesData?.data || [];
     const sizes: Size[] = [
         {
             id: "1",
@@ -85,17 +62,15 @@ const MenuPage = ({ searchParams }: MenuPageProps) => {
                     </FilterContainer>
                 </div>
 
-                {
-                    isLoadingMenuItems ? (
-                        <div className="col-span-12 md:col-span-10 flex items-center justify-center min-h-[50vh]">
-                            <Spinner />
-                        </div>
-                    ) : (
-                        <Box className="col-span-12 md:col-span-10 flex-col items-start justify-start w-full">
-                            <MenuContent menuItems={menuItems?.data} />
-                        </Box>
-                    )
-                }
+                {isLoadingMenuItems ? (
+                    <div className="col-span-12 md:col-span-10 flex items-center justify-center min-h-[50vh]">
+                        <Spinner />
+                    </div>
+                ) : (
+                    <Box className="col-span-12 md:col-span-10 flex-col items-start justify-start w-full">
+                        <MenuContent menuItems={menuItems?.data} />
+                    </Box>
+                )}
             </div>
         </Container>
     );

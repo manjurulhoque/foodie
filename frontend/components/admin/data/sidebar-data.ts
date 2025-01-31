@@ -14,11 +14,6 @@ import {
 import { type SidebarData } from "@/components/layout/types";
 
 export const sidebarData: SidebarData = {
-    user: {
-        name: "Admin",
-        email: "admin@gmail.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
     teams: [
         {
             name: "Shadcn Admin",
@@ -55,6 +50,11 @@ export const sidebarData: SidebarData = {
                             icon: MenuSquare,
                         },
                     ],
+                },
+                {
+                    title: "Categories",
+                    url: "/admin/categories",
+                    icon: Palette,
                 },
             ],
         },
