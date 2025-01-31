@@ -28,7 +28,9 @@ func (r *RestaurantRepository) FindByID(id uint) (*models.Restaurant, error) {
 
 func (r *RestaurantRepository) FindAll() ([]models.Restaurant, error) {
 	var restaurants []models.Restaurant
-	err := r.db.Preload("MenuItems").Find(&restaurants).Error
+	err := r.db.Preload("MenuItems", func(db *gorm.DB) *gorm.DB {
+		return db.Order("menu_items.created_at DESC")
+	}).Preload("Cuisine").Find(&restaurants).Error
 	return restaurants, err
 }
 
