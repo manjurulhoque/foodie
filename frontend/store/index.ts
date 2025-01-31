@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import { UserApi } from "@/store/reducers/user/api";
 import { RestaurantApi } from "@/store/reducers/restaurant/api";
 import { MenuApi } from "@/store/reducers/menu/api";
@@ -20,7 +21,7 @@ export const store: any = configureStore({
             RestaurantApi.middleware,
             MenuApi.middleware,
             CategoryApi.middleware,
-            CuisineApi.middleware,
+            CuisineApi.middleware
         ),
 });
 
