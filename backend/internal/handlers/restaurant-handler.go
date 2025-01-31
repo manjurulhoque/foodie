@@ -40,7 +40,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 		Address     string                `form:"address" validate:"required"`
 		Phone       string                `form:"phone" validate:"required"`
 		Email       string                `form:"email" validate:"required"`
-		Cuisine     string                `form:"cuisine" validate:"required"`
+		CuisineID   uint                  `form:"cuisine_id" validate:"required"`
 		UserID      uint                  `validate:"required"`
 		Image       *multipart.FileHeader `form:"image" validate:"required"`
 	}
@@ -61,7 +61,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 		"address":     restaurantInput.Address,
 		"phone":       restaurantInput.Phone,
 		"email":       restaurantInput.Email,
-		"cuisine":     restaurantInput.Cuisine,
+		"cuisine_id":  restaurantInput.CuisineID,
 		"user_id":     userID,
 	}
 

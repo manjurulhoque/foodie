@@ -24,6 +24,7 @@ export const columns: ColumnDef<Restaurant>[] = [
     {
         accessorKey: "cuisine",
         header: "Cuisine",
+        cell: ({ row }) => row.original.cuisine?.name,
     },
     {
         accessorKey: "rating",
