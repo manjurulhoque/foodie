@@ -1,6 +1,6 @@
 "use client";
 
-import { MenuItem as MenuItemType } from "@/components/menu/menu-item";
+import { MenuItemDetails } from "@/components/menu/menu-item-details";
 import { Box } from "@/components/shared/box";
 import { ChevronRight, Home, Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -82,9 +82,9 @@ export const MenuContent = ({ menuItems }: MenuContentProps) => {
             <div className="grid grid-cols-2 lg:grid-cols-3 w-full h-full gap-4 gap-y-24">
                 {menuItems && menuItems.length > 0 ? (
                     <>
-                        {/* {menuItems.map((menuItem) => (
-                            <MenuItemType data={menuItem} key={menuItem.id} />
-                        ))} */}
+                        {menuItems.map((menuItem) => (
+                            <MenuItemDetails menuItem={menuItem} key={menuItem.id} />
+                        ))}
                     </>
                 ) : (
                     <>

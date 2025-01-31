@@ -14,7 +14,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, User, Settings, ShoppingBag, Shield } from "lucide-react";
+import {
+    LogOut,
+    User,
+    Settings,
+    ShoppingBag,
+    Shield,
+    ShoppingCart,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMeQuery } from "@/store/reducers/user/api";
 import { Skeleton } from "../ui/skeleton";
@@ -88,6 +95,20 @@ export const Header = () => {
                                     {route.label}
                                 </Link>
                             ))}
+                            <Link
+                                href="/cart"
+                                className={cn(
+                                    "text-base capitalize font-medium transition-colors hover:text-primary duration-200 bg-black rounded-full p-2 flex items-center gap-1",
+                                    pathname === "/cart"
+                                        ? "text-black dark:text-white"
+                                        : "text-white"
+                                )}
+                            >
+                                <ShoppingCart className="h-4 w-4" />
+                                <span className="min-w-4 text-sm">
+                                    0
+                                </span>
+                            </Link>
                         </nav>
                     </div>
 

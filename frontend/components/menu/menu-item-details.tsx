@@ -14,63 +14,72 @@ import { Button } from "../ui/button";
 import { Heart, HeartCrack, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { MenuItem } from "@/models/restaurant.interface";
 
 interface MenuItemProps {
-    data: any;
+    menuItem: MenuItem;
 }
 
-export const MenuItem = ({ data }: MenuItemProps) => {
+export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
     const [isLiked, setIsLiked] = useState(false);
     const IsLikedIcon = isLiked ? Heart : HeartCrack;
 
+    const getImageUrl = () => {
+        return `${process.env.BACKEND_BASE_URL}/${menuItem.image}`;
+    };
+
+    const handleAddToCart = () => {
+        console.log("add to cart");
+    };
+
     return (
         <Card className="w-full max-h-[340px] rounded-md bg-white shadow-lg border-none flex flex-col items-center justify-center relative py-6 pt-24 md:pt-28">
-            <div className="absolute -top-[4%] md:-top-[20%]  overflow-hidden w-24 md:w-40 h-24 md:h-40 rounded-full bg-hero flex items-center justify-center p-1 md:p-2">
+            <div className="absolute -top-[4%] md:-top-[20%] overflow-hidden w-24 md:w-40 h-24 md:h-40 rounded-full bg-emerald-500 flex items-center justify-center p-1 md:p-2">
                 <div className="w-full h-full rounded-full bg-white relative">
                     <Image
-                        src={data.images[0].url}
-                        className="w-full h-full object-contain "
+                        src={getImageUrl()}
+                        className="w-full h-full object-contain rounded-full"
                         fill
-                        alt={data.name}
+                        alt={menuItem.name}
                     />
                 </div>
             </div>
 
-            <Link href={`/menu/${data.id}`} className="w-full px-2 text-center">
+            <Link href={`/menu/${menuItem.id}`} className="w-full px-2 text-center">
                 <CardTitle className="text-neutral-700 truncate w-full text-lg">
-                    {data.name}
+                    {menuItem.name}
                 </CardTitle>
             </Link>
 
             <div className="w-full flex items-center justify-center gap-2 flex-wrap mt-4 px-2">
-                {data.cuisine && (
+                {/* {menuItem.cuisine && (
                     <div className="rounded-md bg-emerald-500/10 px-2 py-[2px] text-[11px] font-semibold capitalize">
-                        {data.cuisine}
+                        {menuItem.cuisine}
                     </div>
-                )}
+                )} */}
 
-                {data.category && (
+                {menuItem.category && (
                     <div className="rounded-md bg-blue-500/10 px-2 py-[2px] text-[11px] font-semibold capitalize">
-                        {data.category}
+                        {menuItem.category}
                     </div>
                 )}
 
-                {data.kitchen && (
+
+                {/* {menuItem.kitchen && (
                     <div className="rounded-md bg-red-500/10 px-2 py-[2px] text-[11px] font-semibold  capitalize">
-                        {data.kitchen}
+                        {menuItem.kitchen}
                     </div>
                 )}
 
-                {data.size && (
+                {menuItem.size && (
                     <div className="rounded-md bg-yellow-500/10 px-2 py-[2px] text-[11px] font-semibold capitalize">
-                        {data.size}
+                        {menuItem.size}
                     </div>
-                )}
+                )} */}
             </div>
 
             <CardDescription className="text-center px-2 my-2">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus,
-                quaerat?
+                {menuItem.description}
             </CardDescription>
 
             <div className="w-full flex items-center px-2 mt-4 gap-3">
@@ -78,20 +87,20 @@ export const MenuItem = ({ data }: MenuItemProps) => {
                     variant="outline"
                     className="rounded-full font-bold text-lg text-muted-foreground"
                 >
-                    ${data.price}
+                    ${menuItem.price}
                 </Button>
-                <Link href={`/menu/${data.id}`} className="w-full">
-                    <Button className="bg-hero w-full rounded-full">
-                        But Now
+                <Link href={`/menu/${menuItem.id}`} className="w-full">
+                    <Button className="bg-emerald-500 w-full rounded-full hover:bg-emerald-600">
+                        Buy Now
                     </Button>
                 </Link>
             </div>
 
             {/* add to cart */}
             <Button
-                className="absolute top-0 right-0 rounded-tl-none rounded-br-none"
+                className="absolute top-0 right-0 rounded-tl-none rounded-br-none bg-black text-white hover:bg-black"
                 size="sm"
-                onClick={() => {}}
+                onClick={() => handleAddToCart()}
             >
                 <ShoppingCart className="w-4 h-4" />
             </Button>
