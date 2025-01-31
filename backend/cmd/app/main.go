@@ -65,18 +65,21 @@ func main() {
 	restaurantRepo := repositories.NewRestaurantRepository(db.DB)
 	menuRepo := repositories.NewMenuRepository(db.DB)
 	orderRepo := repositories.NewOrderRepository(db.DB)
+	categoryRepo := repositories.NewCategoryRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
 	restaurantService := services.NewRestaurantService(restaurantRepo)
 	menuService := services.NewMenuService(menuRepo)
 	orderService := services.NewOrderService(orderRepo, menuRepo)
+	categoryService := services.NewCategoryService(categoryRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService)
 	restaurantHandler := handlers.NewRestaurantHandler(restaurantService)
 	menuHandler := handlers.NewMenuHandler(menuService)
 	_ = handlers.NewOrderHandler(orderService)
+	categoryHandler := handlers.NewCategoryHandler(categoryService)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -134,6 +137,15 @@ func main() {
 				restaurantMenu.PUT("/:id", authMiddleware, adminMiddleware, menuHandler.UpdateMenuItem)
 				restaurantMenu.GET("/:id", menuHandler.GetMenuItem)
 			}
+		}
+
+		// Category routes
+		categories := api.Group("/categories")
+		{
+			categories.GET("", categoryHandler.GetAllCategories)
+			categories.GET("/:id", categoryHandler.GetCategory)
+			categories.POST("", authMiddleware, adminMiddleware, categoryHandler.CreateCategory)
+			categories.PUT("/:id", authMiddleware, adminMiddleware, categoryHandler.UpdateCategory)
 		}
 	}
 

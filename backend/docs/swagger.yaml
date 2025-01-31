@@ -159,6 +159,60 @@ info:
   title: Foodie API
   version: "1.0"
 paths:
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Get all categories
+      tags:
+      - categories
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Delete a category
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      description: Get a category by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Get a category by ID
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update a category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Update a category
+      tags:
+      - categories
   /login:
     post:
       consumes:
@@ -210,6 +264,19 @@ paths:
       summary: Get all menu items
       tags:
       - menu
+    post:
+      consumes:
+      - application/json
+      description: Create a menu item
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Create a menu item
+      tags:
+      - menu
   /menu/:id:
     get:
       consumes:
@@ -222,6 +289,19 @@ paths:
           description: OK
           schema: {}
       summary: Get a menu item
+      tags:
+      - menu
+    put:
+      consumes:
+      - application/json
+      description: Update a menu item
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Update a menu item
       tags:
       - menu
   /register:
@@ -320,6 +400,20 @@ paths:
       summary: Update a restaurant
       tags:
       - restaurants
+  /restaurants/:id/menu:
+    get:
+      consumes:
+      - application/json
+      description: Get all menu items of a restaurant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+      summary: Get all menu items of a restaurant
+      tags:
+      - menu
 schemes:
 - http
 swagger: "2.0"
