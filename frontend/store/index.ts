@@ -5,6 +5,8 @@ import { RestaurantApi } from "@/store/reducers/restaurant/api";
 import { MenuApi } from "@/store/reducers/menu/api";
 import { CategoryApi } from "@/store/reducers/category/api";
 import { CuisineApi } from "@/store/reducers/cuisine/api";
+import { CartApi } from "@/store/reducers/cart/api";
+import { OrderApi } from "@/store/reducers/order/api";
 
 export const store: any = configureStore({
     reducer: {
@@ -13,6 +15,8 @@ export const store: any = configureStore({
         [MenuApi.reducerPath]: MenuApi.reducer,
         [CategoryApi.reducerPath]: CategoryApi.reducer,
         [CuisineApi.reducerPath]: CuisineApi.reducer,
+        [CartApi.reducerPath]: CartApi.reducer,
+        [OrderApi.reducerPath]: OrderApi.reducer,
     },
     devTools: true,
     middleware: (getDefaultMiddleware: any) =>
@@ -21,7 +25,9 @@ export const store: any = configureStore({
             RestaurantApi.middleware,
             MenuApi.middleware,
             CategoryApi.middleware,
-            CuisineApi.middleware
+            CuisineApi.middleware,
+            CartApi.middleware,
+            OrderApi.middleware
         ),
 });
 

@@ -8,6 +8,8 @@ import { Heart, HeartCrack, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/models/restaurant.interface";
+import toast from "react-hot-toast";
+import { useAddToCartMutation } from "@/store/reducers/cart/api";
 
 interface MenuItemProps {
     menuItem: MenuItem;
@@ -16,7 +18,8 @@ interface MenuItemProps {
 export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
     const [isLiked, setIsLiked] = useState(false);
     const IsLikedIcon = isLiked ? Heart : HeartCrack;
-
+    const [addToCart] = useAddToCartMutation();
+    
     const getImageUrl = () => {
         if (!menuItem.image) {
             return fetch(`https://foodish-api.com/api/`)
@@ -39,7 +42,17 @@ export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
     }, [menuItem.image]);
 
     const handleAddToCart = () => {
-        console.log("add to cart");
+        addToCart({
+            menu_item_id: menuItem.id,
+            quantity: 1,
+        })
+            .unwrap()
+            .then(() => {
+                toast.success("Added to cart successfully!");
+            })
+            .catch((error) => {
+                toast.error("Failed to add to cart");
+            });
     };
 
     return (

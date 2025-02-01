@@ -27,6 +27,7 @@ import { useMeQuery } from "@/store/reducers/user/api";
 import { Skeleton } from "../ui/skeleton";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useGetCartQuery } from "@/store/reducers/cart/api";
 
 export const Header = () => {
     const pathname = usePathname();
@@ -34,6 +35,7 @@ export const Header = () => {
     const { data, isLoading } = useMeQuery(null, {});
     const isLoggedIn = !!data?.data;
     const user = data?.data;
+    const { data: cart } = useGetCartQuery();
 
     const routes = [
         {
@@ -106,7 +108,7 @@ export const Header = () => {
                             >
                                 <ShoppingCart className="h-4 w-4" />
                                 <span className="min-w-4 text-sm">
-                                    0
+                                    {cart?.data?.items?.length || 0}
                                 </span>
                             </Link>
                         </nav>

@@ -2,15 +2,22 @@
 
 import { useGetMenuItemQuery } from "@/store/reducers/menu/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Minus, Plus, ShoppingCart, Star, Clock, Tag, Heart } from "lucide-react";
+import {
+    Minus,
+    Plus,
+    ShoppingCart,
+    Star,
+    Clock,
+    Tag,
+    Heart,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
 import RelatedItems from "./related-items";
 import Spinner from "@/components/shared/spinner";
 import toast from "react-hot-toast";
 import { Badge } from "@/components/ui/badge";
+import { useAddToCartMutation } from "@/store/reducers/cart/api";
 
 export default function MenuItemPage({
     params,
@@ -21,7 +28,7 @@ export default function MenuItemPage({
         params.menuItemId
     );
     const [quantity, setQuantity] = useState(1);
-
+    const [addToCart] = useAddToCartMutation();
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
@@ -35,7 +42,17 @@ export default function MenuItemPage({
     }
 
     const handleAddToCart = () => {
-        toast.success("Added to cart successfully!");
+        addToCart({
+            menu_item_id: menuItem.data.id,
+            quantity,
+        })
+            .unwrap()
+            .then(() => {
+                toast.success("Added to cart successfully!");
+            })
+            .catch((error) => {
+                toast.error("Failed to add to cart");
+            });
     };
 
     const getImageUrl = () => {
@@ -140,8 +157,8 @@ export default function MenuItemPage({
                             <ShoppingCart className="mr-2 h-4 w-4" />
                             {menuItem.data.is_available
                                 ? `Add to Cart - $${(
-                                    menuItem.data.price * quantity
-                                ).toFixed(2)}`
+                                      menuItem.data.price * quantity
+                                  ).toFixed(2)}`
                                 : "Out of Stock"}
                         </Button>
                         <Button variant="outline" size="lg" className="w-full">

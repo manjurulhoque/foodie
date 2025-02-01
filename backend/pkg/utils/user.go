@@ -7,7 +7,7 @@ import (
 // GetUserID extracts the user ID from the gin context
 // This is set by the auth middleware after validating the token
 func GetUserID(c *gin.Context) uint {
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userId")
 	if !exists {
 		return 0
 	}
