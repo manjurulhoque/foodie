@@ -98,9 +98,9 @@ export const Header = () => {
                             <Link
                                 href="/cart"
                                 className={cn(
-                                    "text-base capitalize font-medium transition-colors hover:text-primary duration-200 bg-black rounded-full p-2 flex items-center gap-1",
+                                    "text-base capitalize font-medium transition-colors hover:text-primary duration-200 bg-black rounded-full p-2 flex items-center gap-1 hover:bg-black hover:text-white",
                                     pathname === "/cart"
-                                        ? "text-black dark:text-white"
+                                        ? "text-white dark:text-white"
                                         : "text-white"
                                 )}
                             >
