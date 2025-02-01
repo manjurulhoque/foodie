@@ -70,6 +70,7 @@ func main() {
 	orderRepo := repositories.NewOrderRepository(db.DB)
 	categoryRepo := repositories.NewCategoryRepository(db.DB)
 	cuisineRepo := repositories.NewCuisineRepository(db.DB)
+	cartRepo := repositories.NewCartRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
@@ -78,6 +79,7 @@ func main() {
 	orderService := services.NewOrderService(orderRepo, menuRepo)
 	categoryService := services.NewCategoryService(categoryRepo)
 	cuisineService := services.NewCuisineService(cuisineRepo)
+	cartService := services.NewCartService(cartRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService)
@@ -86,6 +88,7 @@ func main() {
 	_ = handlers.NewOrderHandler(orderService)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
 	cuisineHandler := handlers.NewCuisineHandler(cuisineService)
+	cartHandler := handlers.NewCartHandler(cartService)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -161,6 +164,17 @@ func main() {
 			cuisines.GET("/:id", cuisineHandler.GetCuisine)
 			cuisines.POST("", authMiddleware, adminMiddleware, cuisineHandler.CreateCuisine)
 			cuisines.PUT("/:id", authMiddleware, adminMiddleware, cuisineHandler.UpdateCuisine)
+		}
+
+		// Cart routes
+		cart := api.Group("/cart")
+		{
+			cart.Use(authMiddleware)
+			cart.GET("", cartHandler.GetCart)
+			cart.POST("/items", cartHandler.AddToCart)
+			cart.PUT("/items/:id", cartHandler.UpdateCartItem)
+			cart.DELETE("/items/:id", cartHandler.RemoveFromCart)
+			cart.DELETE("", cartHandler.ClearCart)
 		}
 	}
 
