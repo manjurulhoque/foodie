@@ -12,7 +12,7 @@ export const MenuApi = createApi({
             query: () => `menu`,
             providesTags: ["MenuItem"],
         }),
-        getRestaurantMenuItems: builder.query<{ data: MenuItem[] }, string>({
+        getRestaurantMenuItems: builder.query<{ data: MenuItem[] }, number>({
             query: (restaurantId) => `restaurants/${restaurantId}/menu`,
             providesTags: ["MenuItem"],
         }),
