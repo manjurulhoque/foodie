@@ -175,14 +175,16 @@ func (h *RestaurantHandler) GetAllRestaurants(c *gin.Context) {
 	// Get pagination params from query
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	cuisineID, _ := strconv.Atoi(c.DefaultQuery("cuisine_id", "0"))
+	minRating, _ := strconv.ParseFloat(c.DefaultQuery("min_rating", "0"), 32)
 
 	// we won't allow more than 100 items at a time
 	if limit > 100 {
 		limit = 10
 	}
 
-	// Get all restaurants with pagination
-	restaurants, total, err := h.service.GetAllRestaurants(page, limit)
+	// Get all restaurants with filters and pagination
+	restaurants, total, err := h.service.GetAllRestaurants(page, limit, uint(cuisineID), float32(minRating))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,

@@ -26,6 +26,16 @@ import {
     ChevronRight,
 } from "lucide-react";
 import Spinner from "@/components/shared/spinner";
+import { Cuisine } from "@/models/cuisine.interface";
+import { RestaurantSkeleton } from "@/components/skeleton/restaurant.skeleton";
+import { CuisineBadgeSkeleton } from "@/components/skeleton/cuisine-badge.skeleton";
+
+const getCuisineId = (cuisineName: string, cuisines: any) => {
+    const cuisine = cuisines?.find(
+        (cuisine: Cuisine) => cuisine.name === cuisineName
+    );
+    return cuisine?.id;
+};
 
 export default function RestaurantsPage() {
     const router = useRouter();
@@ -35,12 +45,22 @@ export default function RestaurantsPage() {
     const initialRating = Number(searchParams.get("rating")) || 0;
 
     const [page, setPage] = useState(initialPage);
-    const { data, isLoading } = useGetRestaurantsQuery({ page, limit: 9 });
+    const { data: cuisines, isLoading: isCuisinesLoading } =
+        useGetCuisinesQuery();
+    const { data, isLoading: isRestaurantsLoading } = useGetRestaurantsQuery({
+        page,
+        limit: 9,
+        cuisine_id: initialCuisine
+            ? getCuisineId(initialCuisine, cuisines?.data)
+            : undefined,
+        min_rating: initialRating,
+    });
     const restaurants = data?.data?.data;
     const meta = data?.data?.meta;
-    const { data: cuisines } = useGetCuisinesQuery();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCuisine, setSelectedCuisine] = useState<string | null>(initialCuisine);
+    const [selectedCuisine, setSelectedCuisine] = useState<string | null>(
+        initialCuisine
+    );
     const [ratingFilter, setRatingFilter] = useState([initialRating]);
 
     useEffect(() => {
@@ -55,23 +75,19 @@ export default function RestaurantsPage() {
         router.push(url.pathname + url.search);
     }, [page, selectedCuisine, ratingFilter, router]);
 
-    if (isLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <Spinner />
-            </div>
-        );
-    }
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex min-h-screen items-center justify-center">
+    //             <RestaurantSkeleton />
+    //         </div>
+    //     );
+    // }
 
     const filteredRestaurants = restaurants?.filter(
         (restaurant: Restaurant) => {
-            const matchesSearch = restaurant.name
+            return restaurant.name
                 .toLowerCase()
                 .includes(searchTerm.toLowerCase());
-            const matchesCuisine =
-                !selectedCuisine || restaurant.cuisine?.name === selectedCuisine;
-            const matchesRating = restaurant.rating >= ratingFilter[0];
-            return matchesSearch && matchesCuisine && matchesRating;
         }
     );
 
@@ -126,6 +142,13 @@ export default function RestaurantsPage() {
                                     >
                                         All
                                     </Badge>
+                                    {isCuisinesLoading && (
+                                        <>
+                                            {[...Array(10)].map((_, i) => (
+                                                <CuisineBadgeSkeleton key={i} />
+                                            ))}
+                                        </>
+                                    )}
                                     {cuisines?.data.map((cuisine) => (
                                         <Badge
                                             key={cuisine.id}
@@ -163,6 +186,13 @@ export default function RestaurantsPage() {
                 {/* Restaurant Grid */}
                 <div className="md:col-span-3">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {isRestaurantsLoading && (
+                            <>
+                                {[...Array(9)].map((_, i) => (
+                                    <RestaurantSkeleton key={i} />
+                                ))}
+                            </>
+                        )}
                         {filteredRestaurants?.length === 0 && (
                             <div className="items-center justify-center py-12 text-neutral-700 font-semibold text-2xl col-span-10">
                                 No restaurants found

@@ -3,6 +3,13 @@ import { Restaurant } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
 import { PaginatedResponse } from "@/lib/pagination";
 
+interface GetRestaurantsParams {
+    page?: number;
+    limit?: number;
+    cuisine_id?: number;
+    min_rating?: number;
+}
+
 export const RestaurantApi = createApi({
     reducerPath: "restaurantApi",
     refetchOnFocus: true,
@@ -11,13 +18,15 @@ export const RestaurantApi = createApi({
     endpoints: (builder) => ({
         getRestaurants: builder.query<
             { data: PaginatedResponse<Restaurant> },
-            { page?: number; limit?: number } | void
+            GetRestaurantsParams | void
         >({
             query: (params) => ({
                 url: "restaurants",
                 params: {
                     page: params?.page || 1,
                     limit: params?.limit || 9,
+                    cuisine_id: params?.cuisine_id,
+                    min_rating: params?.min_rating,
                 },
             }),
             providesTags: ["Restaurant"],
