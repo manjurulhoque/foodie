@@ -8,10 +8,10 @@ import (
 type RestaurantService interface {
 	CreateRestaurant(map[string]interface{}) error
 	GetRestaurant(id uint) (*models.Restaurant, error)
-	GetAllRestaurants() ([]models.Restaurant, error)
 	UpdateRestaurant(restaurant interface{}, id uint) error
 	DeleteRestaurant(id uint) error
 	GetRestaurantsByUser(userID uint) ([]models.Restaurant, error)
+	GetAllRestaurants(page, limit int) ([]models.Restaurant, int64, error)
 }
 
 type restaurantService struct {
@@ -30,10 +30,6 @@ func (s *restaurantService) GetRestaurant(id uint) (*models.Restaurant, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *restaurantService) GetAllRestaurants() ([]models.Restaurant, error) {
-	return s.repo.FindAll()
-}
-
 func (s *restaurantService) UpdateRestaurant(restaurant interface{}, id uint) error {
 	return s.repo.Update(restaurant, id)
 }
@@ -44,4 +40,8 @@ func (s *restaurantService) DeleteRestaurant(id uint) error {
 
 func (s *restaurantService) GetRestaurantsByUser(userID uint) ([]models.Restaurant, error) {
 	return s.repo.FindRestaurantsByUserID(userID)
+}
+
+func (s *restaurantService) GetAllRestaurants(page, limit int) ([]models.Restaurant, int64, error) {
+	return s.repo.FindAllPaginated(page, limit)
 }

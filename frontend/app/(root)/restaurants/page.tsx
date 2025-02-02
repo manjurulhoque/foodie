@@ -3,7 +3,7 @@
 import { useGetRestaurantsQuery } from "@/store/reducers/restaurant/api";
 import { useGetCuisinesQuery } from "@/store/reducers/cuisine/api";
 import { Restaurant } from "@/models/restaurant.interface";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Card,
     CardContent,
@@ -16,17 +16,44 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { MapPin, Search, Star, UtensilsCrossed } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+    MapPin,
+    Search,
+    Star,
+    UtensilsCrossed,
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-react";
 import Spinner from "@/components/shared/spinner";
 
 export default function RestaurantsPage() {
-    const { data, isLoading } = useGetRestaurantsQuery();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const initialPage = Number(searchParams.get("page")) || 1;
+    const initialCuisine = searchParams.get("cuisine") || null;
+    const initialRating = Number(searchParams.get("rating")) || 0;
+
+    const [page, setPage] = useState(initialPage);
+    const { data, isLoading } = useGetRestaurantsQuery({ page, limit: 9 });
+    const restaurants = data?.data?.data;
+    const meta = data?.data?.meta;
     const { data: cuisines } = useGetCuisinesQuery();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCuisine, setSelectedCuisine] = useState<number | null>(null);
-    const [ratingFilter, setRatingFilter] = useState([0]);
-    const router = useRouter();
+    const [selectedCuisine, setSelectedCuisine] = useState<string | null>(initialCuisine);
+    const [ratingFilter, setRatingFilter] = useState([initialRating]);
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", page.toString());
+        if (selectedCuisine) {
+            url.searchParams.set("cuisine", selectedCuisine);
+        } else {
+            url.searchParams.delete("cuisine");
+        }
+        url.searchParams.set("rating", ratingFilter[0].toString());
+        router.push(url.pathname + url.search);
+    }, [page, selectedCuisine, ratingFilter, router]);
 
     if (isLoading) {
         return (
@@ -36,15 +63,17 @@ export default function RestaurantsPage() {
         );
     }
 
-    const filteredRestaurants = data?.data.filter((restaurant: Restaurant) => {
-        const matchesSearch = restaurant.name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
-        const matchesCuisine =
-            !selectedCuisine || restaurant.cuisine_id === selectedCuisine;
-        const matchesRating = restaurant.rating >= ratingFilter[0];
-        return matchesSearch && matchesCuisine && matchesRating;
-    });
+    const filteredRestaurants = restaurants?.filter(
+        (restaurant: Restaurant) => {
+            const matchesSearch = restaurant.name
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            const matchesCuisine =
+                !selectedCuisine || restaurant.cuisine?.name === selectedCuisine;
+            const matchesRating = restaurant.rating >= ratingFilter[0];
+            return matchesSearch && matchesCuisine && matchesRating;
+        }
+    );
 
     const getImageUrl = (restaurant: Restaurant) => {
         if (!restaurant.image) {
@@ -101,12 +130,12 @@ export default function RestaurantsPage() {
                                         <Badge
                                             key={cuisine.id}
                                             className={`cursor-pointer ${
-                                                selectedCuisine === cuisine.id
+                                                selectedCuisine === cuisine.name
                                                     ? "bg-primary text-white"
                                                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                             }`}
                                             onClick={() =>
-                                                setSelectedCuisine(cuisine.id)
+                                                setSelectedCuisine(cuisine.name)
                                             }
                                         >
                                             {cuisine.name}
@@ -134,6 +163,11 @@ export default function RestaurantsPage() {
                 {/* Restaurant Grid */}
                 <div className="md:col-span-3">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {filteredRestaurants?.length === 0 && (
+                            <div className="items-center justify-center py-12 text-neutral-700 font-semibold text-2xl col-span-10">
+                                No restaurants found
+                            </div>
+                        )}
                         {filteredRestaurants?.map((restaurant) => (
                             <Card
                                 key={restaurant.id}
@@ -183,6 +217,31 @@ export default function RestaurantsPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Add pagination controls */}
+            {meta && (
+                <div className="mt-8 flex items-center justify-center gap-4">
+                    <Button
+                        variant="outline"
+                        onClick={() => setPage(page - 1)}
+                        disabled={page === 1}
+                    >
+                        <ChevronLeft className="h-4 w-4 mr-2" />
+                        Previous
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                        Page {page} of {meta.totalPages}
+                    </span>
+                    <Button
+                        variant="outline"
+                        onClick={() => setPage(page + 1)}
+                        disabled={page === meta.totalPages}
+                    >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

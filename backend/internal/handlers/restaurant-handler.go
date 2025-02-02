@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/google/uuid"
 
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
@@ -171,7 +172,17 @@ func (h *RestaurantHandler) GetRestaurant(c *gin.Context) {
 // @Success 200 {array} models.Restaurant
 // @Router /restaurants [get]
 func (h *RestaurantHandler) GetAllRestaurants(c *gin.Context) {
-	restaurants, err := h.service.GetAllRestaurants()
+	// Get pagination params from query
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	// we won't allow more than 100 items at a time
+	if limit > 100 {
+		limit = 10
+	}
+
+	// Get all restaurants with pagination
+	restaurants, total, err := h.service.GetAllRestaurants(page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,
@@ -181,10 +192,20 @@ func (h *RestaurantHandler) GetAllRestaurants(c *gin.Context) {
 		return
 	}
 
+	totalPages := (int(total) + limit - 1) / limit // Ceiling division
+
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success: true,
-		Message: "Restaurants found",
-		Data:    restaurants,
+		Message: "Restaurants retrieved successfully",
+		Data: map[string]interface{}{
+			"data": restaurants,
+			"meta": map[string]interface{}{
+				"total":      total,
+				"page":       page,
+				"limit":      limit,
+				"totalPages": totalPages,
+			},
+		},
 	})
 }
 

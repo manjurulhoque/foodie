@@ -24,6 +24,117 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/cart": {
+            "get": {
+                "description": "Get user's cart with items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Get user's cart",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Cart"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove all items from the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Clear cart",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/items": {
+            "post": {
+                "description": "Add a menu item to user's cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Add item to cart",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Cart"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/items/{id}": {
+            "put": {
+                "description": "Update the quantity of an item in the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Update cart item quantity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Cart"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove an item from the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Remove item from cart",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/categories": {
             "get": {
                 "description": "Get all categories",
@@ -96,6 +207,86 @@ const docTemplate = `{
                     "categories"
                 ],
                 "summary": "Delete a category",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/cuisines": {
+            "get": {
+                "description": "Get all cuisines",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cuisines"
+                ],
+                "summary": "Get all cuisines",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new cuisine",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cuisines"
+                ],
+                "summary": "Create a new cuisine",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/cuisines/{id}": {
+            "get": {
+                "description": "Get a cuisine by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cuisines"
+                ],
+                "summary": "Get a cuisine by ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a cuisine",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cuisines"
+                ],
+                "summary": "Update a cuisine",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -453,6 +644,102 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Cart": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CartItem"
+                    }
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CartItem": {
+            "type": "object",
+            "properties": {
+                "cart_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "menu_item": {
+                    "$ref": "#/definitions/models.MenuItem"
+                },
+                "menu_item_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                }
+            }
+        },
+        "models.Cuisine": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-29T17:57:19Z"
+                }
+            }
+        },
         "models.MenuItem": {
             "type": "object",
             "required": [
@@ -467,6 +754,12 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "example": "2024-01-29T17:57:19Z"
+                },
+                "cuisine": {
+                    "$ref": "#/definitions/models.Cuisine"
+                },
+                "cuisine_id": {
+                    "type": "integer"
                 },
                 "deleted_at": {
                     "type": "string",
@@ -490,6 +783,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                },
+                "restaurant": {
+                    "$ref": "#/definitions/models.Restaurant"
                 },
                 "restaurant_id": {
                     "type": "integer"
@@ -517,7 +813,10 @@ const docTemplate = `{
                     "example": "2024-01-29T17:57:19Z"
                 },
                 "cuisine": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.Cuisine"
+                },
+                "cuisine_id": {
+                    "type": "integer"
                 },
                 "deleted_at": {
                     "type": "string",

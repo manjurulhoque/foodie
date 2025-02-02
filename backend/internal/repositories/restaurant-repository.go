@@ -47,3 +47,25 @@ func (r *RestaurantRepository) FindRestaurantsByUserID(userID uint) ([]models.Re
 	err := r.db.Where("user_id = ?", userID).Find(&restaurants).Error
 	return restaurants, err
 }
+
+func (r *RestaurantRepository) FindAllPaginated(page, limit int) ([]models.Restaurant, int64, error) {
+	var restaurants []models.Restaurant
+	var total int64
+
+	offset := (page - 1) * limit
+
+	// Get total count
+	if err := r.db.Model(&models.Restaurant{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated data
+	err := r.db.Preload("MenuItems", func(db *gorm.DB) *gorm.DB {
+		return db.Order("menu_items.created_at DESC")
+	}).Preload("Cuisine").
+		Offset(offset).
+		Limit(limit).
+		Find(&restaurants).Error
+
+	return restaurants, total, err
+}

@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Restaurant } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
+import { PaginatedResponse } from "@/lib/pagination";
 
 export const RestaurantApi = createApi({
     reducerPath: "restaurantApi",
@@ -8,8 +9,17 @@ export const RestaurantApi = createApi({
     baseQuery: DynamicBaseQuery,
     tagTypes: ["Restaurant"],
     endpoints: (builder) => ({
-        getRestaurants: builder.query<{ data: Restaurant[] }, void>({
-            query: () => "restaurants",
+        getRestaurants: builder.query<
+            { data: PaginatedResponse<Restaurant> },
+            { page?: number; limit?: number } | void
+        >({
+            query: (params) => ({
+                url: "restaurants",
+                params: {
+                    page: params?.page || 1,
+                    limit: params?.limit || 9,
+                },
+            }),
             providesTags: ["Restaurant"],
         }),
         getRestaurant: builder.query<{ data: Restaurant }, string>({
