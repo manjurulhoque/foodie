@@ -86,7 +86,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(userService)
 	restaurantHandler := handlers.NewRestaurantHandler(restaurantService)
 	menuHandler := handlers.NewMenuHandler(menuService)
-	_ = handlers.NewOrderHandler(orderService)
+	orderHandler := handlers.NewOrderHandler(orderService, cartService)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
 	cuisineHandler := handlers.NewCuisineHandler(cuisineService)
 	cartHandler := handlers.NewCartHandler(cartService)
@@ -176,6 +176,12 @@ func main() {
 			cart.PUT("/items/:id", cartHandler.UpdateCartItem)
 			cart.DELETE("/items/:id", cartHandler.RemoveFromCart)
 			cart.DELETE("", cartHandler.ClearCart)
+		}
+
+		// Order routes
+		orders := api.Group("/orders")
+		{
+			orders.POST("", authMiddleware, orderHandler.CreateOrder)
 		}
 	}
 

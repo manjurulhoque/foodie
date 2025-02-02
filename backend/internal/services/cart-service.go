@@ -17,6 +17,10 @@ func (s *CartService) GetUserCart(userID uint) (*models.Cart, error) {
 	return s.repo.FindByUser(userID)
 }
 
+func (s *CartService) GetCartItems(cartID uint) ([]models.CartItem, error) {
+	return s.repo.FindItemsByCart(cartID)
+}
+
 func (s *CartService) AddToCart(userID uint, menuItemID uint, quantity int) error {
 	cart, err := s.repo.FindByUser(userID)
 	if err != nil {

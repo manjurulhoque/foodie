@@ -31,6 +31,15 @@ func (r *CartRepository) FindByUser(userID uint) (*models.Cart, error) {
 	return &cart, nil
 }
 
+func (r *CartRepository) FindItemsByCart(cartID uint) ([]models.CartItem, error) {
+	var cartItems []models.CartItem
+	err := r.db.Preload("MenuItem").Where("cart_id = ?", cartID).Find(&cartItems).Error
+	if err != nil {
+		return nil, err
+	}
+	return cartItems, nil
+}
+
 func (r *CartRepository) AddItem(cartID uint, menuItemID uint, quantity int) error {
 	var cartItem models.CartItem
 	err := r.db.Where("cart_id = ? AND menu_item_id = ?", cartID, menuItemID).First(&cartItem).Error
