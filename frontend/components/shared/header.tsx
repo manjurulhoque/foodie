@@ -49,9 +49,9 @@ export const Header = () => {
             active: pathname === "/menu" || pathname.includes("/menu"),
         },
         {
-            href: "/orders",
-            label: "orders",
-            active: pathname === "/orders" || pathname.includes("/orders"),
+            href: "/restaurants",
+            label: "Restaurants",
+            active: pathname === "/restaurants" || pathname.includes("/restaurants"),
         },
         {
             href: "/about",
