@@ -12,7 +12,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchProvider } from "@/context/search-context";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
-import { DashboardPageLayout } from "@/components/dashboard/page-layout";
+import { DashboardPageLayout } from "@/components/dashboard/dashboard-page-layout";
 
 export const metadata: Metadata = {
     title: "Foodie customer",
