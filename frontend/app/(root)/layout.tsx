@@ -9,6 +9,7 @@ import { NextAuthProvider } from "@/components/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
     title: "Foodie",
@@ -39,6 +40,7 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
                             />
                             <Header />
                             {children}
+                            <Footer />
                             <Toaster position="bottom-center" />
                         </NextAuthProvider>
                     </ReduxProvider>
