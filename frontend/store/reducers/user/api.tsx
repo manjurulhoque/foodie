@@ -12,6 +12,7 @@ export const UserApi = createApi({
         me: builder.query<Response<User>, null>({
             query: () => ({ url: "/me", method: "GET" }),
             providesTags: ["User"],
+            keepUnusedDataFor: 300, // Cache data for 5 minutes (300 seconds)
         }),
     }),
 });

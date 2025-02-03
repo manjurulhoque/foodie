@@ -6,12 +6,13 @@ import { Toaster } from "react-hot-toast";
 import { NextAuthProvider } from "@/components/NextAuthProvider";
 import ReduxProvider from "@/components/ReduxProvider";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
-import { getServerSession } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchProvider } from "@/context/search-context";
 import Cookies from "js-cookie";
 import { PageLayout } from "@/components/admin/page-layout";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
     title: "Foodie admin",
@@ -26,6 +27,13 @@ interface Props {
 
 const AdminLayout: React.FC<Props> = async ({ children }) => {
     const session = await getServerSession(authOptions);
+    const { user } = session as Session;
+    if (!user) {
+        return redirect("/login");
+    }
+    if (user.role !== "admin") {
+        return redirect("/");
+    }
     const defaultOpen = Cookies.get("sidebar:state") !== "false";
     return (
         <html lang="en" suppressHydrationWarning>
