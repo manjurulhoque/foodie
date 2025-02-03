@@ -1,5 +1,5 @@
-import { Container } from "./shared/container";
-import { Button } from "./ui/button";
+import { Container } from "@/components/shared/container";
+import { Button } from "@/components/ui/button";
 
 export default function Footer() {
     return (

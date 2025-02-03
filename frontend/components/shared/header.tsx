@@ -61,6 +61,7 @@ export const Header = () => {
     ];
 
     const isAdmin = user?.role === "admin";
+    const isCustomer = user?.role === "customer";
 
     return (
         <header className="w-full z-50 transition bg-transparent">
@@ -158,6 +159,19 @@ export const Header = () => {
                                             <span>Admin dashboard</span>
                                         </DropdownMenuItem>
                                     )}
+                                    {
+                                        isCustomer && (
+                                            <DropdownMenuItem
+                                                className="cursor-pointer"
+                                                onClick={() => {
+                                                    router.push("/dashboard");
+                                                }}
+                                            >
+                                                <Shield className="mr-2 h-4 w-4" />
+                                                <span>Customer dashboard</span>
+                                            </DropdownMenuItem>
+                                        )
+                                    }
                                     <DropdownMenuItem
                                         className="cursor-pointer"
                                         onClick={() => {

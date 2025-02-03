@@ -9,7 +9,7 @@ import { NextAuthProvider } from "@/components/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
-import Footer from "@/components/footer";
+import Footer from "@/components/shared/footer";
 
 export const metadata: Metadata = {
     title: "Foodie",
