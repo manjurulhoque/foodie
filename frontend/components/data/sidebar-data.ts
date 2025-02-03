@@ -11,17 +11,11 @@ import {
     MenuSquare,
     Kanban,
     UtensilsCrossed,
+    ShoppingCart,
 } from "lucide-react";
 import { type SidebarData } from "@/components/layout/types";
 
-export const sidebarData: SidebarData = {
-    teams: [
-        {
-            name: "Shadcn Admin",
-            logo: Command,
-            plan: "Vite + ShadcnUI",
-        },
-    ],
+export const adminSidebarData: SidebarData = {
     navGroups: [
         {
             title: "General",
@@ -97,6 +91,47 @@ export const sidebarData: SidebarData = {
                     title: "Help Center",
                     url: "/help-center",
                     icon: HelpCircle,
+                },
+            ],
+        },
+    ],
+};
+
+export const dashboardSidebarData: SidebarData = {
+    navGroups: [
+        {
+            title: "General",
+            items: [
+                {
+                    title: "Dashboard",
+                    url: "/dashboard",
+                    icon: LayoutDashboard,
+                },
+                {
+                    title: "Orders",
+                    url: "/dashboard/orders",
+                    icon: ShoppingCart,
+                },
+            ],
+        },
+        {
+            title: "Other",
+            items: [
+                {
+                    title: "Settings",
+                    icon: Settings,
+                    items: [
+                        {
+                            title: "Profile",
+                            url: "/dashboard/settings",
+                            icon: UserCog,
+                        },
+                        {
+                            title: "Account",
+                            url: "/dashboard/settings/account",
+                            icon: Settings,
+                        },
+                    ],
                 },
             ],
         },

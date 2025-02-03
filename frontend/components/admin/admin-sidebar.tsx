@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/sidebar";
 import { NavGroup } from "@/components/layout/nav-group";
 import { NavUser } from "@/components/layout/nav-user";
-import { sidebarData } from "@/components/admin/data/sidebar-data";
+import { adminSidebarData } from "@/components/data/sidebar-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/models/user.interface";
 
-export function AppSidebar({
+export function AdminSidebar({
     user,
     isLoading,
     ...props
@@ -22,7 +22,7 @@ export function AppSidebar({
         <Sidebar collapsible="icon" variant="floating" {...props}>
             <SidebarHeader>Admin</SidebarHeader>
             <SidebarContent>
-                {sidebarData.navGroups.map((props: any) => (
+                {adminSidebarData.navGroups.map((props: any) => (
                     <NavGroup key={props.title} {...props} />
                 ))}
             </SidebarContent>

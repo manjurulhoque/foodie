@@ -2,20 +2,24 @@
 
 import { User } from "@/models/user.interface";
 import { cn } from "@/lib/utils";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { Header } from "@/components/layout/header";
 import { Search } from "@/components/admin/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { useMeQuery } from "@/store/reducers/user/api";
 
-export function PageLayout({ children }: { children: React.ReactNode }) {
+export function DashboardPageLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const { data, isLoading } = useMeQuery(null, {});
     const user = data?.data as User;
 
     return (
         <>
-            <AdminSidebar user={user} isLoading={isLoading} />
+            <DashboardSidebar user={user} isLoading={isLoading} />
             <div
                 id="content"
                 className={cn(
