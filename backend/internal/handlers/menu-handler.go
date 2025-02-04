@@ -69,7 +69,10 @@ func (h *MenuHandler) GetMenuItem(c *gin.Context) {
 // @Success 200 {object} any
 // @Router /menu [get]
 func (h *MenuHandler) GetAllMenuItems(c *gin.Context) {
-	menuItems, err := h.service.GetAllMenuItems()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	menuItems, total, err := h.service.GetAllMenuItems(page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,
@@ -79,10 +82,20 @@ func (h *MenuHandler) GetAllMenuItems(c *gin.Context) {
 		return
 	}
 
+	totalPages := (int(total) + limit - 1) / limit // Ceiling division
+
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Menu items found",
-		Data:    menuItems,
+		Data: map[string]interface{}{
+			"data": menuItems,
+			"meta": map[string]interface{}{
+				"total":      total,
+				"page":       page,
+				"limit":      limit,
+				"totalPages": totalPages,
+			},
+		},
 	})
 }
 

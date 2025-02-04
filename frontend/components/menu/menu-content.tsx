@@ -2,20 +2,28 @@
 
 import { MenuItemDetails } from "@/components/menu/menu-item-details";
 import { Box } from "@/components/shared/box";
-import { ChevronRight, Home, Menu, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
 import { MenuItem } from "@/models/restaurant.interface";
+import { PaginatedResponse } from "@/lib/pagination";
+import { Button } from "../ui/button";
 
 interface MenuContentProps {
-    menuItems?: MenuItem[];
+    menuItems?: PaginatedResponse<MenuItem>;
+    page: number;
+    setPage: (page: number) => void;
 }
 
-export const MenuContent = ({ menuItems }: MenuContentProps) => {
+export const MenuContent = ({ menuItems, page, setPage }: MenuContentProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const currentParams = Object.fromEntries(searchParams.entries());
+    const currentParams = Object.fromEntries(
+        Array.from(searchParams.entries()).filter(([key]) => key !== 'page')
+    );
+    const menuItemsData = menuItems?.data;
+    const meta = menuItems?.meta;
 
     const handleClick = (param: string) => {
         if (currentParams.hasOwnProperty(param)) {
@@ -80,9 +88,9 @@ export const MenuContent = ({ menuItems }: MenuContentProps) => {
             </Box>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 w-full h-full gap-4 gap-y-24">
-                {menuItems && menuItems.length > 0 ? (
+                {menuItemsData && menuItemsData.length > 0 ? (
                     <>
-                        {menuItems.map((menuItem) => (
+                        {menuItemsData.map((menuItem) => (
                             <MenuItemDetails menuItem={menuItem} key={menuItem.id} />
                         ))}
                     </>
@@ -94,6 +102,30 @@ export const MenuContent = ({ menuItems }: MenuContentProps) => {
                     </>
                 )}
             </div>
+            {/* Add pagination controls */}
+            {meta && (
+                <div className="mt-10 flex items-center justify-center gap-4">
+                    <Button
+                        variant="outline"
+                        onClick={() => setPage(page - 1)}
+                        disabled={page === 1}
+                    >
+                        <ChevronLeft className="h-4 w-4 mr-2" />
+                        Previous
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                        Page {page} of {meta.totalPages}
+                    </span>
+                    <Button
+                        variant="outline"
+                        onClick={() => setPage(page + 1)}
+                        disabled={page === meta.totalPages}
+                    >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                </div>
+            )}
         </>
     );
 };

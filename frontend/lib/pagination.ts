@@ -4,8 +4,6 @@ export interface PaginationParams {
 }
 
 export interface PaginatedResponse<T> {
-    success: boolean;
-    message: string;
     data: T[];
     meta: {
         total: number;
@@ -36,8 +34,6 @@ export const getPaginatedData = <T>(
     const totalPages = Math.ceil(total / limit);
 
     return {
-        success: true,
-        message: "Data fetched successfully",
         data: paginatedData,
         meta: {
             total,

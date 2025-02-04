@@ -7,6 +7,5 @@ export interface Response<T> {
     data: T;
     message: string;
     success: boolean;
-    statusCode: number;
     errors: ErrorDetail[];
 }

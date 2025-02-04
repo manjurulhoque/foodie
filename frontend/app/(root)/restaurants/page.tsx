@@ -25,7 +25,6 @@ import {
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
-import Spinner from "@/components/shared/spinner";
 import { Cuisine } from "@/models/cuisine.interface";
 import { RestaurantSkeleton } from "@/components/skeleton/restaurant.skeleton";
 import { CuisineBadgeSkeleton } from "@/components/skeleton/cuisine-badge.skeleton";

@@ -13,10 +13,21 @@ func NewMenuRepository(db *gorm.DB) MenuRepository {
 	return MenuRepository{db: db}
 }
 
-func (r *MenuRepository) FindAll() ([]models.MenuItem, error) {
+func (r *MenuRepository) FindAllPaginated(page int, limit int) ([]models.MenuItem, int64, error) {
 	var menuItems []models.MenuItem
-	err := r.db.Find(&menuItems).Error
-	return menuItems, err
+	var total int64
+
+	offset := (page - 1) * limit
+	err := r.db.Offset(offset).Limit(limit).Find(&menuItems).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if err := r.db.Model(&models.MenuItem{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return menuItems, total, nil
 }
 
 func (r *MenuRepository) Create(menuItem map[string]interface{}) error {

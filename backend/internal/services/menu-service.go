@@ -6,7 +6,7 @@ import (
 )
 
 type MenuService interface {
-	GetAllMenuItems() ([]models.MenuItem, error)
+	GetAllMenuItems(int, int) ([]models.MenuItem, int64, error)
 	CreateMenuItem(map[string]interface{}, uint) error
 	GetMenuItem(uint) (*models.MenuItem, error)
 	UpdateMenuItem(uint, map[string]interface{}) (*models.MenuItem, error)
@@ -23,8 +23,8 @@ func NewMenuService(repo repositories.MenuRepository) MenuService {
 	return &menuService{repo: repo}
 }
 
-func (s *menuService) GetAllMenuItems() ([]models.MenuItem, error) {
-	return s.repo.FindAll()
+func (s *menuService) GetAllMenuItems(page int, limit int) ([]models.MenuItem, int64, error) {
+	return s.repo.FindAllPaginated(page, limit)
 }
 
 func (s *menuService) CreateMenuItem(menuItem map[string]interface{}, restaurantID uint) error {

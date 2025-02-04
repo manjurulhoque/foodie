@@ -1,6 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { MenuItem } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
+import { PaginatedResponse, PaginationParams } from "@/lib/pagination";
+import { Response } from "@/models/response.interface";
 
 export const MenuApi = createApi({
     reducerPath: "menuApi",
@@ -8,8 +10,17 @@ export const MenuApi = createApi({
     baseQuery: DynamicBaseQuery,
     tagTypes: ["MenuItem"],
     endpoints: (builder) => ({
-        getAllMenuItems: builder.query<{ data: MenuItem[] }, void>({
-            query: () => `menu`,
+        getAllMenuItems: builder.query<
+            Response<PaginatedResponse<MenuItem>>,
+            PaginationParams
+        >({
+            query: (params) => ({
+                url: "menu",
+                params: {
+                    page: params?.page || 1,
+                    limit: params?.limit || 9,
+                },
+            }),
             providesTags: ["MenuItem"],
         }),
         getRestaurantMenuItems: builder.query<{ data: MenuItem[] }, number>({
