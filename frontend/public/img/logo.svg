@@ -1,0 +1,25 @@
+<svg width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Foodie Text -->
+  <text x="10" y="45" font-family="Arial, sans-serif" font-size="40" fill="#48d1cc" font-weight="bold" letter-spacing="-1">
+    f
+  </text>
+  
+  <!-- First "o" with fork -->
+  <circle cx="55" cy="33" r="15" fill="#48d1cc"/>
+  <path d="M48 27 L54 33 M50 27 L56 33 M52 27 L58 33" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Second "o" with spoon -->
+  <circle cx="95" cy="33" r="15" fill="#20b2aa"/>
+  <ellipse cx="95" cy="28" rx="4" ry="8" fill="white"/>
+  <rect x="93" y="32" width="4" height="10" fill="white"/>
+  
+  <text x="120" y="45" font-family="Arial, sans-serif" font-size="40" fill="#48d1cc" font-weight="bold" letter-spacing="-1">
+    d
+  </text>
+  <text x="155" y="45" font-family="Arial, sans-serif" font-size="40" fill="#48d1cc" font-weight="bold" letter-spacing="-1">
+    i
+  </text>
+  <text x="170" y="45" font-family="Arial, sans-serif" font-size="40" fill="#48d1cc" font-weight="bold" letter-spacing="-1">
+    e
+  </text>
+</svg>
