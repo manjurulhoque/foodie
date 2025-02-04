@@ -10,6 +10,7 @@ export interface Restaurant {
     rating: number;
     image: string;
     is_active: boolean;
+    is_open: boolean;
     user_id: number;
     menu_items: MenuItem[];
     cuisine_id: number;

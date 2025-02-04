@@ -39,3 +39,9 @@ func (r *CuisineRepository) Update(id uint, cuisine map[string]interface{}) erro
 func (r *CuisineRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Cuisine{}, id).Error
 }
+
+func (r *CuisineRepository) FindPopular() ([]models.Cuisine, error) {
+	var cuisines []models.Cuisine
+	err := r.db.Where("is_popular = ?", true).Find(&cuisines).Error
+	return cuisines, err
+}

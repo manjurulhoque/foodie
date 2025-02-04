@@ -16,6 +16,7 @@ type Restaurant struct {
 	Rating      float32 `json:"rating" gorm:"default:0"`
 	Image       string  `json:"image"`
 	IsActive    bool    `json:"is_active" gorm:"default:true"`
+	IsOpen      bool    `json:"is_open" gorm:"default:true"`
 	UserID      uint    `json:"user_id,omitempty" gorm:"default:null;null"`
 	CuisineID   uint    `json:"cuisine_id,omitempty" gorm:"default:null;null"`
 

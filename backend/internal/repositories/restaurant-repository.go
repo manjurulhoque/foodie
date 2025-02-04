@@ -78,3 +78,9 @@ func (r *RestaurantRepository) FindAllPaginated(page, limit int, cuisineID uint,
 
 	return restaurants, total, err
 }
+
+func (r *RestaurantRepository) FindRestaurantsByCuisineID(cuisineID uint) ([]models.Restaurant, error) {
+	var restaurants []models.Restaurant
+	err := r.db.Where("cuisine_id = ?", cuisineID).Find(&restaurants).Error
+	return restaurants, err
+}

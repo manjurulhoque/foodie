@@ -12,6 +12,7 @@ type RestaurantService interface {
 	DeleteRestaurant(id uint) error
 	GetRestaurantsByUser(userID uint) ([]models.Restaurant, error)
 	GetAllRestaurants(page, limit int, cuisineID uint, minRating float32) ([]models.Restaurant, int64, error)
+	GetRestaurantsByCuisine(cuisineID uint) ([]models.Restaurant, error)
 }
 
 type restaurantService struct {
@@ -44,4 +45,8 @@ func (s *restaurantService) GetRestaurantsByUser(userID uint) ([]models.Restaura
 
 func (s *restaurantService) GetAllRestaurants(page, limit int, cuisineID uint, minRating float32) ([]models.Restaurant, int64, error) {
 	return s.repo.FindAllPaginated(page, limit, cuisineID, minRating)
+}
+
+func (s *restaurantService) GetRestaurantsByCuisine(cuisineID uint) ([]models.Restaurant, error) {
+	return s.repo.FindRestaurantsByCuisineID(cuisineID)
 }

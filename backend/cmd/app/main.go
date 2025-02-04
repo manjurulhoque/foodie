@@ -147,6 +147,11 @@ func main() {
 				restaurantMenu.PUT("/:id", authMiddleware, adminMiddleware, menuHandler.UpdateMenuItem)
 				restaurantMenu.GET("/:id", menuHandler.GetMenuItem)
 			}
+
+			restaurantCuisine := restaurants.Group("/cuisine/:id")
+			{
+				restaurantCuisine.GET("", restaurantHandler.GetRestaurantsByCuisine)
+			}
 		}
 
 		// Category routes
@@ -162,6 +167,7 @@ func main() {
 		cuisines := api.Group("/cuisines")
 		{
 			cuisines.GET("", cuisineHandler.GetAllCuisines)
+			cuisines.GET("/popular", cuisineHandler.GetPopularCuisines)
 			cuisines.GET("/:id", cuisineHandler.GetCuisine)
 			cuisines.POST("", authMiddleware, adminMiddleware, cuisineHandler.CreateCuisine)
 			cuisines.PUT("/:id", authMiddleware, adminMiddleware, cuisineHandler.UpdateCuisine)

@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Cuisine } from "@/models/cuisine.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
+import { Response } from "@/models/response.interface";
 
 export const CuisineApi = createApi({
     reducerPath: "cuisineApi",
@@ -41,6 +42,10 @@ export const CuisineApi = createApi({
             }),
             invalidatesTags: ["Cuisine"],
         }),
+        getPopularCuisines: builder.query<Response<Cuisine[]>, void>({
+            query: () => "cuisines/popular",
+            providesTags: ["Cuisine"],
+        }),
     }),
 });
 
@@ -49,4 +54,5 @@ export const {
     useGetCuisineQuery,
     useCreateCuisineMutation,
     useUpdateCuisineMutation,
+    useGetPopularCuisinesQuery,
 } = CuisineApi;

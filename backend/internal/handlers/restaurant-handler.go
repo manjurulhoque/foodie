@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 
@@ -348,5 +349,34 @@ func (h *RestaurantHandler) DeleteRestaurant(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
 		Success: true,
 		Message: "Restaurant deleted successfully",
+	})
+}
+
+// GetRestaurantsByCuisine handler
+func (h *RestaurantHandler) GetRestaurantsByCuisine(c *gin.Context) {
+	cuisineID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid cuisine id",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	restaurants, err := h.service.GetRestaurantsByCuisine(uint(cuisineID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get restaurants",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.Restaurant]{
+		Success: true,
+		Message: "Restaurants found",
+		Data:    restaurants,
 	})
 }

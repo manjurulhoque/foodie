@@ -11,6 +11,7 @@ type CuisineService interface {
 	GetAllCuisines() ([]models.Cuisine, error)
 	UpdateCuisine(uint, map[string]interface{}) error
 	DeleteCuisine(uint) error
+	GetPopularCuisines() ([]models.Cuisine, error)
 }
 
 type cuisineService struct {
@@ -39,4 +40,8 @@ func (s *cuisineService) UpdateCuisine(id uint, cuisine map[string]interface{}) 
 
 func (s *cuisineService) DeleteCuisine(id uint) error {
 	return s.repo.Delete(id)
+}
+
+func (s *cuisineService) GetPopularCuisines() ([]models.Cuisine, error) {
+	return s.repo.FindPopular()
 }

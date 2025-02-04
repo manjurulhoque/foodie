@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 )
@@ -178,5 +179,31 @@ func (h *CuisineHandler) UpdateCuisine(c *gin.Context) {
 		Success: true,
 		Message: "Cuisine updated successfully",
 		Data:    cuisineMap,
+	})
+}
+
+// GetPopularCuisines handler
+// @Summary Get popular cuisines
+// @Description Get popular cuisines
+// @Tags cuisines
+// @Accept json
+// @Produce json
+// @Success 200 {object} any
+// @Router /cuisines/popular [get]
+func (h *CuisineHandler) GetPopularCuisines(c *gin.Context) {
+	cuisines, err := h.service.GetPopularCuisines()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get popular cuisines",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.Cuisine]{
+		Success: true,
+		Message: "Popular cuisines found",
+		Data:    cuisines,
 	})
 }

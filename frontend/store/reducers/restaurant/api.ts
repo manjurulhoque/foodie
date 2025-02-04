@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { Restaurant } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
 import { PaginatedResponse } from "@/lib/pagination";
+import { Response } from "@/models/response.interface";
 
 interface GetRestaurantsParams {
     page?: number;
@@ -66,6 +67,10 @@ export const RestaurantApi = createApi({
             }),
             invalidatesTags: ["Restaurant"],
         }),
+        getRestaurantsByCuisine: builder.query<Response<Restaurant[]>, string>({
+            query: (cuisineId) => `restaurants/cuisine/${cuisineId}`,
+            providesTags: ["Restaurant"],
+        }),
     }),
 });
 
@@ -75,4 +80,5 @@ export const {
     useCreateRestaurantMutation,
     useUpdateRestaurantMutation,
     useDeleteRestaurantMutation,
+    useGetRestaurantsByCuisineQuery,
 } = RestaurantApi;
