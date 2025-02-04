@@ -128,7 +128,7 @@ export const Header = () => {
                                                 src={user?.image}
                                                 alt={user?.name}
                                             />
-                                            <AvatarFallback>UN</AvatarFallback>
+                                            <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
