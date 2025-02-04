@@ -24,7 +24,11 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		PaymentMethod   string `json:"payment_method" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&orderInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request body",
+			Data:    nil,
+		})
 		return
 	}
 
@@ -33,13 +37,21 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	// get cart
 	cart, err := h.cartService.GetUserCart(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get cart",
+			Data:    nil,
+		})
 		return
 	}
 	// get cart items
 	cartItems, err := h.cartService.GetCartItems(cart.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get cart items",
+			Data:    nil,
+		})
 		return
 	}
 
@@ -55,7 +67,11 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		restaurantIDs[item.MenuItem.RestaurantID] = true
 	}
 	if len(restaurantIDs) > 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Items from different restaurants cannot be combined in a single order"})
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Items from different restaurants cannot be combined in a single order",
+			Data:    nil,
+		})
 		return
 	}
 
@@ -69,7 +85,37 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	err = h.service.CreateOrder(order)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to create order",
+			Data:    nil,
+		})
 		return
 	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[models.Order]{
+		Success: true,
+		Message: "Order created successfully",
+		Data:    *order,
+	})
+}
+
+func (h *OrderHandler) GetUserOrders(c *gin.Context) {
+	userID := utils.GetUserID(c)
+
+	orders, err := h.service.GetUserOrders(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[[]models.Order]{
+			Success: false,
+			Message: "Failed to fetch orders",
+			Data:    nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.Order]{
+		Success: true,
+		Message: "Orders fetched successfully",
+		Data:    orders,
+	})
 }

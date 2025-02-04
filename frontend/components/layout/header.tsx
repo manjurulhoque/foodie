@@ -4,6 +4,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Home } from "lucide-react";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
     fixed?: boolean;
@@ -17,7 +20,8 @@ export const Header = ({
     ...props
 }: HeaderProps) => {
     const [offset, setOffset] = React.useState(0);
-
+    const router = useRouter();
+    
     React.useEffect(() => {
         const onScroll = () => {
             setOffset(
@@ -48,6 +52,16 @@ export const Header = ({
                 className="scale-125 sm:scale-100"
             />
             <Separator orientation="vertical" className="h-6" />
+            <div className="flex items-center gap-3">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="scale-125 sm:scale-100"
+                    onClick={() => router.push("/")}
+                >
+                    <Home />
+                </Button>
+            </div>
             {children}
         </header>
     );

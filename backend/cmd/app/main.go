@@ -182,6 +182,7 @@ func main() {
 		orders := api.Group("/orders")
 		{
 			orders.POST("", authMiddleware, orderHandler.CreateOrder)
+			orders.GET("/user", authMiddleware, orderHandler.GetUserOrders)
 		}
 	}
 

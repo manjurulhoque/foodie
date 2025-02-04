@@ -22,13 +22,14 @@ export const MenuItemDetails = ({ menuItem }: MenuItemProps) => {
     
     const getImageUrl = () => {
         if (!menuItem.image) {
-            return fetch(`https://foodish-api.com/api/`)
-                .then((response) => response.json())
-                .then((data) => data.image)
-                .catch((error) => {
-                    console.error("Error fetching image:", error);
-                    return null;
-                });
+            // return fetch(`https://foodish-api.com/api/`)
+            //     .then((response) => response.json())
+            //     .then((data) => data.image)
+            //     .catch((error) => {
+            //         console.error("Error fetching image:", error);
+            //         return null;
+            //     });
+            return Promise.resolve("/img/default-menu.svg");
         }
         return Promise.resolve(
             `${process.env.BACKEND_BASE_URL}/${menuItem.image}`

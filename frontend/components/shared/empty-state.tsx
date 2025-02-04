@@ -9,7 +9,7 @@ interface EmptyStateProps {
 export function EmptyState({
     title,
     description,
-    image = "/img/empty-menu.svg",
+    image = "/img/default-menu.svg",
 }: EmptyStateProps) {
     return (
         <div className="flex h-[400px] w-full flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in-50">

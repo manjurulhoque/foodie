@@ -32,7 +32,7 @@ export function MenuItemCard({ menuItem }: MenuItemCardProps) {
 
     const getImageUrl = (path: string) => {
         if (!path) {
-            return "/img/placeholder.svg";
+            return "/img/default-menu.svg";
         }
         return `${process.env.BACKEND_BASE_URL}/${path}`;
     };

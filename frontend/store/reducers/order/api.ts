@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Order } from "@/models/order.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
+import { Response } from "@/models/response.interface";
 
 export const OrderApi = createApi({
     reducerPath: "orderApi",
@@ -23,7 +24,15 @@ export const OrderApi = createApi({
             query: () => "orders",
             providesTags: ["Order"],
         }),
+        getUserOrders: builder.query<Response<Order[]>, void>({
+            query: () => "orders/user",
+            providesTags: ["Order"],
+        }),
     }),
 });
 
-export const { useCreateOrderMutation, useGetOrdersQuery } = OrderApi;
+export const {
+    useCreateOrderMutation,
+    useGetOrdersQuery,
+    useGetUserOrdersQuery,
+} = OrderApi;
