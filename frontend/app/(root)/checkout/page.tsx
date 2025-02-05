@@ -38,11 +38,11 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Invalid email address.",
     }),
-    phone: z.string().min(10, {
-        message: "Phone number must be at least 10 digits.",
+    phone: z.string({
+        message: "Phone number is required.",
     }),
-    delivery_address: z.string().min(10, {
-        message: "Delivery address must be at least 10 characters.",
+    delivery_address: z.string({
+        message: "Delivery address is required.",
     }),
     payment_method: z.string().min(1, {
         message: "Payment method is required.",
@@ -96,10 +96,15 @@ export default function CheckoutPage() {
     };
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const restaurantId = cart.data.items[0].menu_item.restaurant_id;
         try {
-            await createOrder(values).unwrap();
+            await createOrder({
+                ...values,
+                restaurant_id: restaurantId,
+                total_price: calculateTotal(),
+            }).unwrap();
             toast.success("Order placed successfully!");
-            router.push("/orders");
+            router.push("/dashboard/orders");
         } catch (error) {
             toast.error("Failed to place order");
         }
@@ -253,9 +258,10 @@ export default function CheckoutPage() {
                                     <span>${calculateTotal().toFixed(2)}</span>
                                 </div>
                                 <Button
-                                    type="submit"
+                                    type="button"
                                     className="w-full"
                                     disabled={isCreatingOrder}
+                                    onClick={form.handleSubmit(onSubmit)}
                                 >
                                     {isCreatingOrder ? (
                                         <Spinner className="h-4 w-4" />

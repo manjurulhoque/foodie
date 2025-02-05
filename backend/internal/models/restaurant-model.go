@@ -89,10 +89,10 @@ func (Order) BeforeUpdate(tx *gorm.DB) (err error) {
 
 type OrderItem struct {
 	BaseModel
-	OrderID    uint     `json:"order_id"`
+	OrderID    uint     `json:"order_id" gorm:"not null"`
 	Order      Order    `json:"-" gorm:"foreignKey:OrderID"`
-	MenuItemID uint     `json:"menu_item_id"`
-	MenuItem   MenuItem `json:"-" gorm:"foreignKey:MenuItemID"`
+	MenuItemID uint     `json:"menu_item_id" gorm:"not null"`
+	MenuItem   MenuItem `json:"menu_item" gorm:"foreignKey:MenuItemID"`
 	Quantity   int      `json:"quantity" binding:"required"`
 	Price      float64  `json:"price"`
 }

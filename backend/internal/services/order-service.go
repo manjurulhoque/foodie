@@ -18,17 +18,6 @@ func NewOrderService(repo repositories.OrderRepository, menuRepo repositories.Me
 }
 
 func (s *OrderService) CreateOrder(order *models.Order) error {
-	var totalAmount float64
-	for i := range order.Items {
-		menuItem, err := s.menuRepo.FindByID(order.Items[i].MenuItemID)
-		if err != nil {
-			return err
-		}
-		order.Items[i].Price = menuItem.Price
-		totalAmount += menuItem.Price * float64(order.Items[i].Quantity)
-	}
-	order.TotalAmount = totalAmount
-
 	return s.repo.Create(order)
 }
 

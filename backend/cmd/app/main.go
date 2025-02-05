@@ -35,6 +35,7 @@ func init() {
 	err = db.DB.AutoMigrate(
 		&models.User{}, &models.Address{},
 		&models.Restaurant{}, &models.MenuItem{}, &models.Order{},
+		&models.OrderItem{},
 		&models.Category{}, &models.Cuisine{},
 		&models.Cart{}, &models.CartItem{},
 	)

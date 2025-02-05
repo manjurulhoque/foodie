@@ -10,8 +10,13 @@ export const OrderApi = createApi({
     tagTypes: ["Order"],
     endpoints: (builder) => ({
         createOrder: builder.mutation<
-            { data: Order },
-            { delivery_address: string }
+            Response<Order>,
+            {
+                delivery_address: string;
+                restaurant_id: number;
+                payment_method: string;
+                total_price: number;
+            }
         >({
             query: (body) => ({
                 url: "orders",

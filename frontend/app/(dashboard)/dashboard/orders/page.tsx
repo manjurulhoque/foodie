@@ -86,6 +86,7 @@ export default function DashboardOrdersPage() {
                                     </CardDescription>
                                 </div>
                                 <div className="flex gap-2">
+                                    Order Status:
                                     <Badge
                                         className={getStatusColor(
                                             order.status as OrderStatus
@@ -93,6 +94,7 @@ export default function DashboardOrdersPage() {
                                     >
                                         {order.status}
                                     </Badge>
+                                    Payment Status:
                                     <Badge
                                         className={getPaymentStatusColor(
                                             order.payment_status as PaymentStatus
@@ -105,7 +107,7 @@ export default function DashboardOrdersPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {order.items.map((item) => (
+                                {order.items?.map((item) => (
                                     <div
                                         key={item.id}
                                         className="flex justify-between"
@@ -125,11 +127,11 @@ export default function DashboardOrdersPage() {
                                 <Separator />
                                 <div className="flex justify-between font-bold">
                                     <span>Total</span>
-                                    <span>${order.total.toFixed(2)}</span>
+                                    <span>${order.total_amount.toFixed(2)}</span>
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                    <p>Delivery Address:</p>
-                                    <p>{order.delivery_address}</p>
+                                    <p>Delivery Address: {order.delivery_address}</p>
+                                    <p>Payment Method: {order.payment_method}</p>
                                 </div>
                             </div>
                         </CardContent>

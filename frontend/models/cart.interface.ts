@@ -17,6 +17,7 @@ export interface CartItem {
         price: number;
         image: string;
         is_available: boolean;
+        restaurant_id: number;
     };
     quantity: number;
 }

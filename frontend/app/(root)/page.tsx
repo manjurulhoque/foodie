@@ -16,7 +16,6 @@ import { Cuisine } from "@/models/cuisine.interface";
 
 export default function Home() {
     const { data: popularCuisines, isLoading } = useGetPopularCuisinesQuery();
-    console.log(popularCuisines);
     const features = [
         {
             icon: <Truck className="h-12 w-12 text-primary" />,

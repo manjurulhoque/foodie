@@ -2,9 +2,10 @@ export interface Order {
     id: number;
     user_id: number;
     restaurant_id: number;
-    total: number;
+    total_amount: number;
     status: OrderStatus;
     payment_status: PaymentStatus;
+    payment_method: string;
     delivery_address: string;
     items: OrderItem[];
     created_at: string;
