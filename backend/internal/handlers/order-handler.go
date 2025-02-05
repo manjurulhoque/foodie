@@ -8,15 +8,18 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type OrderHandler struct {
 	service     services.OrderService
 	cartService services.CartService
+	db          *gorm.DB
 }
 
-func NewOrderHandler(service services.OrderService, cartService services.CartService) *OrderHandler {
-	return &OrderHandler{service: service, cartService: cartService}
+func NewOrderHandler(service services.OrderService, cartService services.CartService, db *gorm.DB) *OrderHandler {
+	return &OrderHandler{service: service, cartService: cartService, db: db}
 }
 
 func (h *OrderHandler) CreateOrder(c *gin.Context) {

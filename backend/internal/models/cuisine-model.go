@@ -13,6 +13,8 @@ type Cuisine struct {
 	Image       string `json:"image"`
 	IsActive    bool   `json:"is_active" gorm:"default:true"`
 	IsPopular   bool   `json:"is_popular" gorm:"default:false"`
+
+	Restaurants []*Restaurant `json:"restaurants" gorm:"many2many:restaurant_cuisines;"`
 }
 
 func (Cuisine) BeforeCreate(tx *gorm.DB) error {

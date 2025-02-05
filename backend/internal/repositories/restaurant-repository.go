@@ -19,7 +19,7 @@ func (r *RestaurantRepository) Create(restaurant map[string]interface{}) error {
 
 func (r *RestaurantRepository) FindByID(id uint) (*models.Restaurant, error) {
 	var restaurant models.Restaurant
-	err := r.db.Preload("MenuItems").First(&restaurant, id).Error
+	err := r.db.Preload("MenuItems").Preload("Cuisines").First(&restaurant, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -51,27 +51,25 @@ func (r *RestaurantRepository) FindRestaurantsByUserID(userID uint) ([]models.Re
 func (r *RestaurantRepository) FindAllPaginated(page, limit int, cuisineID uint, minRating float32) ([]models.Restaurant, int64, error) {
 	var restaurants []models.Restaurant
 	var total int64
-
 	offset := (page - 1) * limit
+
 	query := r.db.Model(&models.Restaurant{})
 
-	// Apply filters
 	if cuisineID > 0 {
-		query = query.Where("cuisine_id = ?", cuisineID)
+		query = query.Joins("JOIN restaurant_cuisines ON restaurants.id = restaurant_cuisines.restaurant_id").
+			Where("restaurant_cuisines.cuisine_id = ?", cuisineID)
 	}
+
 	if minRating > 0 {
 		query = query.Where("rating >= ?", minRating)
 	}
 
-	// Get total count with filters
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	// Get paginated data with filters
-	err := query.Preload("MenuItems", func(db *gorm.DB) *gorm.DB {
-		return db.Order("menu_items.created_at DESC")
-	}).Preload("Cuisine").
+	err := query.Preload("MenuItems").
+		Preload("Cuisines").
 		Offset(offset).
 		Limit(limit).
 		Find(&restaurants).Error

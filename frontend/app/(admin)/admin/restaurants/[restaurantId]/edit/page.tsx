@@ -31,7 +31,9 @@ import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useGetCuisinesQuery } from "@/store/reducers/cuisine/api";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import Select from "react-select";
+import Spinner from "@/components/shared/spinner";
+
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -49,11 +51,16 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    cuisine_id: z.number({
-        message: "Please select a cuisine.",
-    }),
+    cuisine_ids: z.array(z.number()).min(1, "Select at least one cuisine"),
     image: z
-        .union([z.instanceof(File), z.string(), z.null(), z.undefined()])
+        .union([
+            typeof window !== "undefined" && globalThis.File
+                ? z.instanceof(globalThis.File)
+                : z.never(), // Prevents SSR crash
+            z.string(),
+            z.null(),
+            z.undefined(),
+        ])
         .optional(),
 });
 
@@ -86,13 +93,14 @@ export default function EditRestaurantPage({
             address: "",
             phone: "",
             email: "",
-            cuisine_id: 0,
+            cuisine_ids: [],
         },
     });
 
     useEffect(() => {
         if (restaurantData?.data) {
             form.reset(restaurantData.data);
+            form.setValue("cuisine_ids", restaurantData.data.cuisines.map((cuisine) => cuisine.id));
         }
     }, [form, restaurantData]);
 
@@ -105,7 +113,7 @@ export default function EditRestaurantPage({
             formData.append("address", data.address);
             formData.append("phone", data.phone);
             formData.append("email", data.email);
-            formData.append("cuisine_id", data.cuisine_id.toString());
+            formData.append("cuisine_ids", JSON.stringify(data.cuisine_ids));
             if (data.image && data.image instanceof File) {
                 formData.append("image", data.image);
             }
@@ -139,7 +147,7 @@ export default function EditRestaurantPage({
     if (isLoadingRestaurant) {
         return (
             <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Spinner />
             </div>
         );
     }
@@ -194,34 +202,30 @@ export default function EditRestaurantPage({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="cuisine_id"
+                                    name="cuisine_ids"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Cuisine</FormLabel>
+                                            <FormLabel>Cuisines</FormLabel>
                                             <Select
-                                                disabled={isUpdating}
-                                                onValueChange={(value) => field.onChange(Number(value))}
-                                                value={field.value?.toString() || ""}
-                                                defaultValue={field.value?.toString() || ""}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a cuisine" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {cuisineData?.data?.map(
-                                                        (cuisine) => (
-                                                            <SelectItem
-                                                                key={cuisine.id}
-                                                                value={cuisine.id.toString()}
-                                                            >
-                                                                {cuisine.name}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                                isMulti
+                                                isLoading={isLoadingCuisine}
+                                                options={cuisineData?.data?.map((cuisine) => ({
+                                                    value: cuisine.id,
+                                                    label: cuisine.name,
+                                                })) ?? []}
+                                                value={(cuisineData?.data ?? [])
+                                                    .filter((cuisine) => field.value.includes(cuisine.id))
+                                                    .map((cuisine) => ({
+                                                        value: cuisine.id,
+                                                        label: cuisine.name,
+                                                    }))}
+                                                onChange={(newValue) => {
+                                                    const selectedValues = newValue ? 
+                                                        (newValue as { value: number; label: string }[]).map(item => item.value) 
+                                                        : [];
+                                                    field.onChange(selectedValues);
+                                                }}
+                                            />
                                             <FormMessage />
                                         </FormItem>
                                     )}

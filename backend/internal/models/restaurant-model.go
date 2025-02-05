@@ -17,10 +17,9 @@ type Restaurant struct {
 	Image       string  `json:"image"`
 	IsActive    bool    `json:"is_active" gorm:"default:true"`
 	IsOpen      bool    `json:"is_open" gorm:"default:true"`
-	UserID      uint    `json:"user_id,omitempty" gorm:"default:null;null"`
-	CuisineID   uint    `json:"cuisine_id,omitempty" gorm:"default:null;null"`
+	UserID      *uint    `json:"user_id" gorm:"default:null;null"`
 
-	Cuisine   *Cuisine   `json:"cuisine,omitempty" gorm:"foreignKey:CuisineID"`
+	Cuisines  []*Cuisine  `json:"cuisines" gorm:"many2many:restaurant_cuisines;"`
 	User      *User      `json:"user,omitempty" gorm:"foreignKey:UserID"`
 	MenuItems []MenuItem `json:"menu_items" gorm:"foreignKey:RestaurantID"`
 }

@@ -14,14 +14,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type MenuHandler struct {
 	service services.MenuService
+	db      *gorm.DB
 }
 
-func NewMenuHandler(service services.MenuService) *MenuHandler {
-	return &MenuHandler{service: service}
+func NewMenuHandler(service services.MenuService, db *gorm.DB) *MenuHandler {
+	return &MenuHandler{service: service, db: db}
 }
 
 // GetMenuItem menu handler

@@ -27,8 +27,9 @@ import {
 import { Loader2, ArrowLeft, ImageIcon } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useGetCuisinesQuery } from "@/store/reducers/cuisine/api";
+import Select from "react-select";
+import Spinner from "@/components/shared/spinner";
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -46,16 +47,17 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    cuisine_id: z.union([z.string(), z.number()]).transform((value) => {
-        if (typeof value === "string") {
-            const parsed = parseInt(value);
-            if (isNaN(parsed)) {
-                throw new Error("Invalid cuisine ID");
-            }
-            return parsed;
-        }
-        return value;
-    }),
+    // cuisine_id: z.union([z.string(), z.number()]).transform((value) => {
+    //     if (typeof value === "string") {
+    //         const parsed = parseInt(value);
+    //         if (isNaN(parsed)) {
+    //             throw new Error("Invalid cuisine ID");
+    //         }
+    //         return parsed;
+    //     }
+    //     return value;
+    // }),
+    cuisine_ids: z.array(z.number()).min(1, "Select at least one cuisine"),
     image: z
         .any()
         .refine((file) => !file || file instanceof File, "Must be a file")
@@ -77,7 +79,7 @@ export default function NewRestaurantPage() {
             address: "",
             phone: "",
             email: "",
-            cuisine_id: "",
+            cuisine_ids: [],
         },
     });
 
@@ -89,7 +91,7 @@ export default function NewRestaurantPage() {
             formData.append("address", data.address);
             formData.append("phone", data.phone);
             formData.append("email", data.email);
-            formData.append("cuisine_id", data.cuisine_id.toString());
+            formData.append("cuisine_ids", JSON.stringify(data.cuisine_ids));
             if (data.image instanceof File) {
                 formData.append("image", data.image);
             }
@@ -116,6 +118,14 @@ export default function NewRestaurantPage() {
             reader.readAsDataURL(file);
         }
     };
+
+    if (isLoadingCuisine) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <Spinner />
+            </div>
+        );
+    }
 
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
@@ -167,39 +177,30 @@ export default function NewRestaurantPage() {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="cuisine_id"
+                                    name="cuisine_ids"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Cuisine</FormLabel>
-                                            {isLoadingCuisine ? (
-                                                <div className="flex h-10 w-full items-center justify-center rounded-md border">
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                </div>
-                                            ) : (
-                                                <Select
-                                                    onValueChange={(value) => field.onChange(Number(value))}
-                                                    value={field.value?.toString() || ""}
-                                                defaultValue={field.value?.toString() || ""}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a cuisine" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {cuisineData?.data?.map(
-                                                        (cuisine) => (
-                                                            <SelectItem
-                                                                key={cuisine.id}
-                                                                value={cuisine.id.toString()}
-                                                            >
-                                                                {cuisine.name}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                    </SelectContent>
-                                                </Select>
-                                            )}
+                                            <FormLabel>Cuisines</FormLabel>
+                                            <Select
+                                                isMulti
+                                                isLoading={isLoadingCuisine}
+                                                options={cuisineData?.data?.map((cuisine) => ({
+                                                    value: cuisine.id,
+                                                    label: cuisine.name,
+                                                })) ?? []}
+                                                value={(cuisineData?.data ?? [])
+                                                    .filter((cuisine) => field.value.includes(cuisine.id))
+                                                    .map((cuisine) => ({
+                                                        value: cuisine.id,
+                                                        label: cuisine.name,
+                                                    }))}
+                                                onChange={(newValue: any) => {
+                                                    const selectedValues = newValue ? 
+                                                        (newValue as { value: number; label: string }[]).map(item => item.value) 
+                                                        : [];
+                                                    field.onChange(selectedValues);
+                                                }}
+                                            />
                                             <FormMessage />
                                         </FormItem>
                                     )}

@@ -7,14 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type CartHandler struct {
 	service services.CartService
+	db      *gorm.DB
 }
 
-func NewCartHandler(service services.CartService) *CartHandler {
-	return &CartHandler{service: service}
+func NewCartHandler(service services.CartService, db *gorm.DB) *CartHandler {
+	return &CartHandler{service: service, db: db}
 }
 
 // GetCart godoc

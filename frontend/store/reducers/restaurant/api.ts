@@ -18,7 +18,7 @@ export const RestaurantApi = createApi({
     tagTypes: ["Restaurant"],
     endpoints: (builder) => ({
         getRestaurants: builder.query<
-            { data: PaginatedResponse<Restaurant> },
+            Response<PaginatedResponse<Restaurant>>,
             GetRestaurantsParams | void
         >({
             query: (params) => ({
@@ -32,7 +32,7 @@ export const RestaurantApi = createApi({
             }),
             providesTags: ["Restaurant"],
         }),
-        getRestaurant: builder.query<{ data: Restaurant }, string>({
+        getRestaurant: builder.query<Response<Restaurant>, string>({
             query: (id) => `restaurants/${id}`,
             providesTags: ["Restaurant"],
         }),

@@ -78,10 +78,13 @@ export default function RestaurantPage({
                                 <Star className="h-3 w-3" />
                                 {restaurant?.data.rating}
                             </Badge>
-                            <Badge className="flex items-center gap-1 bg-white/20 text-white">
-                                <UtensilsCrossed className="h-3 w-3" />
-                                {restaurant?.data.cuisine?.name}
-                            </Badge>
+                            <div className="flex flex-wrap gap-2">
+                                {restaurant?.data.cuisines.map((cuisine) => (
+                                    <Badge key={cuisine.id} variant="secondary">
+                                        {cuisine.name}
+                                    </Badge>
+                                ))}
+                            </div>
                             <Badge className="flex items-center gap-1 bg-white/20 text-white">
                                 <Clock className="h-3 w-3" />
                                 30-45 min

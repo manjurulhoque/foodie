@@ -33,11 +33,16 @@ func init() {
 	}
 
 	err = db.DB.AutoMigrate(
-		&models.User{}, &models.Address{},
-		&models.Restaurant{}, &models.MenuItem{}, &models.Order{},
+		&models.User{},
+		&models.Address{},
+		&models.Restaurant{},
+		&models.MenuItem{},
+		&models.Order{},
 		&models.OrderItem{},
-		&models.Category{}, &models.Cuisine{},
-		&models.Cart{}, &models.CartItem{},
+		&models.Category{},
+		&models.Cuisine{},
+		&models.Cart{},
+		&models.CartItem{},
 	)
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())
@@ -84,13 +89,13 @@ func main() {
 	cartService := services.NewCartService(cartRepo)
 
 	// Initialize handlers with pointer receivers
-	userHandler := handlers.NewUserHandler(userService)
-	restaurantHandler := handlers.NewRestaurantHandler(restaurantService)
-	menuHandler := handlers.NewMenuHandler(menuService)
-	orderHandler := handlers.NewOrderHandler(orderService, cartService)
-	categoryHandler := handlers.NewCategoryHandler(categoryService)
-	cuisineHandler := handlers.NewCuisineHandler(cuisineService)
-	cartHandler := handlers.NewCartHandler(cartService)
+	userHandler := handlers.NewUserHandler(userService, db.DB)
+	restaurantHandler := handlers.NewRestaurantHandler(restaurantService, db.DB)
+	menuHandler := handlers.NewMenuHandler(menuService, db.DB)
+	orderHandler := handlers.NewOrderHandler(orderService, cartService, db.DB)
+	categoryHandler := handlers.NewCategoryHandler(categoryService, db.DB)
+	cuisineHandler := handlers.NewCuisineHandler(cuisineService, db.DB)
+	cartHandler := handlers.NewCartHandler(cartService, db.DB)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{

@@ -6,14 +6,17 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	"net/http"
+
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
 	userService services.UserService
+	db          *gorm.DB
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
-	return &UserHandler{userService: userService}
+func NewUserHandler(userService services.UserService, db *gorm.DB) *UserHandler {
+	return &UserHandler{userService: userService, db: db}
 }
 
 // Register user handler

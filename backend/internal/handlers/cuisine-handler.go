@@ -8,14 +8,17 @@ import (
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type CuisineHandler struct {
 	service services.CuisineService
+	db      *gorm.DB
 }
 
-func NewCuisineHandler(service services.CuisineService) *CuisineHandler {
-	return &CuisineHandler{service: service}
+func NewCuisineHandler(service services.CuisineService, db *gorm.DB) *CuisineHandler {
+	return &CuisineHandler{service: service, db: db}
 }
 
 // CreateCuisine godoc

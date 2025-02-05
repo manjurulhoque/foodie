@@ -17,18 +17,18 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   1, // Italian
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Dragon Palace",
 		Description: "Traditional Chinese dishes with modern flair",
-		Address:     "456 Oak Ave, Chinatown", 
+		Address:     "456 Oak Ave, Chinatown",
 		Phone:       "+1234567891",
 		Email:       "info@dragonpalace.com",
 		IsActive:    true,
 		Rating:      4.3,
 		Image:       "",
-		CuisineID:   2, // Chinese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Sushi Zen",
@@ -39,7 +39,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.7,
 		Image:       "",
-		CuisineID:   3, // Japanese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Taj Mahal",
@@ -50,7 +50,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   4, // Indian
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "El Mariachi",
@@ -61,7 +61,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   5, // Mexican
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Thai Orchid",
@@ -72,7 +72,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   6, // Thai
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Le Bistro",
@@ -83,7 +83,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.8,
 		Image:       "",
-		CuisineID:   7, // French
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Olive Garden",
@@ -94,7 +94,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   8, // Mediterranean
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Seoul Kitchen",
@@ -105,7 +105,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   9, // Korean
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Saigon Pho",
@@ -116,7 +116,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   10, // Vietnamese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Athens Taverna",
@@ -127,7 +127,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   11, // Greek
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Tapas Bar",
@@ -138,7 +138,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.7,
 		Image:       "",
-		CuisineID:   12, // Spanish
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Falafel House",
@@ -149,7 +149,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   13, // Middle Eastern
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Burger Joint",
@@ -160,7 +160,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.3,
 		Image:       "",
-		CuisineID:   14, // American
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Churrascaria",
@@ -171,7 +171,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.8,
 		Image:       "",
-		CuisineID:   15, // Brazilian
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Istanbul Kebab",
@@ -182,7 +182,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   16, // Turkish
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Beirut Nights",
@@ -193,7 +193,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   17, // Lebanese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Casablanca",
@@ -204,7 +204,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.7,
 		Image:       "",
-		CuisineID:   18, // Moroccan
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Pasta Paradise",
@@ -215,7 +215,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   1, // Italian
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Dim Sum House",
@@ -226,7 +226,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   2, // Chinese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Ramen Bar",
@@ -237,7 +237,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   3, // Japanese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Curry House",
@@ -248,7 +248,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   4, // Indian
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Taco Loco",
@@ -259,7 +259,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.3,
 		Image:       "",
-		CuisineID:   5, // Mexican
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Bangkok Street",
@@ -270,7 +270,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   6, // Thai
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Paris Cafe",
@@ -281,7 +281,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.7,
 		Image:       "",
-		CuisineID:   7, // French
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Greek Islands",
@@ -292,7 +292,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   11, // Greek
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Seoul BBQ",
@@ -303,7 +303,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   9, // Korean
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Hanoi Kitchen",
@@ -314,7 +314,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.4,
 		Image:       "",
-		CuisineID:   10, // Vietnamese
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Mediterranean Grill",
@@ -325,7 +325,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.5,
 		Image:       "",
-		CuisineID:   8, // Mediterranean
+		Cuisines:    []*models.Cuisine{},
 	},
 	{
 		Name:        "Spice Route",
@@ -336,7 +336,7 @@ var restaurants = []models.Restaurant{
 		IsActive:    true,
 		Rating:      4.6,
 		Image:       "",
-		CuisineID:   4, // Indian
+		Cuisines:    []*models.Cuisine{},
 	},
 }
 
@@ -705,19 +705,20 @@ func SeedRestaurants(db *gorm.DB) error {
 		return err
 	}
 
+	// First get all cuisines
+	var cuisines []models.Cuisine
+	if err := db.Find(&cuisines).Error; err != nil {
+		return err
+	}
+
 	// Create restaurants
 	for _, restaurant := range restaurants {
-		seedRestaurant := models.Restaurant{
-			Name:        restaurant.Name,
-            Description: restaurant.Description,
-            Address:     restaurant.Address,
-            Phone:       restaurant.Phone,
-            Email:       restaurant.Email,
-            IsActive:    restaurant.IsActive,
-            Rating:      restaurant.Rating,
-            Image:       restaurant.Image,
+		cuisinePointers := make([]*models.Cuisine, len(cuisines))
+		for i := range cuisines {
+			cuisinePointers[i] = &cuisines[i]
 		}
-		if err := db.Create(&seedRestaurant).Error; err != nil {
+		restaurant.Cuisines = cuisinePointers
+		if err := db.Create(&restaurant).Error; err != nil {
 			return err
 		}
 	}

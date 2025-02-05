@@ -9,6 +9,7 @@ import { DataTable } from "@/components/ui/data-table";
 
 export default function RestaurantsPage() {
     const { data, isLoading } = useGetRestaurantsQuery();
+    const restaurants = data?.data?.data || [];
     const router = useRouter();
 
     return (
@@ -24,7 +25,7 @@ export default function RestaurantsPage() {
             </div>
             <DataTable
                 columns={columns}
-                data={data?.data || []}
+                data={restaurants}
                 isLoading={isLoading}
             />
         </div>

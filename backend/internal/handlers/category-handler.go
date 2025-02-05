@@ -3,17 +3,21 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type CategoryHandler struct {
 	service services.CategoryService
+	db      *gorm.DB
 }
 
-func NewCategoryHandler(service services.CategoryService) *CategoryHandler {
-	return &CategoryHandler{service: service}
+func NewCategoryHandler(service services.CategoryService, db *gorm.DB) *CategoryHandler {
+	return &CategoryHandler{service: service, db: db}
 }
 
 func (h *CategoryHandler) CreateCategory(c *gin.Context) {
