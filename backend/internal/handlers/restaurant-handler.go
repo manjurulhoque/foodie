@@ -485,3 +485,83 @@ func (h *RestaurantHandler) GetRestaurantsByCuisine(c *gin.Context) {
 		Data:    restaurants,
 	})
 }
+
+// UpdateWorkingHours restaurant handler
+// @Summary Update working hours for a restaurant
+// @Description Update working hours for a restaurant
+// @Tags restaurants
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Restaurant
+// @Router /restaurants/:id/working-hours [put]
+func (h *RestaurantHandler) UpdateWorkingHours(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	var workingHours []models.WorkingHour
+	if err := c.ShouldBindJSON(&workingHours); err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request body",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	if err := h.service.UpdateWorkingHours(uint(id), workingHours); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to update working hours",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success: true,
+		Message: "Working hours updated successfully",
+	})
+}
+
+// GetWorkingHours restaurant handler
+// @Summary Get working hours for a restaurant
+// @Description Get working hours for a restaurant
+// @Tags restaurants
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.WorkingHour
+// @Router /restaurants/:id/working-hours [get]
+func (h *RestaurantHandler) GetWorkingHours(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	workingHours, err := h.service.GetWorkingHours(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get working hours",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.WorkingHour]{
+		Success: true,
+		Message: "Working hours retrieved successfully",
+		Data:    workingHours,
+	})
+}

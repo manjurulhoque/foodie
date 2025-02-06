@@ -43,6 +43,7 @@ func init() {
 		&models.Cuisine{},
 		&models.Cart{},
 		&models.CartItem{},
+		&models.WorkingHour{},
 	)
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())

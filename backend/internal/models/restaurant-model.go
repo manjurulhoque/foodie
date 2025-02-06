@@ -17,11 +17,12 @@ type Restaurant struct {
 	Image       string  `json:"image"`
 	IsActive    bool    `json:"is_active" gorm:"default:true"`
 	IsOpen      bool    `json:"is_open" gorm:"default:true"`
-	UserID      *uint    `json:"user_id" gorm:"default:null;null"`
+	UserID      *uint   `json:"user_id" gorm:"default:null;null"`
 
-	Cuisines  []*Cuisine  `json:"cuisines" gorm:"many2many:restaurant_cuisines;"`
-	User      *User      `json:"user,omitempty" gorm:"foreignKey:UserID"`
-	MenuItems []MenuItem `json:"menu_items" gorm:"foreignKey:RestaurantID"`
+	Cuisines     []*Cuisine     `json:"cuisines" gorm:"many2many:restaurant_cuisines;"`
+	User         *User          `json:"user,omitempty" gorm:"foreignKey:UserID"`
+	MenuItems    []MenuItem     `json:"menu_items" gorm:"foreignKey:RestaurantID"`
+	WorkingHours []*WorkingHour `json:"working_hours" gorm:"foreignKey:RestaurantID"`
 }
 
 func (Restaurant) BeforeCreate(tx *gorm.DB) (err error) {
@@ -103,6 +104,31 @@ func (OrderItem) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (OrderItem) BeforeUpdate(tx *gorm.DB) (err error) {
+	tx.Statement.SetColumn("UpdatedAt", time.Now())
+	return nil
+}
+
+type WorkingHour struct {
+	BaseModel
+	RestaurantID uint       `json:"restaurant_id" gorm:"not null"`
+	Restaurant   Restaurant `json:"-" gorm:"foreignKey:RestaurantID"`
+	DayOfWeek    int        `json:"day_of_week" gorm:"not null"` // 0 = Sunday, 6 = Saturday
+	OpenTime     string     `json:"open_time" gorm:"not null"`   // Format: "HH:MM"
+	CloseTime    string     `json:"close_time" gorm:"not null"`  // Format: "HH:MM"
+	IsClosed     bool       `json:"is_closed" gorm:"default:false"`
+}
+
+func (WorkingHour) TableName() string {
+	return "working_hours"
+}
+
+func (WorkingHour) BeforeCreate(tx *gorm.DB) (err error) {
+	tx.Statement.SetColumn("CreatedAt", time.Now())
+	tx.Statement.SetColumn("UpdatedAt", time.Now())
+	return nil
+}
+
+func (WorkingHour) BeforeUpdate(tx *gorm.DB) (err error) {
 	tx.Statement.SetColumn("UpdatedAt", time.Now())
 	return nil
 }

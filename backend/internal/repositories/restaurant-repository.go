@@ -19,7 +19,7 @@ func (r *RestaurantRepository) Create(restaurant map[string]interface{}) error {
 
 func (r *RestaurantRepository) FindByID(id uint) (*models.Restaurant, error) {
 	var restaurant models.Restaurant
-	err := r.db.Preload("MenuItems").Preload("Cuisines").First(&restaurant, id).Error
+	err := r.db.Preload("MenuItems").Preload("Cuisines").Preload("WorkingHours").First(&restaurant, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -81,4 +81,27 @@ func (r *RestaurantRepository) FindRestaurantsByCuisineID(cuisineID uint) ([]mod
 	var restaurants []models.Restaurant
 	err := r.db.Where("cuisine_id = ?", cuisineID).Find(&restaurants).Error
 	return restaurants, err
+}
+
+func (r *RestaurantRepository) UpdateWorkingHours(restaurantID uint, workingHours []models.WorkingHour) error {
+	// First delete existing working hours
+	if err := r.db.Where("restaurant_id = ?", restaurantID).Delete(&models.WorkingHour{}).Error; err != nil {
+		return err
+	}
+
+	// Then create new working hours
+	for _, wh := range workingHours {
+		wh.RestaurantID = restaurantID
+		if err := r.db.Create(&wh).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *RestaurantRepository) GetWorkingHours(restaurantID uint) ([]models.WorkingHour, error) {
+	var workingHours []models.WorkingHour
+	err := r.db.Where("restaurant_id = ?", restaurantID).Order("day_of_week").Find(&workingHours).Error
+	return workingHours, err
 }
