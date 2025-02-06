@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import Spinner from "@/components/shared/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { MenuItem } from "@/models/restaurant.interface";
 
 export default function CartPage() {
     const { data: cart, isLoading } = useGetCartQuery();
@@ -35,6 +36,13 @@ export default function CartPage() {
             </div>
         );
     }
+
+    const getImageUrl = (menuItem: MenuItem) => {
+        if (!menuItem.image) {
+            return "/img/placeholder.svg";
+        }
+        return `${process.env.BACKEND_BASE_URL}/${menuItem.image}`;
+    };
 
     if (!cart?.data?.items?.length) {
         return (
@@ -109,10 +117,9 @@ export default function CartPage() {
                                 <div className="flex gap-4">
                                     <div className="relative h-24 w-24 rounded-md overflow-hidden">
                                         <Image
-                                            src={
-                                                item.menu_item.image ||
-                                                "/img/placeholder.svg"
-                                            }
+                                            src={getImageUrl(
+                                                item.menu_item
+                                            )}
                                             alt={item.menu_item.name}
                                             fill
                                             className="object-cover"
