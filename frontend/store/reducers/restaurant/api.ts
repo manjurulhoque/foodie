@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Restaurant } from "@/models/restaurant.interface";
+import { Restaurant, WorkingHour } from "@/models/restaurant.interface";
 import DynamicBaseQuery from "@/store/dynamic-base-query";
 import { PaginatedResponse } from "@/lib/pagination";
 import { Response } from "@/models/response.interface";
@@ -60,7 +60,7 @@ export const RestaurantApi = createApi({
             }),
             invalidatesTags: ["Restaurant"],
         }),
-        deleteRestaurant: builder.mutation<void, string>({
+        deleteRestaurant: builder.mutation<void, number>({
             query: (id) => ({
                 url: `restaurants/${id}`,
                 method: "DELETE",
@@ -70,6 +70,20 @@ export const RestaurantApi = createApi({
         getRestaurantsByCuisine: builder.query<Response<Restaurant[]>, string>({
             query: (cuisineId) => `restaurants/cuisine/${cuisineId}`,
             providesTags: ["Restaurant"],
+        }),
+        updateWorkingHours: builder.mutation<
+            void,
+            {
+                id: number;
+                workingHours: Partial<WorkingHour>[];
+            }
+        >({
+            query: ({ id, workingHours }) => ({
+                url: `restaurants/${id}/working-hours`,
+                method: "PUT",
+                body: workingHours,
+            }),
+            invalidatesTags: ["Restaurant"],
         }),
     }),
 });
@@ -81,4 +95,5 @@ export const {
     useUpdateRestaurantMutation,
     useDeleteRestaurantMutation,
     useGetRestaurantsByCuisineQuery,
+    useUpdateWorkingHoursMutation,
 } = RestaurantApi;

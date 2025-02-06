@@ -147,6 +147,11 @@ func main() {
 			restaurants.PUT("/:id", authMiddleware, restaurantHandler.UpdateRestaurant)
 			restaurants.DELETE("/:id", authMiddleware, restaurantHandler.DeleteRestaurant)
 
+			restaurantWorkingHours := restaurants.Group("/:id/working-hours")
+			{
+				restaurantWorkingHours.PUT("", authMiddleware, restaurantHandler.UpdateWorkingHours)
+			}
+
 			restaurantMenu := restaurants.Group("/:id/menu")
 			{
 				restaurantMenu.GET("", menuHandler.GetRestaurantMenuItems)

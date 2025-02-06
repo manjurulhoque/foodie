@@ -10,7 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Edit, MoreHorizontal, Trash, Utensils } from "lucide-react";
+import { Clock, Edit, MoreHorizontal, Trash, Utensils } from "lucide-react";
 import { Restaurant } from "@/models/restaurant.interface";
 import { useDeleteRestaurantMutation } from "@/store/reducers/restaurant/api";
 
@@ -41,6 +41,15 @@ export function CellAction({ data }: CellActionProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                        router.push(`/admin/restaurants/${data.id}/working-hours`)
+                    }
+                >
+                    <Clock className="mr-2 h-4 w-4" />
+                    Working Hours
+                </DropdownMenuItem>
                 <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() =>

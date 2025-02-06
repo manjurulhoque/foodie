@@ -16,6 +16,7 @@ export interface Restaurant {
     menu_items: MenuItem[];
     created_at: string;
     updated_at: string;
+    working_hours: WorkingHour[];
 }
 
 export interface MenuItem {
@@ -27,6 +28,17 @@ export interface MenuItem {
     category: string;
     is_available: boolean;
     restaurant_id: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface WorkingHour {
+    id: number;
+    restaurant_id: number;
+    day_of_week: number;
+    open_time: string;
+    close_time: string;
+    is_closed: boolean;
     created_at: string;
     updated_at: string;
 }
