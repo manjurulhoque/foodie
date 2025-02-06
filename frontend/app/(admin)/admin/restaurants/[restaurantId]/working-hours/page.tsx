@@ -30,16 +30,7 @@ import {
 import { toast } from "react-hot-toast";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-
-const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-];
+import { DaysOfWeek } from "@/lib/days";
 
 const workingHoursSchema = z.object({
     workingHours: z.array(
@@ -69,7 +60,7 @@ export default function WorkingHoursPage({
     const form = useForm<WorkingHoursFormValues>({
         resolver: zodResolver(workingHoursSchema),
         defaultValues: {
-            workingHours: daysOfWeek.map((_, index) => ({
+            workingHours: DaysOfWeek.map((_, index) => ({
                 dayOfWeek: index,
                 openTime: "09:00",
                 closeTime: "17:00",
@@ -145,7 +136,7 @@ export default function WorkingHoursPage({
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="space-y-4">
-                                {daysOfWeek.map((day, index) => (
+                                {DaysOfWeek.map((day, index) => (
                                     <div key={day}>
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="font-medium">
@@ -218,7 +209,7 @@ export default function WorkingHoursPage({
                                                 )}
                                             />
                                         </div>
-                                        {index < daysOfWeek.length - 1 && (
+                                        {index < DaysOfWeek.length - 1 && (
                                             <Separator className="my-4" />
                                         )}
                                     </div>

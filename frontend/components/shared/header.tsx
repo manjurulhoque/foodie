@@ -51,7 +51,9 @@ export const Header = () => {
         {
             href: "/restaurants",
             label: "Restaurants",
-            active: pathname === "/restaurants" || pathname.includes("/restaurants"),
+            active:
+                pathname === "/restaurants" ||
+                pathname.includes("/restaurants"),
         },
         {
             href: "/about",
@@ -71,7 +73,11 @@ export const Header = () => {
                         href="/"
                         className="uppercase flex gap-x-2 font-bold text-neutral-700 text-md lg:text-2xl md:text-xl select-none"
                     >
-                        <img src="/img/logo.svg" alt="Foodie" className="w-40 h-20" />
+                        <img
+                            src="/img/logo.svg"
+                            alt="Foodie"
+                            className="w-40 h-20"
+                        />
                     </Link>
 
                     <div className="ml-auto flex items-center">
@@ -128,7 +134,9 @@ export const Header = () => {
                                                 src={user?.image}
                                                 alt={user?.name}
                                             />
-                                            <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                                            <AvatarFallback>
+                                                {user?.name?.charAt(0)}
+                                            </AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -159,19 +167,17 @@ export const Header = () => {
                                             <span>Admin dashboard</span>
                                         </DropdownMenuItem>
                                     )}
-                                    {
-                                        isCustomer && (
-                                            <DropdownMenuItem
-                                                className="cursor-pointer"
-                                                onClick={() => {
-                                                    router.push("/dashboard");
-                                                }}
-                                            >
-                                                <Shield className="mr-2 h-4 w-4" />
-                                                <span>Customer dashboard</span>
-                                            </DropdownMenuItem>
-                                        )
-                                    }
+                                    {isCustomer && (
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                router.push("/dashboard");
+                                            }}
+                                        >
+                                            <Shield className="mr-2 h-4 w-4" />
+                                            <span>Customer dashboard</span>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem
                                         className="cursor-pointer"
                                         onClick={() => {

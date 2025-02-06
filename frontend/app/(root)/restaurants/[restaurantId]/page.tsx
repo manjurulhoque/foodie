@@ -9,23 +9,22 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Star, Clock, UtensilsCrossed } from "lucide-react";
+import { MapPin, Star, Clock, UtensilsCrossed, Info } from "lucide-react";
 import { RestaurantDetailSkeleton } from "@/components/skeleton/restaurant-detail.skeleton";
-import { MenuItem } from "@/models/restaurant.interface";
+import { MenuItem, Restaurant } from "@/models/restaurant.interface";
 import { MenuItemCard } from "@/components/menu/menu-item-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MenuItemSkeleton from "@/components/skeleton/menu-item.skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
+import RestaurantInfoDialog from "@/components/dialog/restaurant-info-dialog";
 
 export default function RestaurantPage({
     params,
 }: {
     params: { restaurantId: string };
 }) {
-    const { data: restaurant, isLoading: isRestaurantLoading } =
-        useGetRestaurantQuery(params.restaurantId);
-    const { data: menuItems, isLoading: isMenuLoading } =
-        useGetRestaurantMenuItemsQuery(parseInt(params.restaurantId));
+    const { data: restaurant, isLoading: isRestaurantLoading } = useGetRestaurantQuery(params.restaurantId);
+    const { data: menuItems, isLoading: isMenuLoading } = useGetRestaurantMenuItemsQuery(parseInt(params.restaurantId));
     const [activeCategory, setActiveCategory] = useState<string>("all");
 
     if (isRestaurantLoading) {
@@ -69,26 +68,36 @@ export default function RestaurantPage({
                     className="object-cover brightness-50"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
+                    <div className="text-center text-white w-full max-w-4xl px-4">
                         <h1 className="text-4xl font-bold">
                             {restaurant?.data.name}
                         </h1>
-                        <div className="mt-4 flex items-center justify-center gap-4">
-                            <Badge className="flex items-center gap-1 bg-white/20 text-white">
+                        <div className="mt-4 flex items-center justify-center gap-4 flex-nowrap overflow-x-auto">
+                            <Badge className="flex items-center gap-1 bg-white/20 text-white shrink-0">
                                 <Star className="h-3 w-3" />
                                 {restaurant?.data.rating}
                             </Badge>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex gap-2 shrink-0">
                                 {restaurant?.data.cuisines.map((cuisine) => (
                                     <Badge key={cuisine.id} variant="secondary">
                                         {cuisine.name}
                                     </Badge>
                                 ))}
                             </div>
-                            <Badge className="flex items-center gap-1 bg-white/20 text-white">
+                            <Badge className="flex items-center gap-1 bg-white/20 text-white shrink-0">
                                 <Clock className="h-3 w-3" />
                                 30-45 min
                             </Badge>
+                            {restaurant?.data && (
+                                <div className="shrink-0">
+                                    <RestaurantInfoDialog
+                                        restaurant={restaurant.data}
+                                        workingHours={
+                                            restaurant.data.working_hours || []
+                                        }
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="mt-2 flex items-center justify-center gap-2 text-sm">
                             <MapPin className="h-4 w-4" />
