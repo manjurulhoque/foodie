@@ -27,13 +27,16 @@ interface Props {
 
 const AdminLayout: React.FC<Props> = async ({ children }) => {
     const session = await getServerSession(authOptions);
-    const { user } = session as Session;
-    if (!user) {
-        return redirect("/login");
+
+    if (!session) {
+        return redirect("/signin");
     }
-    if (user.role !== "admin") {
+
+    const { user } = session as Session;
+    if (!user || user.role !== "admin") {
         return redirect("/");
     }
+
     const defaultOpen = Cookies.get("sidebar:state") !== "false";
     return (
         <html lang="en" suppressHydrationWarning>
