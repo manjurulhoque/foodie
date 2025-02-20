@@ -7,6 +7,7 @@ import { CategoryApi } from "@/store/reducers/category/api";
 import { CuisineApi } from "@/store/reducers/cuisine/api";
 import { CartApi } from "@/store/reducers/cart/api";
 import { OrderApi } from "@/store/reducers/order/api";
+import { CustomerApi } from "@/store/reducers/customer/api";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store: any = configureStore({
@@ -18,6 +19,7 @@ export const store: any = configureStore({
         [CuisineApi.reducerPath]: CuisineApi.reducer,
         [CartApi.reducerPath]: CartApi.reducer,
         [OrderApi.reducerPath]: OrderApi.reducer,
+        [CustomerApi.reducerPath]: CustomerApi.reducer,
     },
     devTools: true, // TODO: remove this in production
     middleware: (getDefaultMiddleware: any) =>
@@ -28,7 +30,8 @@ export const store: any = configureStore({
             CategoryApi.middleware,
             CuisineApi.middleware,
             CartApi.middleware,
-            OrderApi.middleware
+            OrderApi.middleware,
+            CustomerApi.middleware
         ),
 });
 

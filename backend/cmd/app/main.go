@@ -79,6 +79,7 @@ func main() {
 	categoryRepo := repositories.NewCategoryRepository(db.DB)
 	cuisineRepo := repositories.NewCuisineRepository(db.DB)
 	cartRepo := repositories.NewCartRepository(db.DB)
+	customerRepo := repositories.NewCustomerRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
@@ -88,6 +89,7 @@ func main() {
 	categoryService := services.NewCategoryService(categoryRepo)
 	cuisineService := services.NewCuisineService(cuisineRepo)
 	cartService := services.NewCartService(cartRepo)
+	customerService := services.NewCustomerService(customerRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService, db.DB)
@@ -97,6 +99,7 @@ func main() {
 	categoryHandler := handlers.NewCategoryHandler(categoryService, db.DB)
 	cuisineHandler := handlers.NewCuisineHandler(cuisineService, db.DB)
 	cartHandler := handlers.NewCartHandler(cartService, db.DB)
+	customerHandler := handlers.NewCustomerHandler(customerService, db.DB)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -201,6 +204,12 @@ func main() {
 		{
 			orders.POST("", authMiddleware, orderHandler.CreateOrder)
 			orders.GET("/user", authMiddleware, orderHandler.GetUserOrders)
+		}
+
+		// Customer routes
+		customers := api.Group("/customers")
+		{
+			customers.GET("", customerHandler.GetAllCustomers)
 		}
 	}
 
