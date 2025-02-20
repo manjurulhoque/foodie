@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { setupListeners } from "@reduxjs/toolkit/query";
 import { UserApi } from "@/store/reducers/user/api";
 import { RestaurantApi } from "@/store/reducers/restaurant/api";
 import { MenuApi } from "@/store/reducers/menu/api";
@@ -8,6 +7,7 @@ import { CuisineApi } from "@/store/reducers/cuisine/api";
 import { CartApi } from "@/store/reducers/cart/api";
 import { OrderApi } from "@/store/reducers/order/api";
 import { CustomerApi } from "@/store/reducers/customer/api";
+import { AddressApi } from "@/store/reducers/address/api";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store: any = configureStore({
@@ -20,6 +20,7 @@ export const store: any = configureStore({
         [CartApi.reducerPath]: CartApi.reducer,
         [OrderApi.reducerPath]: OrderApi.reducer,
         [CustomerApi.reducerPath]: CustomerApi.reducer,
+        [AddressApi.reducerPath]: AddressApi.reducer,
     },
     devTools: true, // TODO: remove this in production
     middleware: (getDefaultMiddleware: any) =>
@@ -31,7 +32,8 @@ export const store: any = configureStore({
             CuisineApi.middleware,
             CartApi.middleware,
             OrderApi.middleware,
-            CustomerApi.middleware
+            CustomerApi.middleware,
+            AddressApi.middleware
         ),
 });
 

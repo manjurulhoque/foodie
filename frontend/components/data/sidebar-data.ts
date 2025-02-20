@@ -12,6 +12,7 @@ import {
     Kanban,
     UtensilsCrossed,
     ShoppingCart,
+    MapPin,
 } from "lucide-react";
 import { type SidebarData } from "@/components/layout/types";
 
@@ -116,6 +117,11 @@ export const dashboardSidebarData: SidebarData = {
                     title: "Orders",
                     url: "/dashboard/orders",
                     icon: ShoppingCart,
+                },
+                {
+                    title: "Addresses",
+                    url: "/dashboard/addresses",
+                    icon: MapPin,
                 },
             ],
         },

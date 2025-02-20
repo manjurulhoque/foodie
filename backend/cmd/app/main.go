@@ -80,6 +80,7 @@ func main() {
 	cuisineRepo := repositories.NewCuisineRepository(db.DB)
 	cartRepo := repositories.NewCartRepository(db.DB)
 	customerRepo := repositories.NewCustomerRepository(db.DB)
+	addressRepo := repositories.NewAddressRepository(db.DB)
 
 	// Initialize services with pointer receivers
 	userService := services.NewUserService(userRepo)
@@ -90,6 +91,7 @@ func main() {
 	cuisineService := services.NewCuisineService(cuisineRepo)
 	cartService := services.NewCartService(cartRepo)
 	customerService := services.NewCustomerService(customerRepo)
+	addressService := services.NewAddressService(addressRepo)
 
 	// Initialize handlers with pointer receivers
 	userHandler := handlers.NewUserHandler(userService, db.DB)
@@ -100,6 +102,7 @@ func main() {
 	cuisineHandler := handlers.NewCuisineHandler(cuisineService, db.DB)
 	cartHandler := handlers.NewCartHandler(cartService, db.DB)
 	customerHandler := handlers.NewCustomerHandler(customerService, db.DB)
+	addressHandler := handlers.NewAddressHandler(addressService)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -216,6 +219,16 @@ func main() {
 		users := api.Group("/users")
 		{
 			users.GET("", authMiddleware, adminMiddleware, userHandler.GetAllUsers)
+		}
+
+		// Address routes
+		addresses := api.Group("/addresses")
+		{
+			addresses.Use(authMiddleware)
+			addresses.GET("", addressHandler.GetUserAddresses)
+			addresses.POST("", addressHandler.CreateAddress)
+			addresses.PUT("/:id", addressHandler.UpdateAddress)
+			addresses.DELETE("/:id", addressHandler.DeleteAddress)
 		}
 	}
 

@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 const (
@@ -62,4 +64,15 @@ type Address struct {
 	State      string `json:"state" gorm:"not null"`
 	PostalCode string `json:"postal_code" gorm:"not null"`
 	IsDefault  bool   `json:"is_default" gorm:"default:false"`
+}
+
+func (Address) BeforeCreate(tx *gorm.DB) error {
+	tx.Statement.SetColumn("CreatedAt", time.Now())
+	tx.Statement.SetColumn("UpdatedAt", time.Now())
+	return nil
+}
+
+func (Address) BeforeUpdate(tx *gorm.DB) error {
+	tx.Statement.SetColumn("UpdatedAt", time.Now())
+	return nil
 }
