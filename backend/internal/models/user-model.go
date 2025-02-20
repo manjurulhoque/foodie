@@ -38,12 +38,14 @@ func (u *User) TableName() string {
 }
 
 type PublicUser struct {
-	Id    uint   `json:"id"`
-	Name  string `json:"name"`
-	Image string `json:"image"`
-	Email string `json:"email"`
-	Phone string `json:"phone"`
-	Role  string `json:"role"`
+	Id        uint      `json:"id"`
+	Name      string    `json:"name"`
+	Image     string    `json:"image"`
+	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
+	Role      string    `json:"role"`
+	CreatedAt time.Time `json:"created_at"`
+	IsActive  bool      `json:"is_active"`
 }
 
 func (u *PublicUser) TableName() string {

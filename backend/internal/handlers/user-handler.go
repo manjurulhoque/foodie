@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/services"
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
-	"net/http"
 
 	"gorm.io/gorm"
 )
@@ -39,9 +40,9 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -56,34 +57,34 @@ func (h *UserHandler) Register(c *gin.Context) {
 			}
 		}
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     newErrs,
+			Success: false,
+			Message: "Invalid request",
+			Errors:  newErrs,
 		})
 		return
 	}
 
 	if input.Password1 != input.Password2 {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Passwords do not match",
-			Errors:     []utils.ErrorDetail{{Message: "Passwords do not match"}},
+			Success: false,
+			Message: "Passwords do not match",
+			Errors:  []utils.ErrorDetail{{Message: "Passwords do not match"}},
 		})
 		return
 	}
 
 	if err := h.userService.RegisterUser(input.Name, input.Email, input.Password1, input.Phone); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to register user",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Failed to register user",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, utils.GenericResponse[any]{
-		Success:    true,
-		Message:    "User registered successfully",
+		Success: true,
+		Message: "User registered successfully",
 	})
 }
 
@@ -104,9 +105,9 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid request",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid request",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
@@ -114,16 +115,16 @@ func (h *UserHandler) Login(c *gin.Context) {
 	accessToken, refreshToken, err := h.userService.LoginUser(input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Invalid credentials",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Invalid credentials",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, utils.GenericResponse[any]{
-		Success:    true,
-		Message:    "Login successful",
+		Success: true,
+		Message: "Login successful",
 		Data: gin.H{
 			"access":  accessToken,
 			"refresh": refreshToken,
@@ -144,16 +145,42 @@ func (h *UserHandler) Me(c *gin.Context) {
 	user, err := h.userService.GetUserByEmail(userEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
-			Success:    false,
-			Message:    "Failed to get user",
-			Errors:     []utils.ErrorDetail{{Message: err.Error()}},
+			Success: false,
+			Message: "Failed to get user",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, utils.GenericResponse[models.PublicUser]{
-		Success:    true,
-		Message:    "User fetched successfully",
-		Data:       *user,
+		Success: true,
+		Message: "User fetched successfully",
+		Data:    *user,
+	})
+}
+
+// @Summary Get all users
+// @Description Get all users (admin only)
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} utils.GenericResponse[[]models.PublicUser]
+// @Router /users [get]
+func (h *UserHandler) GetAllUsers(c *gin.Context) {
+	users, err := h.userService.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get users",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.PublicUser]{
+		Success: true,
+		Message: "Users retrieved successfully",
+		Data:    users,
 	})
 }

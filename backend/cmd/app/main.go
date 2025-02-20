@@ -211,6 +211,12 @@ func main() {
 		{
 			customers.GET("", customerHandler.GetAllCustomers)
 		}
+
+		// User routes
+		users := api.Group("/users")
+		{
+			users.GET("", authMiddleware, adminMiddleware, userHandler.GetAllUsers)
+		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

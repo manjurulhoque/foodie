@@ -48,7 +48,7 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
                                 {order.status}
                             </Badge>
                             <span className="text-sm font-semibold">
-                                ${order.total.toFixed(2)}
+                                ${order.total_amount.toFixed(2)}
                             </span>
                         </div>
                     </div>

@@ -56,6 +56,11 @@ export const adminSidebarData: SidebarData = {
                     url: "/admin/cuisines",
                     icon: UtensilsCrossed,
                 },
+                {
+                    title: "All Users",
+                    url: "/admin/users",
+                    icon: Users,
+                },
             ],
         },
         {

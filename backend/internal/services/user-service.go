@@ -3,12 +3,13 @@ package services
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/manjurulhoque/foodie/backend/internal/models"
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 // Define constants for token expiration
@@ -23,6 +24,7 @@ type UserService interface {
 	GetUserById(id uint) (*models.PublicUser, error)
 	GetUserByEmail(email string) (*models.PublicUser, error)
 	VerifyToken(token string) (*JWTCustomClaims, error)
+	GetAllUsers() ([]models.PublicUser, error)
 }
 
 var jwtSecret = []byte("ABC1234567890")
@@ -126,12 +128,12 @@ func (s *userService) GetUserById(id uint) (*models.PublicUser, error) {
 	}
 
 	return &models.PublicUser{
-		Id:        user.ID,
-		Name:      user.Name,
-		Image:     user.Image,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		Role:      user.Role,
+		Id:    user.ID,
+		Name:  user.Name,
+		Image: user.Image,
+		Email: user.Email,
+		Phone: user.Phone,
+		Role:  user.Role,
 	}, nil
 }
 
@@ -142,12 +144,12 @@ func (s *userService) GetUserByEmail(email string) (*models.PublicUser, error) {
 	}
 
 	return &models.PublicUser{
-		Id:        user.ID,
-		Name:      user.Name,
-		Image:     user.Image,
-		Email:     user.Email,
-		Phone:     user.Phone,
-		Role:      user.Role,
+		Id:    user.ID,
+		Name:  user.Name,
+		Image: user.Image,
+		Email: user.Email,
+		Phone: user.Phone,
+		Role:  user.Role,
 	}, nil
 }
 
@@ -165,4 +167,8 @@ func (s *userService) VerifyToken(tokenString string) (*JWTCustomClaims, error) 
 		return nil, errors.New("unauthorized")
 	}
 	return claims, nil
+}
+
+func (s *userService) GetAllUsers() ([]models.PublicUser, error) {
+	return s.userRepo.FindAllUsers()
 }

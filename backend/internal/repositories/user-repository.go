@@ -12,6 +12,7 @@ type UserRepository interface {
 	EmailExists(email string) bool
 	UpdateUser(uint, map[string]interface{}) error
 	GetDB() *gorm.DB
+	FindAllUsers() ([]models.PublicUser, error)
 }
 
 type userRepository struct {
@@ -50,4 +51,10 @@ func (r *userRepository) EmailExists(email string) bool {
 
 func (r *userRepository) UpdateUser(userId uint, updates map[string]interface{}) error {
 	return r.db.Model(&models.User{}).Where("id = ?", userId).Updates(updates).Error
+}
+
+func (r *userRepository) FindAllUsers() ([]models.PublicUser, error) {
+	var users []models.PublicUser
+	err := r.db.Model(&models.User{}).Find(&users).Error
+	return users, err
 }

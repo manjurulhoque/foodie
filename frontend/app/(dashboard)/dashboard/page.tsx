@@ -17,8 +17,7 @@ import { RecentOrders } from "@/components/dashboard/recent-orders";
 import { Overview } from "@/components/dashboard/overview";
 
 export default function DashboardPage() {
-    const { data: orders, isLoading: isOrdersLoading } =
-        useGetUserOrdersQuery();
+    const { data: orders, isLoading: isOrdersLoading } = useGetUserOrdersQuery();
     const { data: user, isLoading: isUserLoading } = useMeQuery(null);
 
     if (isOrdersLoading || isUserLoading) {
@@ -31,7 +30,7 @@ export default function DashboardPage() {
 
     const userOrders = orders?.data ?? [];
     const totalOrders = userOrders.length;
-    const totalSpent = userOrders.reduce((acc, order) => acc + order.total, 0);
+    const totalSpent = userOrders.reduce((acc, order) => acc + order.total_amount, 0);
     const pendingOrders = userOrders.filter(
         (order) => order.status === OrderStatus.PENDING
     ).length;
