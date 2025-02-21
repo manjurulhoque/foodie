@@ -29,8 +29,19 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 		return
 	}
 
+	// Validate required fields
+	if address.Label == "" || address.Street == "" || address.City == "" ||
+		address.State == "" || address.PostalCode == "" {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "All fields are required",
+			Errors:  []utils.ErrorDetail{{Message: "All fields are required"}},
+		})
+		return
+	}
+
 	// Set user ID from authenticated user
-	userID := uint(c.GetFloat64("user_id"))
+	userID := utils.GetUserID(c)
 	address.UserID = userID
 
 	if err := h.service.CreateAddress(&address); err != nil {
@@ -62,7 +73,7 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 	}
 
 	// Add user ID to updates
-	address["user_id"] = uint(c.GetFloat64("user_id"))
+	address["user_id"] = utils.GetUserID(c)
 
 	if err := h.service.UpdateAddress(uint(id), address); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
@@ -97,7 +108,7 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 }
 
 func (h *AddressHandler) GetUserAddresses(c *gin.Context) {
-	userID := uint(c.GetFloat64("user_id"))
+	userID := utils.GetUserID(c)
 	addresses, err := h.service.GetUserAddresses(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
