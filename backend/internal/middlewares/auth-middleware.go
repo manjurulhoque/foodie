@@ -85,3 +85,27 @@ func AdminMiddleware(userRepo repositories.UserRepository, userService services.
 		c.Next()
 	}
 }
+
+func OwnerMiddleware(userRepo repositories.UserRepository, userService services.UserService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authUser, _ := c.Get(userKey)
+		user, ok := authUser.(*models.User)
+		if !ok {
+			slog.Error("Invalid user", "error", "User is not an owner")
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
+		if user.Role != "owner" {
+			slog.Error("Unauthorized access attempt", "error", "User is not an owner")
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}

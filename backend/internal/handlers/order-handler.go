@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"net/http"
 	"log/slog"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/models"

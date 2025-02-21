@@ -23,6 +23,7 @@ type Restaurant struct {
 	User         *User          `json:"user,omitempty" gorm:"foreignKey:UserID"`
 	MenuItems    []MenuItem     `json:"menu_items" gorm:"foreignKey:RestaurantID"`
 	WorkingHours []*WorkingHour `json:"working_hours" gorm:"foreignKey:RestaurantID"`
+	Orders       []*Order        `json:"orders" gorm:"foreignKey:RestaurantID"`
 }
 
 func (Restaurant) BeforeCreate(tx *gorm.DB) (err error) {

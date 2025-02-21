@@ -148,6 +148,16 @@ export const ownerSidebarData: SidebarData = {
                     url: "/owner/dashboard",
                     icon: LayoutDashboard,
                 },
+                {
+                    title: "Orders",
+                    url: "/owner/orders",
+                    icon: ShoppingCart,
+                },
+                {
+                    title: "Restaurants",
+                    url: "/owner/restaurants",
+                    icon: Citrus,
+                },
             ],
         },
         {

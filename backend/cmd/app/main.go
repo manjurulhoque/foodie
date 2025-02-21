@@ -103,6 +103,7 @@ func main() {
 	cartHandler := handlers.NewCartHandler(cartService, db.DB)
 	customerHandler := handlers.NewCustomerHandler(customerService, db.DB)
 	addressHandler := handlers.NewAddressHandler(addressService)
+	ownerHandler := handlers.NewOwnerHandler(restaurantService, orderService, db.DB)
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
@@ -124,6 +125,7 @@ func main() {
 	api := router.Group("/api")
 	authMiddleware := middlewares.AuthMiddleware(userRepo, userService)
 	adminMiddleware := middlewares.AdminMiddleware(userRepo, userService)
+	ownerMiddleware := middlewares.OwnerMiddleware(userRepo, userService)
 	{
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
@@ -229,6 +231,13 @@ func main() {
 			addresses.POST("", addressHandler.CreateAddress)
 			addresses.PUT("/:id", addressHandler.UpdateAddress)
 			addresses.DELETE("/:id", addressHandler.DeleteAddress)
+		}
+
+		// Owner routes
+		owner := api.Group("/owner")
+		{
+			owner.GET("/restaurants", authMiddleware, ownerMiddleware, ownerHandler.GetRestaurants)
+			owner.GET("/orders", authMiddleware, ownerMiddleware, ownerHandler.GetOrders)
 		}
 	}
 

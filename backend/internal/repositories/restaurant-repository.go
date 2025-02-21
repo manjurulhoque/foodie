@@ -105,3 +105,9 @@ func (r *RestaurantRepository) GetWorkingHours(restaurantID uint) ([]models.Work
 	err := r.db.Where("restaurant_id = ?", restaurantID).Order("day_of_week").Find(&workingHours).Error
 	return workingHours, err
 }
+
+func (r *RestaurantRepository) FindAllRestaurantsByOwnerID(userID uint) ([]models.Restaurant, error) {
+	var restaurants []models.Restaurant
+	err := r.db.Where("user_id = ?", userID).Find(&restaurants).Error
+	return restaurants, err
+}

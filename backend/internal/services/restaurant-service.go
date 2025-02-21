@@ -15,6 +15,7 @@ type RestaurantService interface {
 	GetRestaurantsByCuisine(cuisineID uint) ([]models.Restaurant, error)
 	UpdateWorkingHours(uint, []models.WorkingHour) error
 	GetWorkingHours(uint) ([]models.WorkingHour, error)
+	GetAllRestaurantsByOwnerID(userID uint) ([]models.Restaurant, error)
 }
 
 type restaurantService struct {
@@ -59,4 +60,8 @@ func (s *restaurantService) UpdateWorkingHours(restaurantID uint, workingHours [
 
 func (s *restaurantService) GetWorkingHours(restaurantID uint) ([]models.WorkingHour, error) {
 	return s.repo.GetWorkingHours(restaurantID)
+}
+
+func (s *restaurantService) GetAllRestaurantsByOwnerID(userID uint) ([]models.Restaurant, error) {
+	return s.repo.FindAllRestaurantsByOwnerID(userID)
 }
