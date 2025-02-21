@@ -52,6 +52,6 @@ func (r *OrderRepository) UpdatePaymentStatus(id uint, status string) error {
 
 func (r *OrderRepository) FindAll() ([]models.Order, error) {
 	var orders []models.Order
-	err := r.db.Preload("Restaurant").Preload("Items").Preload("Items.MenuItem").Find(&orders).Error
+	err := r.db.Preload("User").Preload("Restaurant").Preload("Items").Preload("Items.MenuItem").Find(&orders).Error
 	return orders, err
 }

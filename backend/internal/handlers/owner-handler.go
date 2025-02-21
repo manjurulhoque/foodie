@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -69,5 +70,59 @@ func (h *OwnerHandler) GetAllOrders(c *gin.Context) {
 		Success: true,
 		Message: "Orders retrieved successfully",
 		Data:    orders,
+	})
+}
+
+// UpdateOrderStatus godoc
+// @Summary Update the status of an order
+// @Description Update the status of an order
+// @Tags orders
+// @Accept json
+// @Produce json
+func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
+	orderID := c.Param("id")
+	orderIDUint, err := strconv.ParseUint(orderID, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid order ID",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+	order, err := h.orderService.GetOrder(uint(orderIDUint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to retrieve order",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+	var input struct {
+		Status string `json:"status" binding:"required,oneof=pending preparing ready delivered cancelled"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid input",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+	order.Status = input.Status
+	err = h.orderService.UpdateOrder(order)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to update order status",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+	c.JSON(http.StatusOK, utils.GenericResponse[models.Order]{
+		Success: true,
+		Message: "Order status updated successfully",
+		Data:    *order,
 	})
 }

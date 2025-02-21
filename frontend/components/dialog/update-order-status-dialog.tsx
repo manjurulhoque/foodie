@@ -29,6 +29,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { toast } from "react-hot-toast";
+import { useUpdateOrderStatusMutation } from "@/store/reducers/owner/api";
 
 const formSchema = z.object({
     status: z.enum(["pending", "preparing", "ready", "delivered", "cancelled"]),
@@ -47,7 +48,7 @@ export default function UpdateOrderStatusDialog({
     onOpenChange,
     onSuccess,
 }: UpdateOrderStatusDialogProps) {
-    const { data: session } = useSession();
+    const [updateOrderStatus, { isLoading }] = useUpdateOrderStatusMutation();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -57,9 +58,13 @@ export default function UpdateOrderStatusDialog({
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            // TODO: Update order status
-
-            onSuccess();
+            const response = await updateOrderStatus({ id: order.id, status: values.status });
+            if (response.data?.success) {
+                toast.success("Order status updated successfully");
+                onSuccess();
+            } else {
+                toast.error("Error updating order status");
+            }
         } catch (error) {
             toast.error("Error updating order status");
         }

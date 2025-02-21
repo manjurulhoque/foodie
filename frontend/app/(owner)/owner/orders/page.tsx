@@ -31,7 +31,6 @@ export default function OwnerOrdersPage() {
     const handleUpdateSuccess = () => {
         setIsUpdateDialogOpen(false);
         refetch();
-        toast.success("Order status updated successfully");
     };
 
     const formatDate = (dateString: string) => {

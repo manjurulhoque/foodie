@@ -240,6 +240,7 @@ func main() {
 		{
 			owner.GET("/restaurants", authMiddleware, ownerMiddleware, ownerHandler.GetRestaurants)
 			owner.GET("/orders", authMiddleware, ownerMiddleware, ownerHandler.GetAllOrders)
+			owner.PUT("/orders/:id", authMiddleware, ownerMiddleware, ownerHandler.UpdateOrderStatus)
 		}
 	}
 
