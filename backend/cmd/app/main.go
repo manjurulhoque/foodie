@@ -135,7 +135,7 @@ func main() {
 		api.POST("/register", userHandler.Register)
 		api.POST("/login", userHandler.Login)
 		api.GET("/me", authMiddleware, userHandler.Me)
-
+		api.PUT("/me", authMiddleware, userHandler.UpdateUser)
 		// Menu routes
 		menu := api.Group("/menu")
 		{

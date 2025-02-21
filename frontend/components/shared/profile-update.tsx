@@ -23,7 +23,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { useMeQuery } from "@/store/reducers/user/api";
+import { useMeQuery, useUpdateUserMutation } from "@/store/reducers/user/api";
 import { useEffect } from "react";
 import Spinner from "@/components/shared/spinner";
 
@@ -44,7 +44,7 @@ type AccountFormValues = z.infer<typeof formSchema>;
 export default function ProfileUpdate() {
     const router = useRouter();
     const { data: user, isLoading, refetch } = useMeQuery(null);
-
+    const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
     const form = useForm<AccountFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -66,9 +66,19 @@ export default function ProfileUpdate() {
 
     async function onSubmit(data: AccountFormValues) {
         try {
-            // TODO: Implement update user profile API call
-            toast.success("Account updated successfully");
-            refetch();
+            const response = await updateUser({
+                name: data.name,
+                email: data.email,
+                phone: data.phone,
+            });
+            if (response.data) {
+                toast.success("Account updated successfully");
+                refetch();
+            }
+            if (response.error) {
+                toast.error("Something went wrong while updating your account");
+                console.error(response.error);
+            }
         } catch (error) {
             toast.error("Something went wrong");
             console.error(error);

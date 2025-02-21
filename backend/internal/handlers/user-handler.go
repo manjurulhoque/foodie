@@ -184,3 +184,65 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 		Data:    users,
 	})
 }
+
+// Update user handler
+// @Summary Update a user
+// @Description Update a user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} utils.GenericResponse[models.User]
+// @Router /users/{id} [put]
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	userID := utils.GetUserID(c)
+	user, err := h.userService.GetUserById(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to get user",
+		})
+	}
+
+	var input struct {
+		Name  string `json:"name" validate:"required,min=3,max=32"`
+		Email string `json:"email" validate:"required,email"`
+		Phone string `json:"phone" validate:"required,min=4,max=15"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+		})
+	}
+
+	errs := utils.TranslateError(input)	
+	if len(errs) > 0 {
+		newErrs := make([]utils.ErrorDetail, len(errs))
+		for i, err := range errs {
+			newErrs[i] = utils.ErrorDetail{
+				Message: err.Message,
+				Code:    err.Field,
+			}
+		}
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request",
+			Errors:  newErrs,
+		})
+		return
+	}
+
+	if err := h.userService.UpdateUser(user.Id, input.Name, input.Email, input.Phone); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Failed to update user",
+		})
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success: true,
+		Message: "User updated successfully",
+	})
+}

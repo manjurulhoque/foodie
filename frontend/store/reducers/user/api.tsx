@@ -14,6 +14,10 @@ export const UserApi = createApi({
             providesTags: ["User"],
             keepUnusedDataFor: 300, // Cache data for 5 minutes (300 seconds)
         }),
+        updateUser: builder.mutation<Response<User>, { name: string, email: string, phone: string }>({
+            query: (user) => ({ url: "/me", method: "PUT", body: user }),
+            invalidatesTags: ["User"],
+        }),
         getAllUsers: builder.query<Response<User[]>, void>({
             query: () => ({ url: "/users", method: "GET" }),
             providesTags: ["User"],
@@ -22,4 +26,4 @@ export const UserApi = createApi({
     }),
 });
 
-export const { useMeQuery, useGetAllUsersQuery } = UserApi;
+export const { useMeQuery, useGetAllUsersQuery, useUpdateUserMutation } = UserApi;

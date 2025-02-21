@@ -25,6 +25,7 @@ type UserService interface {
 	GetUserByEmail(email string) (*models.PublicUser, error)
 	VerifyToken(token string) (*JWTCustomClaims, error)
 	GetAllUsers() ([]models.PublicUser, error)
+	UpdateUser(id uint, name, email, phone string) error
 }
 
 var jwtSecret = []byte("ABC1234567890")
@@ -171,4 +172,8 @@ func (s *userService) VerifyToken(tokenString string) (*JWTCustomClaims, error) 
 
 func (s *userService) GetAllUsers() ([]models.PublicUser, error) {
 	return s.userRepo.FindAllUsers()
+}
+
+func (s *userService) UpdateUser(id uint, name, email, phone string) error {
+	return s.userRepo.UpdateUser(id, map[string]interface{}{"name": name, "email": email, "phone": phone})
 }
