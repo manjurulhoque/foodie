@@ -71,7 +71,7 @@ export default function OwnerRestaurantsPage() {
                                             size="sm"
                                             className="mr-2"
                                             onClick={() =>
-                                                handleUpdateClick(restaurant)
+                                                router.push(`/owner/restaurants/${restaurant.id}/edit`)
                                             }
                                         >
                                             Update
