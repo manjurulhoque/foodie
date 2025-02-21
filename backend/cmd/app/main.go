@@ -126,6 +126,7 @@ func main() {
 	authMiddleware := middlewares.AuthMiddleware(userRepo, userService)
 	adminMiddleware := middlewares.AdminMiddleware(userRepo, userService)
 	ownerMiddleware := middlewares.OwnerMiddleware(userRepo, userService)
+	adminOrOwnerMiddleware := middlewares.AdminOrOwnerMiddleware(userRepo, userService)
 	{
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
@@ -164,8 +165,8 @@ func main() {
 			restaurantMenu := restaurants.Group("/:id/menu")
 			{
 				restaurantMenu.GET("", menuHandler.GetRestaurantMenuItems)
-				restaurantMenu.POST("", authMiddleware, adminMiddleware, menuHandler.CreateMenuItem)
-				restaurantMenu.PUT("/:id", authMiddleware, adminMiddleware, menuHandler.UpdateMenuItem)
+				restaurantMenu.POST("", authMiddleware, adminOrOwnerMiddleware, menuHandler.CreateMenuItem)
+				restaurantMenu.PUT("/:id", authMiddleware, adminOrOwnerMiddleware, menuHandler.UpdateMenuItem)
 				restaurantMenu.GET("/:id", menuHandler.GetMenuItem)
 			}
 

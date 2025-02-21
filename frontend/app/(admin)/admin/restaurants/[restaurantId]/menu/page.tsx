@@ -12,7 +12,7 @@ export default function MenuPage({
 }: {
     params: { restaurantId: string };
 }) {
-    const { data, isLoading } = useGetRestaurantMenuItemsQuery(params.restaurantId);
+    const { data, isLoading } = useGetRestaurantMenuItemsQuery(parseInt(params.restaurantId));
     const router = useRouter();
 
     return (

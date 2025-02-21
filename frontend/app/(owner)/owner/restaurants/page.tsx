@@ -15,8 +15,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 import UpdateRestaurantDialog from "@/components/dialog/update-restaurant-dialog";
 import { useGetOwnerRestaurantsQuery } from "@/store/reducers/owner/api";
+import { useRouter } from "next/navigation";
 
 export default function OwnerRestaurantsPage() {
+    const router = useRouter();
     const { data: restaurants, isLoading, error, refetch } = useGetOwnerRestaurantsQuery();
     const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -67,11 +69,22 @@ export default function OwnerRestaurantsPage() {
                                         <Button
                                             variant="outline"
                                             size="sm"
+                                            className="mr-2"
                                             onClick={() =>
                                                 handleUpdateClick(restaurant)
                                             }
                                         >
                                             Update
+                                        </Button>
+                                        <Button
+                                            variant="default"
+                                            size="sm"
+                                            className="mr-2"
+                                            onClick={() =>
+                                                router.push(`/owner/restaurants/${restaurant.id}/menu`)
+                                            }
+                                        >
+                                            View Menu
                                         </Button>
                                     </TableCell>
                                 </TableRow>

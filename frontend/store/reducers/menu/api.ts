@@ -23,16 +23,19 @@ export const MenuApi = createApi({
             }),
             providesTags: ["MenuItem"],
         }),
-        getRestaurantMenuItems: builder.query<{ data: MenuItem[] }, number>({
+        getRestaurantMenuItems: builder.query<
+            Response<MenuItem[]>,
+            number
+        >({
             query: (restaurantId) => `restaurants/${restaurantId}/menu`,
             providesTags: ["MenuItem"],
         }),
-        getMenuItem: builder.query<{ data: MenuItem }, string>({
+        getMenuItem: builder.query<Response<MenuItem>, string>({
             query: (id) => `menu/${id}`,
             providesTags: ["MenuItem"],
         }),
         createMenuItem: builder.mutation<
-            { data: MenuItem },
+            Response<MenuItem>,
             { restaurantId: string; body: FormData }
         >({
             query: ({ restaurantId, body }) => ({
@@ -44,7 +47,7 @@ export const MenuApi = createApi({
             invalidatesTags: ["MenuItem"],
         }),
         updateMenuItem: builder.mutation<
-            { data: MenuItem },
+            Response<MenuItem>,
             { restaurantId: string; menuId: string; body: FormData }
         >({
             query: ({ restaurantId, menuId, body }) => ({
