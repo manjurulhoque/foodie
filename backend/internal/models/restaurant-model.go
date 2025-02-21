@@ -66,9 +66,9 @@ func (MenuItem) BeforeUpdate(tx *gorm.DB) (err error) {
 type Order struct {
 	BaseModel
 	UserID          uint        `json:"user_id"`
-	User            User        `json:"-" gorm:"foreignKey:UserID"`
+	User            User        `json:"user,omitempty" gorm:"foreignKey:UserID"`
 	RestaurantID    uint        `json:"restaurant_id"`
-	Restaurant      Restaurant  `json:"-" gorm:"foreignKey:RestaurantID"`
+	Restaurant      Restaurant  `json:"restaurant,omitempty" gorm:"foreignKey:RestaurantID"`
 	Items           []OrderItem `json:"items" gorm:"foreignKey:OrderID"`
 	TotalAmount     float64     `json:"total_amount"`
 	Status          string      `json:"status" gorm:"default:'pending'"`

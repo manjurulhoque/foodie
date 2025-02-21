@@ -55,8 +55,8 @@ func (h *OwnerHandler) GetRestaurants(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} utils.GenericResponse[[]models.Order]
 // @Router /owner/orders [get]
-func (h *OwnerHandler) GetOrders(c *gin.Context) {
-	orders, err := h.orderService.GetRestaurantOrders(c.GetUint("restaurant_id"))
+func (h *OwnerHandler) GetAllOrders(c *gin.Context) {
+	orders, err := h.orderService.GetAllOrders()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -69,6 +70,9 @@ export default function UpdateOrderStatusDialog({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Update Order Status</DialogTitle>
+                    <DialogDescription>
+                        Update the status of the order
+                    </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form

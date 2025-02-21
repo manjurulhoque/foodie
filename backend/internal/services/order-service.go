@@ -40,3 +40,7 @@ func (s *OrderService) UpdateOrderStatus(id uint, status string) error {
 func (s *OrderService) UpdatePaymentStatus(id uint, status string) error {
 	return s.repo.UpdatePaymentStatus(id, status)
 }
+
+func (s *OrderService) GetAllOrders() ([]models.Order, error) {
+	return s.repo.FindAll()
+}

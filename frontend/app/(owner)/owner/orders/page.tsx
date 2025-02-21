@@ -58,7 +58,8 @@ export default function OwnerOrdersPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {orders?.data?.map((order) => (
+                            {isLoading && <TableRow><TableCell colSpan={7} className="h-24 text-center">Loading...</TableCell></TableRow>}
+                            {!isLoading && orders?.data?.map((order) => (
                                 <TableRow key={order.id}>
                                     <TableCell>#{order.id}</TableCell>
                                     <TableCell>
