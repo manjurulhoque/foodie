@@ -8,8 +8,8 @@ import (
 
 const (
 	RoleCustomer        = "customer"
-	RoleRestaurantOwner = "restaurant_owner"
-	RoleRestaurantStaff = "restaurant_staff"
+	RoleRestaurantOwner = "owner"
+	RoleRestaurantStaff = "staff"
 	RoleAdmin           = "admin"
 	RoleModerator       = "moderator"
 )
@@ -20,7 +20,7 @@ type User struct {
 	Name            string    `json:"name" gorm:"not null" validate:"required"`
 	Password        string    `json:"-" gorm:"not null" validate:"required,min=6"`
 	Phone           string    `json:"phone" gorm:"unique;not null" validate:"required"`
-	Role            string    `json:"role" gorm:"not null" gorm:"default:user"`
+	Role            string    `json:"role" gorm:"not null;default:customer"`
 	Image           string    `json:"image"`
 	IsActive        bool      `json:"is_active" gorm:"default:true"`
 	IsEmailVerified bool      `json:"is_email_verified" gorm:"default:false"`

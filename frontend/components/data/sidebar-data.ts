@@ -6,7 +6,6 @@ import {
     UserCog,
     Users,
     Palette,
-    Command,
     Citrus,
     MenuSquare,
     Kanban,
@@ -130,6 +129,37 @@ export const dashboardSidebarData: SidebarData = {
                         {
                             title: "Profile",
                             url: "/dashboard/settings/profile",
+                            icon: UserCog,
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+export const ownerSidebarData: SidebarData = {
+    navGroups: [
+        {
+            title: "General",
+            items: [
+                {
+                    title: "Dashboard",
+                    url: "/owner/dashboard",
+                    icon: LayoutDashboard,
+                },
+            ],
+        },
+        {
+            title: "Other",
+            items: [
+                {
+                    title: "Settings",
+                    icon: Settings,
+                    items: [
+                        {
+                            title: "Profile",
+                            url: "/owner/settings/profile",
                             icon: UserCog,
                         },
                     ],
