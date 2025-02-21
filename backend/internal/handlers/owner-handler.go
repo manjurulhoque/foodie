@@ -101,6 +101,7 @@ func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
 	}
 	var input struct {
 		Status string `json:"status" binding:"required,oneof=pending preparing ready delivered cancelled"`
+		PaymentStatus string `json:"payment_status" binding:"required,oneof=pending paid failed"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
@@ -111,6 +112,7 @@ func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
 		return
 	}
 	order.Status = input.Status
+	order.PaymentStatus = input.PaymentStatus
 	err = h.orderService.UpdateOrder(order)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{

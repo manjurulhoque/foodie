@@ -33,6 +33,7 @@ import { useUpdateOrderStatusMutation } from "@/store/reducers/owner/api";
 
 const formSchema = z.object({
     status: z.enum(["pending", "preparing", "ready", "delivered", "cancelled"]),
+    payment_status: z.enum(["pending", "paid", "failed"]),
 });
 
 interface UpdateOrderStatusDialogProps {
@@ -53,12 +54,13 @@ export default function UpdateOrderStatusDialog({
         resolver: zodResolver(formSchema),
         defaultValues: {
             status: order.status,
+            payment_status: order.payment_status,
         },
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const response = await updateOrderStatus({ id: order.id, status: values.status });
+            const response = await updateOrderStatus({ id: order.id, status: values.status, payment_status: values.payment_status });
             if (response.data?.success) {
                 toast.success("Order status updated successfully");
                 onSuccess();
@@ -114,6 +116,37 @@ export default function UpdateOrderStatusDialog({
                                             </SelectItem>
                                             <SelectItem value="cancelled">
                                                 Cancelled
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="payment_status"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Payment Status</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select payment status" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="pending">
+                                                Pending
+                                            </SelectItem>
+                                            <SelectItem value="paid">
+                                                Paid
+                                            </SelectItem>
+                                            <SelectItem value="failed">
+                                                Failed
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>

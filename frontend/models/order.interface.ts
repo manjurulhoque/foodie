@@ -7,6 +7,7 @@ export interface Order {
     restaurant_id: number;
     total_amount: number;
     status: "pending" | "preparing" | "ready" | "delivered" | "cancelled";
+    payment_status: "pending" | "paid" | "failed";
     created_at: string;
     updated_at: string;
     restaurant: Restaurant;

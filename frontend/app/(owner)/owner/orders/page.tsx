@@ -52,6 +52,7 @@ export default function OwnerOrdersPage() {
                                 <TableHead>Customer</TableHead>
                                 <TableHead>Total Amount</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Payment Status</TableHead>
                                 <TableHead>Order Date</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
@@ -68,6 +69,9 @@ export default function OwnerOrdersPage() {
                                     <TableCell>${order.total_amount}</TableCell>
                                     <TableCell className="capitalize">
                                         {order.status}
+                                    </TableCell>
+                                    <TableCell className="capitalize">
+                                        {order.payment_status}
                                     </TableCell>
                                     <TableCell>
                                         {formatDate(order.created_at)}

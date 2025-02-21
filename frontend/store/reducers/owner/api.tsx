@@ -15,11 +15,11 @@ export const OwnerApi = createApi({
         getOwnerOrders: builder.query<Response<Order[]>, void>({
             query: () => "/owner/orders",
         }),
-        updateOrderStatus: builder.mutation<Response<Order>, { id: number; status: string }>({
-            query: ({ id, status }) => ({
+        updateOrderStatus: builder.mutation<Response<Order>, { id: number; status: string; payment_status: string }>({
+            query: ({ id, status, payment_status }) => ({
                 url: `/owner/orders/${id}`,
                 method: "PUT",
-                body: { status },
+                body: { status, payment_status },
             }),
         }),
     }),
