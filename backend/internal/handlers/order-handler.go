@@ -3,6 +3,7 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/internal/models"
@@ -112,5 +113,34 @@ func (h *OrderHandler) GetUserOrders(c *gin.Context) {
 		Success: true,
 		Message: "Orders fetched successfully",
 		Data:    orders,
+	})
+}
+
+// GetOrderStatusHistory gets the status history for an order
+func (h *OrderHandler) GetOrderStatusHistory(c *gin.Context) {
+	orderID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid order ID",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	var statusHistory []models.OrderStatusHistory
+	if err := h.db.Where("order_id = ?", orderID).Order("created_at desc").Find(&statusHistory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error fetching status history",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[[]models.OrderStatusHistory]{
+		Success: true,
+		Message: "Status history retrieved successfully",
+		Data:    statusHistory,
 	})
 }

@@ -44,6 +44,7 @@ func init() {
 		&models.Cart{},
 		&models.CartItem{},
 		&models.WorkingHour{},
+		&models.OrderStatusHistory{},
 	)
 	if err != nil {
 		slog.Error("Error migrating database", "error", err.Error())
@@ -211,6 +212,7 @@ func main() {
 		{
 			orders.POST("", authMiddleware, orderHandler.CreateOrder)
 			orders.GET("/user", authMiddleware, orderHandler.GetUserOrders)
+			orders.GET("/:id/status-history", authMiddleware, orderHandler.GetOrderStatusHistory)
 		}
 
 		// Customer routes

@@ -133,3 +133,21 @@ func (WorkingHour) BeforeUpdate(tx *gorm.DB) (err error) {
 	tx.Statement.SetColumn("UpdatedAt", time.Now())
 	return nil
 }
+
+type OrderStatusHistory struct {
+	BaseModel
+	OrderID     uint      `json:"order_id" gorm:"not null"`
+	Status      string    `json:"status" gorm:"not null"`
+	Description string    `json:"description"`
+	Order       *Order    `json:"order,omitempty" gorm:"foreignKey:OrderID"`
+}
+
+func (OrderStatusHistory) TableName() string {
+	return "order_status_histories"
+}
+
+func (OrderStatusHistory) BeforeCreate(tx *gorm.DB) (err error) {
+	tx.Statement.SetColumn("CreatedAt", time.Now())
+	tx.Statement.SetColumn("UpdatedAt", time.Now())
+	return nil
+}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -100,7 +101,7 @@ func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
 		return
 	}
 	var input struct {
-		Status string `json:"status" binding:"required,oneof=pending preparing ready delivered cancelled"`
+		Status        string `json:"status" binding:"required,oneof=pending preparing ready delivered cancelled"`
 		PaymentStatus string `json:"payment_status" binding:"required,oneof=pending paid failed"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -111,6 +112,7 @@ func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
 		})
 		return
 	}
+	description := fmt.Sprintf("Restaurant owner updated the order status to %s from %s and payment status to %s from %s", input.Status, order.Status, input.PaymentStatus, order.PaymentStatus)
 	order.Status = input.Status
 	order.PaymentStatus = input.PaymentStatus
 	err = h.orderService.UpdateOrder(order)
@@ -122,6 +124,23 @@ func (h *OwnerHandler) UpdateOrderStatus(c *gin.Context) {
 		})
 		return
 	}
+
+	// Create status history entry
+	statusHistory := models.OrderStatusHistory{
+		OrderID:     uint(orderIDUint),
+		Status:      input.Status,
+		Description: description,
+	}
+
+	if err := h.db.Create(&statusHistory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error saving status history",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, utils.GenericResponse[models.Order]{
 		Success: true,
 		Message: "Order status updated successfully",
