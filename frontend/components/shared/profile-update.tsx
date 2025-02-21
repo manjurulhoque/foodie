@@ -41,7 +41,7 @@ const formSchema = z.object({
 
 type AccountFormValues = z.infer<typeof formSchema>;
 
-export default function DashboardSettingsAccountPage() {
+export default function ProfileUpdate() {
     const router = useRouter();
     const { data: user, isLoading, refetch } = useMeQuery(null);
 

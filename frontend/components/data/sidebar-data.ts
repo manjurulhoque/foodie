@@ -73,22 +73,17 @@ export const adminSidebarData: SidebarData = {
                     items: [
                         {
                             title: "Profile",
-                            url: "/settings",
+                            url: "/admin/settings/profile",
                             icon: UserCog,
                         },
                         {
-                            title: "Account",
-                            url: "/settings/account",
-                            icon: Settings,
-                        },
-                        {
                             title: "Appearance",
-                            url: "/settings/appearance",
+                            url: "/admin/settings/appearance",
                             icon: Palette,
                         },
                         {
                             title: "Notifications",
-                            url: "/settings/notifications",
+                            url: "/admin/settings/notifications",
                             icon: Bell,
                         },
                     ],
@@ -134,13 +129,8 @@ export const dashboardSidebarData: SidebarData = {
                     items: [
                         {
                             title: "Profile",
-                            url: "/dashboard/settings",
+                            url: "/dashboard/settings/profile",
                             icon: UserCog,
-                        },
-                        {
-                            title: "Account",
-                            url: "/dashboard/settings/account",
-                            icon: Settings,
                         },
                     ],
                 },

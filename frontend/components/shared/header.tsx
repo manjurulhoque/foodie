@@ -181,7 +181,11 @@ export const Header = () => {
                                     <DropdownMenuItem
                                         className="cursor-pointer"
                                         onClick={() => {
-                                            router.push("/profile");
+                                            if (isAdmin) {
+                                                router.push("/admin/settings/profile");
+                                            } else {
+                                                router.push("/dashboard/settings/profile");
+                                            }
                                         }}
                                     >
                                         <User className="mr-2 h-4 w-4" />
