@@ -153,6 +153,7 @@ func main() {
 
 			restaurants.POST("", authMiddleware, restaurantHandler.CreateRestaurant)
 			restaurants.PUT("/:id", authMiddleware, restaurantHandler.UpdateRestaurant)
+			restaurants.PUT("/:id/owner", authMiddleware, adminMiddleware, restaurantHandler.UpdateRestaurantOwner)
 			restaurants.DELETE("/:id", authMiddleware, restaurantHandler.DeleteRestaurant)
 
 			restaurantWorkingHours := restaurants.Group("/:id/working-hours")

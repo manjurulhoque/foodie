@@ -30,7 +30,8 @@ func NewOwnerHandler(restaurantService services.RestaurantService, orderService 
 // @Success 200 {object} utils.GenericResponse[[]models.Restaurant]
 // @Router /owner/restaurants [get]
 func (h *OwnerHandler) GetRestaurants(c *gin.Context) {
-	restaurants, err := h.restaurantService.GetAllRestaurantsByOwnerID(c.GetUint("user_id"))
+	userID := utils.GetUserID(c)
+	restaurants, err := h.restaurantService.GetAllRestaurantsByOwnerID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
 			Success: false,

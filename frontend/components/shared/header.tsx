@@ -193,9 +193,13 @@ export const Header = () => {
                                         className="cursor-pointer"
                                         onClick={() => {
                                             if (isAdmin) {
-                                                router.push("/admin/settings/profile");
+                                                router.push(
+                                                    "/admin/settings/profile"
+                                                );
                                             } else {
-                                                router.push("/dashboard/settings/profile");
+                                                router.push(
+                                                    "/dashboard/settings/profile"
+                                                );
                                             }
                                         }}
                                     >

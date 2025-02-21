@@ -565,3 +565,120 @@ func (h *RestaurantHandler) GetWorkingHours(c *gin.Context) {
 		Data:    workingHours,
 	})
 }
+
+// UpdateRestaurantOwner restaurant handler
+// @Summary Update restaurant owner
+// @Description Update restaurant owner by email
+// @Tags restaurants
+// @Accept json
+// @Produce json
+// @Param id path int true "Restaurant ID"
+// @Param email body string true "Owner Email"
+// @Success 200 {object} models.Restaurant
+// @Router /admin/restaurants/{id}/owner [post]
+func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
+	// Get restaurant ID from URL
+	restaurantID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid restaurant ID",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	// Parse request body
+	var input struct {
+		Email string `json:"email" binding:"required,email"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Invalid request body",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	// Find user by email
+	var user models.User
+	if err := h.db.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, utils.GenericResponse[any]{
+				Success: false,
+				Message: "User not found",
+				Errors:  []utils.ErrorDetail{{Message: "No user found with this email"}},
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error finding user",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	// Get restaurant
+	var restaurant models.Restaurant
+	if err := h.db.First(&restaurant, restaurantID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, utils.GenericResponse[any]{
+				Success: false,
+				Message: "Restaurant not found",
+				Errors:  []utils.ErrorDetail{{Message: "Restaurant not found"}},
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error finding restaurant",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	// Start transaction
+	tx := h.db.Begin()
+
+	// Update user role to owner if not already
+	if user.Role != "owner" {
+		if err := tx.Model(&user).Update("role", "owner").Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+				Success: false,
+				Message: "Error updating user role",
+				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+			})
+			return
+		}
+	}
+
+	// Update restaurant owner
+	if err := tx.Model(&restaurant).Update("user_id", user.ID).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error updating restaurant owner",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	// Commit transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+			Success: false,
+			Message: "Error committing transaction",
+			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.GenericResponse[any]{
+		Success: true,
+		Message: "Restaurant owner updated successfully",
+	})
+}

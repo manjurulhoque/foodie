@@ -9,6 +9,7 @@ import { OrderApi } from "@/store/reducers/order/api";
 import { CustomerApi } from "@/store/reducers/customer/api";
 import { AddressApi } from "@/store/reducers/address/api";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { OwnerApi } from "@/store/reducers/owner/api";
 
 export const store: any = configureStore({
     reducer: {
@@ -21,6 +22,7 @@ export const store: any = configureStore({
         [OrderApi.reducerPath]: OrderApi.reducer,
         [CustomerApi.reducerPath]: CustomerApi.reducer,
         [AddressApi.reducerPath]: AddressApi.reducer,
+        [OwnerApi.reducerPath]: OwnerApi.reducer,
     },
     devTools: true, // TODO: remove this in production
     middleware: (getDefaultMiddleware: any) =>
@@ -33,7 +35,8 @@ export const store: any = configureStore({
             CartApi.middleware,
             OrderApi.middleware,
             CustomerApi.middleware,
-            AddressApi.middleware
+            AddressApi.middleware,
+            OwnerApi.middleware,
         ),
 });
 

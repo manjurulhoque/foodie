@@ -3,10 +3,7 @@ export interface User {
     name: string;
     email: string;
     phone: string;
-    role: string;
-    image: string;
-    is_active: boolean;
-    is_email_verified: boolean;
+    role: "user" | "owner" | "admin";
     created_at: string;
     updated_at: string;
 }

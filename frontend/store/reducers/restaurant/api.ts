@@ -85,6 +85,14 @@ export const RestaurantApi = createApi({
             }),
             invalidatesTags: ["Restaurant"],
         }),
+        updateRestaurantOwner: builder.mutation<void, { id: number; email: string }>({
+            query: ({ id, email }) => ({
+                url: `restaurants/${id}/owner`,
+                method: "PUT",
+                body: { email },
+            }),
+            invalidatesTags: ["Restaurant"],
+        }),
     }),
 });
 
@@ -96,4 +104,5 @@ export const {
     useDeleteRestaurantMutation,
     useGetRestaurantsByCuisineQuery,
     useUpdateWorkingHoursMutation,
+    useUpdateRestaurantOwnerMutation,
 } = RestaurantApi;
