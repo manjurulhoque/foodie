@@ -3,13 +3,13 @@
 import { User } from "@/models/user.interface";
 import { cn } from "@/lib/utils";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { Header } from "@/components/layout/header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Search } from "@/components/admin/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { useMeQuery } from "@/store/reducers/user/api";
 
-export function PageLayout({ children }: { children: React.ReactNode }) {
+export function AdminPageLayout({ children }: { children: React.ReactNode }) {
     const { data, isLoading } = useMeQuery(null, {});
     const user = data?.data as User;
 
@@ -28,13 +28,13 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
                     "group-data-[scroll-locked=1]/body:has-[main.fixed-main]:h-svh"
                 )}
             >
-                <Header>
+                <DashboardHeader>
                     <div className="ml-auto flex items-center space-x-4">
                         <Search />
                         <ThemeSwitch />
                         <ProfileDropdown user={user} isLoading={isLoading} />
                     </div>
-                </Header>
+                </DashboardHeader>
                 {children}
             </div>
         </>

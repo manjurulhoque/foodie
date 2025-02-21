@@ -1,8 +1,5 @@
 import {
-    BadgeCheck,
-    Bell,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
     Sparkles,
 } from "lucide-react";
@@ -22,7 +19,6 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 import { User } from "@/models/user.interface";
 import { signOut } from "next-auth/react";
 
@@ -94,24 +90,24 @@ export function NavUser({ user }: { user: User }) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem asChild>
+                            {/* <DropdownMenuItem asChild>
                                 <Link href="/settings/account">
                                     <BadgeCheck />
                                     Account
                                 </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
+                            </DropdownMenuItem> */}
+                            {/* <DropdownMenuItem asChild>
                                 <Link href="/settings">
                                     <CreditCard />
                                     Billing
                                 </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
+                            </DropdownMenuItem> */}
+                            {/* <DropdownMenuItem asChild>
                                 <Link href="/settings/notifications">
                                     <Bell />
                                     Notifications
                                 </Link>
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

@@ -11,8 +11,9 @@ import { authOptions } from "@/lib/authOptions";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchProvider } from "@/context/search-context";
 import Cookies from "js-cookie";
-import { PageLayout } from "@/components/admin/page-layout";
+import { AdminPageLayout } from "@/components/admin/admin-page-layout";
 import { redirect } from "next/navigation";
+import { ThemeProvider } from "@/context/theme-context";
 
 export const metadata: Metadata = {
     title: "Foodie admin",
@@ -48,7 +49,11 @@ const AdminLayout: React.FC<Props> = async ({ children }) => {
                         <NextAuthProvider session={session}>
                             <SidebarProvider defaultOpen={defaultOpen}>
                                 <SearchProvider>
-                                    <PageLayout>{children}</PageLayout>
+                                    <AdminPageLayout>
+                                        <ThemeProvider>
+                                            {children}
+                                        </ThemeProvider>
+                                    </AdminPageLayout>
                                     <Toaster position="bottom-center" />
                                 </SearchProvider>
                             </SidebarProvider>

@@ -3,7 +3,7 @@
 import { User } from "@/models/user.interface";
 import { cn } from "@/lib/utils";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { Header } from "@/components/layout/header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Search } from "@/components/admin/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { ProfileDropdown } from "@/components/profile-dropdown";
@@ -32,13 +32,13 @@ export function DashboardPageLayout({
                     "group-data-[scroll-locked=1]/body:has-[main.fixed-main]:h-svh"
                 )}
             >
-                <Header>
+                <DashboardHeader>
                     <div className="ml-auto flex items-center space-x-4">
                         <Search />
                         <ThemeSwitch />
                         <ProfileDropdown user={user} isLoading={isLoading} />
                     </div>
-                </Header>
+                </DashboardHeader>
                 {children}
             </div>
         </>

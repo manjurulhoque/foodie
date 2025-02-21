@@ -13,7 +13,7 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
     ref?: React.Ref<HTMLElement>;
 }
 
-export const Header = ({
+export const DashboardHeader = ({
     className,
     fixed,
     children,
@@ -67,4 +67,4 @@ export const Header = ({
     );
 };
 
-Header.displayName = "Header";
+DashboardHeader.displayName = "DashboardHeader";

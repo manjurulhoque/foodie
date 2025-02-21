@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/layout/header";
+import { Header } from "@/components/layout/dashboard-header";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Search } from "@/components/admin/search";
 import { ProfileDropdown } from "@/components/profile-dropdown";
@@ -66,9 +66,7 @@ const AdminPage = () => {
                             <TabsTrigger value="analytics">
                                 Analytics
                             </TabsTrigger>
-                            <TabsTrigger value="reports">
-                                Reports
-                            </TabsTrigger>
+                            <TabsTrigger value="reports">Reports</TabsTrigger>
                             <TabsTrigger value="notifications">
                                 Notifications
                             </TabsTrigger>

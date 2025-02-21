@@ -47,19 +47,19 @@ export function ProfileDropdown({ user, isLoading }: { user: User, isLoading: bo
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link href="/settings">
+                        <Link href="/admin/settings/profile">
                             Profile
                             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer">
+                    {/* <DropdownMenuItem asChild className="cursor-pointer">
                         <Link href="/settings">
                             Billing
                             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                         </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link href="/settings">
+                        <Link href="/admin/settings">
                             Settings
                             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </Link>
