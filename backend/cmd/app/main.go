@@ -108,7 +108,7 @@ func main() {
 
 	// CORS configuration - using a single config instance
 	corsConfig := cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://foodie.manjurulhoque.com"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://foodie-backend.manjurulhoque.com", "http://foodie.manjurulhoque.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
