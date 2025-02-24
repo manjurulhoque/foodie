@@ -28,10 +28,10 @@ RUN apk add --no-cache ca-certificates tzdata
 
 # Copy the binary from builder
 COPY --from=builder /app/main .
-COPY --from=builder /app/web/uploads ./web/uploads
 
-# Create uploads directory if it doesn't exist
-RUN mkdir -p /app/web/uploads
+# Create uploads directory
+RUN mkdir -p /app/web/uploads && \
+    chmod 755 /app/web/uploads
 
 # Set environment variables
 ENV GIN_MODE=release
