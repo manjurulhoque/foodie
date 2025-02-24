@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - NODE_ENV=production
-      - BACKEND_BASE_URL=http://localhost:7000
+      - BACKEND_BASE_URL=https://foodie-backend.manjurulhoque.com
       - NEXTAUTH_SECRET=secret
       - NEXTAUTH_URL=https://foodie.manjurulhoque.com
     restart: unless-stopped

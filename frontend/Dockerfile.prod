@@ -3,6 +3,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Install nano and other build dependencies
+RUN apk add --no-cache nano
+
 # Install dependencies
 COPY package*.json ./
 RUN npm ci
@@ -26,6 +29,9 @@ RUN npm run build
 FROM node:18-alpine AS runner
 
 WORKDIR /app
+
+# Install nano for production environment
+RUN apk add --no-cache nano
 
 # Set production environment
 ENV NODE_ENV production
