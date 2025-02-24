@@ -10,6 +10,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Copy .env.example to .env if it exists
+RUN if [ -f .env.example ]; then cp .env.example .env; fi
+
 # Set production environment
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
@@ -33,6 +36,7 @@ COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/.env ./.env
 
 # Set user for security
 RUN addgroup --system --gid 1001 nodejs
