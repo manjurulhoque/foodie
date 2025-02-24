@@ -13,8 +13,15 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Copy .env.example to .env if it exists
-RUN if [ -f .env.example ]; then cp .env.example .env; fi
+# Copy .env.example to .env and update variables
+RUN if [ -f .env.example ]; then \
+    cp .env.example .env && \
+    echo "" > .env && \
+    echo "NODE_ENV=production" >> .env && \
+    echo "BACKEND_BASE_URL=https://foodie-backend.manjurulhoque.com" >> .env && \
+    echo "NEXTAUTH_SECRET=secret" >> .env && \
+    echo "NEXTAUTH_URL=https://foodie.manjurulhoque.com" >> .env; \
+fi
 
 # Set production environment
 ENV NEXT_TELEMETRY_DISABLED 1
