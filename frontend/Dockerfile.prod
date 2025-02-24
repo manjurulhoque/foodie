@@ -18,9 +18,9 @@ RUN if [ -f .env.example ]; then \
     cp .env.example .env && \
     echo "" > .env && \
     echo "NODE_ENV=production" >> .env && \
-    echo "BACKEND_BASE_URL=https://foodie-backend.manjurulhoque.com" >> .env && \
+    echo "BACKEND_BASE_URL=http://foodie-backend.manjurulhoque.com" >> .env && \
     echo "NEXTAUTH_SECRET=secret" >> .env && \
-    echo "NEXTAUTH_URL=https://foodie.manjurulhoque.com" >> .env; \
+    echo "NEXTAUTH_URL=http://foodie.manjurulhoque.com" >> .env; \
 fi
 
 # Set production environment
