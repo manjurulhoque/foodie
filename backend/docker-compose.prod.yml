@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "9000:9000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=foodie
+      - DB_SSL_MODE=disable
+      - GIN_MODE=release
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./web/uploads:/app/web/uploads
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=foodie
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    build: ./deployment/nginx
+    ports:
+      - "7000:80"
+    depends_on:
+      - api
+    volumes:
+      - ./web/uploads:/app/web/uploads
+
+volumes:
+  postgres_data:
