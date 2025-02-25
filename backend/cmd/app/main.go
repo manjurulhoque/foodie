@@ -2,10 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log/slog"
-	"net/http"
-	"time"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/docs"
@@ -19,6 +15,8 @@ import (
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"log/slog"
+	"net/http"
 )
 
 func init() {
@@ -107,15 +105,15 @@ func main() {
 	ownerHandler := handlers.NewOwnerHandler(restaurantService, orderService, db.DB)
 
 	// CORS configuration - using a single config instance
-	corsConfig := cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://foodie-backend.manjurulhoque.com", "http://foodie.manjurulhoque.com"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}
-	router.Use(cors.New(corsConfig))
+	//corsConfig := cors.Config{
+	//	AllowOrigins:     []string{"http://localhost:3000", "http://foodie-backend.manjurulhoque.com", "http://foodie.manjurulhoque.com"},
+	//	AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+	//	AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+	//	ExposeHeaders:    []string{"Content-Length"},
+	//	AllowCredentials: true,
+	//	MaxAge:           12 * time.Hour,
+	//}
+	router.Use(cors.Default())
 
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Host = "localhost:9000"
