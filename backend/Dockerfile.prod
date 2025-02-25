@@ -15,6 +15,9 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
+# Copy .env.example to .env
+RUN if [ -f .env.example ]; then cp .env.example .env; fi
+
 # Build the application
 RUN CGO_ENABLED=1 GOOS=linux go build -o main ./cmd/app
 
@@ -28,6 +31,7 @@ RUN apk add --no-cache ca-certificates tzdata
 
 # Copy the binary from builder
 COPY --from=builder /app/main .
+COPY --from=builder /app/.env .
 
 # Create uploads directory
 RUN mkdir -p /app/web/uploads && \
