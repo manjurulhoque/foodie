@@ -25,6 +25,8 @@ func InitializeDB() (*gorm.DB, error) {
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 			conf.Host, conf.User, conf.Password, conf.DBName, conf.Port, conf.SSLMode)
 
+		fmt.Println("------dsn-------", dsn)
+
 		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		})
