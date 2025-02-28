@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/docs"
 	"github.com/manjurulhoque/foodie/backend/internal/config"
@@ -113,7 +112,7 @@ func main() {
 	//	AllowCredentials: true,
 	//	MaxAge:           12 * time.Hour,
 	//}
-	router.Use(cors.Default())
+	router.Use(middlewares.CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Host = "localhost:9000"
