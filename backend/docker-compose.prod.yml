@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     volumes:
       - ./web/uploads:/app/web/uploads
-    entrypoint: ["sh", "-c", "sleep 5 && /app/main"]
+    entrypoint: ["sh", "-c", "sleep 10 && /app/main"]
 
   postgres:
     container_name: foodie-postgres
