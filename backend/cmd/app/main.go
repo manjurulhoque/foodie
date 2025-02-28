@@ -14,7 +14,6 @@ import (
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	cors "github.com/rs/cors/wrapper/gin"
 	"log/slog"
 	"net/http"
 )
@@ -68,7 +67,7 @@ func init() {
 func main() {
 	// create a new gin server and run it
 	router := gin.Default()
-	router.Use(cors.Default())
+	router.Use(middlewares.CORSMiddleware())
 	defer db.CloseDB(db.DB)
 
 	// Initialize repositories with pointer receivers
