@@ -67,6 +67,7 @@ func init() {
 func main() {
 	// create a new gin server and run it
 	router := gin.Default()
+	router.Use(middlewares.CORSMiddleware())
 	defer db.CloseDB(db.DB)
 
 	// Initialize repositories with pointer receivers
@@ -112,7 +113,6 @@ func main() {
 	//	AllowCredentials: true,
 	//	MaxAge:           12 * time.Hour,
 	//}
-	router.Use(middlewares.CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Host = "localhost:9000"
