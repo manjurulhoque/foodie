@@ -29,6 +29,12 @@ Check out our live app at [Foodie](https://foodie.manjurulhoque.com/).
 ![Home Page](screenshots/home.png)
 *Home page*
 
+![Restaurant Page](screenshots/restaurant.png)
+*Restaurant page*
+
+![Admin dashboard](screenshots/admin.png)
+*Admin dashboard*
+
 ## Join Our Community
 
 Stay updated with our latest offerings and promotions by joining our newsletter.
