@@ -35,10 +35,6 @@ Check out our live app at [Foodie](https://foodie.manjurulhoque.com/).
 ![Admin dashboard](screenshots/admin.png)
 *Admin dashboard*
 
-## Join Our Community
-
-Stay updated with our latest offerings and promotions by joining our newsletter.
-
 ---
 
 © 2025 Foodie. All rights reserved.
