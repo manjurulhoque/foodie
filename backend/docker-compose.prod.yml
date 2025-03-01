@@ -25,6 +25,7 @@ services:
 
   postgres:
     container_name: foodie-postgres
+    restart: always
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=postgres

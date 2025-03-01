@@ -2,12 +2,12 @@ package db
 
 import (
 	"fmt"
-	"github.com/manjurulhoque/foodie/backend/internal/config"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log/slog"
 	"sync"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -16,18 +16,42 @@ var (
 )
 
 // InitializeDB creates a new GORM DB connection
+// func InitializeDB2() (*gorm.DB, error) {
+// 	var err error
+
+// 	// Use sync.Once to initialize the database connection only once
+// 	dbOnce.Do(func() {
+// 		conf := config.GetDBConfig()
+// 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+// 			conf.Host, conf.User, conf.Password, conf.DBName, conf.Port, conf.SSLMode)
+
+// 		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+// 			Logger: logger.Default.LogMode(logger.Info),
+// 		})
+// 		if err != nil {
+// 			slog.Error("Failed to connect to database", "error", err.Error())
+// 		} else {
+// 			slog.Info("Database connected successfully")
+// 		}
+// 	})
+
+// 	if DB == nil {
+// 		return nil, fmt.Errorf("failed to connect to database: %w", err)
+// 	}
+
+// 	return DB, nil
+// }
+
+// InitializeDB creates a new GORM DB connection
 func InitializeDB() (*gorm.DB, error) {
 	var err error
 
 	// Use sync.Once to initialize the database connection only once
 	dbOnce.Do(func() {
-		conf := config.GetDBConfig()
-		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-			conf.Host, conf.User, conf.Password, conf.DBName, conf.Port, conf.SSLMode)
+		// Update the DSN to use the SQLite file
+		dsn := "./foodie.sqlite3"
 
-		fmt.Println("------dsn-------", dsn)
-
-		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		DB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		})
 		if err != nil {
