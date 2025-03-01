@@ -43,7 +43,7 @@ export const CuisineApi = createApi({
             invalidatesTags: ["Cuisine"],
         }),
         getPopularCuisines: builder.query<Response<Cuisine[]>, void>({
-            query: () => "cuisines/popular/",
+            query: () => "cuisines/popular",
             providesTags: ["Cuisine"],
         }),
     }),
