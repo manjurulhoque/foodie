@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/manjurulhoque/foodie/backend/docs"
 	"github.com/manjurulhoque/foodie/backend/internal/config"
@@ -14,8 +17,6 @@ import (
 	"github.com/manjurulhoque/foodie/backend/pkg/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"log/slog"
-	"net/http"
 )
 
 func init() {
@@ -241,6 +242,14 @@ func main() {
 			owner.GET("/orders", authMiddleware, ownerMiddleware, ownerHandler.GetAllOrders)
 			owner.PUT("/orders/:id", authMiddleware, ownerMiddleware, ownerHandler.UpdateOrderStatus)
 		}
+	}
+
+	// Setup admin routes
+	adminRoutes := router.Group("/api/admin")
+	{
+		adminRoutes.GET("/overview", authMiddleware, adminMiddleware, handlers.GetAdminOverview)
+		adminRoutes.GET("/analytics", authMiddleware, adminMiddleware, handlers.GetAdminAnalytics)
+		adminRoutes.GET("/reports", authMiddleware, adminMiddleware, handlers.GetAdminReports)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -1,257 +1,398 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Header } from "@/components/layout/dashboard-header";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { Search } from "@/components/admin/search";
-import { ProfileDropdown } from "@/components/profile-dropdown";
-import { Main } from "@/components/layout/main";
-import { TopNav } from "@/components/layout/top-nav";
-
-const topNav = [
-    {
-        title: "Overview",
-        href: "admin/overview",
-        isActive: true,
-        disabled: false,
-    },
-    {
-        title: "Customers",
-        href: "admin/customers",
-        isActive: false,
-        disabled: true,
-    },
-    {
-        title: "Products",
-        href: "admin/products",
-        isActive: false,
-        disabled: true,
-    },
-    {
-        title: "Settings",
-        href: "admin/settings",
-        isActive: false,
-        disabled: true,
-    },
-];
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    useGetOverviewQuery,
+    useGetAnalyticsQuery,
+    useGetReportsQuery,
+} from "@/store/reducers/admin/api";
+import {
+    BarChart,
+    Bar,
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from "recharts";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
 
 const AdminPage = () => {
+    const {
+        data: overview,
+        isLoading: overviewLoading,
+        error: overviewError,
+    } = useGetOverviewQuery();
+    const {
+        data: analytics,
+        isLoading: analyticsLoading,
+        error: analyticsError,
+    } = useGetAnalyticsQuery();
+    const {
+        data: reports,
+        isLoading: reportsLoading,
+        error: reportsError,
+    } = useGetReportsQuery();
+
+    if (overviewLoading || analyticsLoading || reportsLoading)
+        return <div>Loading...</div>;
+    if (overviewError)
+        return (
+            <div>
+                Error:{" "}
+                {(overviewError as any).data?.message ||
+                    "Failed to fetch overview"}
+            </div>
+        );
+    if (analyticsError)
+        return (
+            <div>
+                Error:{" "}
+                {(analyticsError as any).data?.message ||
+                    "Failed to fetch analytics"}
+            </div>
+        );
+    if (reportsError)
+        return (
+            <div>
+                Error:{" "}
+                {(reportsError as any).data?.message ||
+                    "Failed to fetch reports"}
+            </div>
+        );
+
     return (
-        <>
-            <Main>
-                <div className="mb-2 flex items-center justify-between space-y-2">
-                    <h1 className="text-2xl font-bold tracking-tight">
-                        Dashboard
-                    </h1>
-                    <div className="flex items-center space-x-2">
-                        <Button>Download</Button>
+        <div className="flex-1 space-y-4 p-8 pt-6">
+            <div className="flex items-center justify-between space-y-2">
+                <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            </div>
+            <Tabs defaultValue="overview" className="space-y-4">
+                <TabsList>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                    <TabsTrigger value="reports">Reports</TabsTrigger>
+                </TabsList>
+
+                {/* Overview Tab */}
+                <TabsContent value="overview" className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Users
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    {overview?.total_users}
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Orders
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    {overview?.total_orders}
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Revenue
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    ${overview?.total_revenue.toFixed(2)}
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Active Restaurants
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    {overview?.active_restaurants}
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                </div>
-                <Tabs
-                    orientation="vertical"
-                    defaultValue="overview"
-                    className="space-y-4"
-                >
-                    <div className="w-full overflow-x-auto pb-2">
-                        <TabsList>
-                            <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="analytics">
-                                Analytics
-                            </TabsTrigger>
-                            <TabsTrigger value="reports">Reports</TabsTrigger>
-                            <TabsTrigger value="notifications">
-                                Notifications
-                            </TabsTrigger>
-                        </TabsList>
-                    </div>
-                    <TabsContent value="overview" className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Revenue
-                                    </CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        className="h-4 w-4 text-muted-foreground"
+                </TabsContent>
+
+                {/* Analytics Tab */}
+                <TabsContent value="analytics" className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {/* Daily Orders Chart */}
+                        <Card className="col-span-3 md:col-span-1">
+                            <CardHeader>
+                                <CardTitle>Daily Orders</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart
+                                        data={analytics?.daily_orders.map(
+                                            (item) => ({
+                                                date: new Date(
+                                                    item.date
+                                                ).toLocaleDateString(),
+                                                orders: item.count,
+                                            })
+                                        )}
+                                        margin={{
+                                            top: 5,
+                                            right: 30,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
                                     >
-                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                                    </svg>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        $45,231.89
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +20.1% from last month
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Subscriptions
-                                    </CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        className="h-4 w-4 text-muted-foreground"
-                                    >
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                                    </svg>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        +2350
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +180.1% from last month
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Sales
-                                    </CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        className="h-4 w-4 text-muted-foreground"
-                                    >
-                                        <rect
-                                            width="20"
-                                            height="14"
-                                            x="2"
-                                            y="5"
-                                            rx="2"
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="date" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="orders"
+                                            stroke="#8884d8"
+                                            activeDot={{ r: 8 }}
                                         />
-                                        <path d="M2 10h20" />
-                                    </svg>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        +12,234
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +19% from last month
-                                    </p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Active Now
-                                    </CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        className="h-4 w-4 text-muted-foreground"
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        {/* Popular Items Chart */}
+                        <Card className="col-span-3 md:col-span-1">
+                            <CardHeader>
+                                <CardTitle>Popular Items</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={analytics?.popular_items.map(
+                                            (item) => ({
+                                                name: item.name,
+                                                orders: item.order_count,
+                                            })
+                                        )}
+                                        margin={{
+                                            top: 5,
+                                            right: 30,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
                                     >
-                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                                    </svg>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">
-                                        +573
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +201 since last hour
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-                            <Card className="col-span-1 lg:col-span-4">
-                                <CardHeader>
-                                    <CardTitle>Overview</CardTitle>
-                                </CardHeader>
-                                <CardContent className="pl-2"></CardContent>
-                            </Card>
-                            <Card className="col-span-1 lg:col-span-3">
-                                <CardHeader>
-                                    <CardTitle>Recent Sales</CardTitle>
-                                    <CardDescription>
-                                        You made 265 sales this month.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent></CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="analytics" className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Analytics</CardTitle>
-                                </CardHeader>
-                                <CardContent></CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Top Products</CardTitle>
-                                    <CardDescription>
-                                        Your top selling products this month.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent></CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="reports" className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Reports</CardTitle>
-                                </CardHeader>
-                                <CardContent></CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="notifications" className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Notifications</CardTitle>
-                                </CardHeader>
-                                <CardContent></CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                </Tabs>
-            </Main>
-        </>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="orders" fill="#82ca9d" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        {/* Monthly Revenue Chart */}
+                        <Card className="col-span-3 md:col-span-1">
+                            <CardHeader>
+                                <CardTitle>Monthly Revenue</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={analytics?.revenue_by_month.map(
+                                            (item) => ({
+                                                month: new Date(
+                                                    item.month
+                                                ).toLocaleDateString("en-US", {
+                                                    month: "short",
+                                                    year: "numeric",
+                                                }),
+                                                revenue: item.revenue,
+                                            })
+                                        )}
+                                        margin={{
+                                            top: 5,
+                                            right: 30,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="month" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="revenue" fill="#8884d8" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </TabsContent>
+
+                {/* Reports Tab */}
+                <TabsContent value="reports" className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {/* Recent Orders Table */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Recent Orders</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Order ID</TableHead>
+                                            <TableHead>User</TableHead>
+                                            <TableHead>Restaurant</TableHead>
+                                            <TableHead>Amount</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Date</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {reports?.recent_orders.map((order) => (
+                                            <TableRow key={order.id}>
+                                                <TableCell>
+                                                    {order.id}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {order.user.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {order.restaurant.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    $
+                                                    {order.total_amount.toFixed(
+                                                        2
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {order.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {format(
+                                                        new Date(
+                                                            order.created_at
+                                                        ),
+                                                        "MMM dd, yyyy"
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+
+                        {/* User Activity Table */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>User Activity</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>User</TableHead>
+                                            <TableHead>Orders</TableHead>
+                                            <TableHead>Total Spent</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {reports?.user_activity.map(
+                                            (activity) => (
+                                                <TableRow key={activity.name}>
+                                                    <TableCell>
+                                                        {activity.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {activity.order_count}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        $
+                                                        {activity.total_spent.toFixed(
+                                                            2
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+
+                        {/* Restaurant Stats Table */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Restaurant Stats</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Restaurant</TableHead>
+                                            <TableHead>Orders</TableHead>
+                                            <TableHead>Rating</TableHead>
+                                            <TableHead>Revenue</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {reports?.restaurant_stats.map(
+                                            (stat) => (
+                                                <TableRow key={stat.name}>
+                                                    <TableCell>
+                                                        {stat.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {stat.order_count}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {stat.avg_rating.toFixed(
+                                                            1
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        $
+                                                        {stat.total_revenue.toFixed(
+                                                            2
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </TabsContent>
+            </Tabs>
+        </div>
     );
 };
 
