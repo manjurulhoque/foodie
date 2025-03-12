@@ -13,6 +13,8 @@ services:
       - NEXTAUTH_SECRET=secret
       - NEXTAUTH_URL=http://foodie.manjurulhoque.com
     restart: unless-stopped
+    networks:
+        - foodie-network
 
   nginx:
     container_name: foodie-frontend-nginx
@@ -22,4 +24,9 @@ services:
       - "82:80"
     depends_on:
       - frontend
-    restart: unless-stopped 
+    restart: unless-stopped
+    networks:
+        - foodie-network
+
+networks:
+    foodie-network:
