@@ -19,7 +19,7 @@ services:
     image: foodie-frontend-nginx
     build: ./deployment/nginx
     ports:
-      - "3002:80"
+      - "82:80"
     depends_on:
       - frontend
     restart: unless-stopped 
