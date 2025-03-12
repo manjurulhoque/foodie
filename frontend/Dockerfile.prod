@@ -61,4 +61,4 @@ USER nextjs
 EXPOSE 3000
 
 # Start the application
-CMD ["node", "server.js", "--port", "3000"] 
+CMD ["node", "server.js"] 
