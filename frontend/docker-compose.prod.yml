@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   frontend:
+    container_name: foodie-frontend
     image: foodie-frontend
     build:
       context: .
@@ -14,6 +15,7 @@ services:
     restart: unless-stopped
 
   nginx:
+    container_name: foodie-frontend-nginx
     image: foodie-frontend-nginx
     build: ./deployment/nginx
     ports:
