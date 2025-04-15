@@ -283,6 +283,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 	// get existing restaurant
@@ -292,6 +293,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Success: false,
 			Message: "Restaurant not found",
 		})
+		c.Abort()
 		return
 	}
 
@@ -312,6 +314,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -325,6 +328,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 				Message: "Invalid cuisine IDs format",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 		restaurantInput.CuisineIDs = cuisineIDs
@@ -344,6 +348,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  newErrs,
 		})
+		c.Abort()
 		return
 	}
 
@@ -358,6 +363,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Restaurant not found",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -378,7 +384,12 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 		filePath := filepath.Join(uploadsPath, newFileName)
 		if err := c.SaveUploadedFile(restaurantInput.Image, filePath); err != nil {
 			slog.Error("Error saving file", "error", err.Error())
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+				Success: false,
+				Message: "Failed to save image",
+				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+			})
+			c.Abort()
 			return
 		}
 		// TODO: delete old image
@@ -394,6 +405,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Failed to update restaurant",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -407,6 +419,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 				Message: "Failed to fetch cuisines",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 
@@ -418,6 +431,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 				Message: "Failed to update cuisine associations",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 	}
@@ -429,6 +443,7 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 			Message: "Failed to commit transaction",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
