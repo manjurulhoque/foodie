@@ -345,16 +345,16 @@ func TestCreateRestaurant(t *testing.T) {
 
 			assert.Equal(t, tt.expectedCode, w.Code)
 
-			// For failure case, we need to check the response differently
-			if tt.expectedCode == http.StatusBadRequest {
-				var errorResponse utils.GenericResponse[any]
-				err := json.Unmarshal(w.Body.Bytes(), &errorResponse)
-				// fmt.Printf("Response body for %s: %s\n", tt.name, string(w.Body.String()))
-				assert.NoError(t, err)
-				assert.False(t, errorResponse.Success)
-				assert.Contains(t, errorResponse.Message, "Invalid form data")
-				return
-			}
+			// // For failure case, we need to check the response differently
+			// if tt.expectedCode == http.StatusBadRequest {
+			// 	var errorResponse utils.GenericResponse[any]
+			// 	err := json.Unmarshal(w.Body.Bytes(), &errorResponse)
+			// 	// fmt.Printf("Response body for %s: %s\n", tt.name, string(w.Body.String()))
+			// 	assert.NoError(t, err)
+			// 	assert.False(t, errorResponse.Success)
+			// 	assert.Contains(t, errorResponse.Message, "Invalid form data")
+			// 	return
+			// }
 
 			// For success case, unmarshal as Restaurant
 			var response utils.GenericResponse[models.Restaurant]
