@@ -2,16 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"log/slog"
+	"strconv"
+	"strings"
+
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/manjurulhoque/foodie/backend/internal/repositories"
-	"log/slog"
-	"os"
-	"reflect"
-	"strconv"
-	"strings"
 )
 
 type IError struct {
@@ -70,11 +69,12 @@ func TranslateError(model interface{}) (errs []IError) {
 	if registerValidationError := vl.RegisterValidation("integer", func(fl validator.FieldLevel) bool {
 		value, err := strconv.Atoi(fl.Field().String())
 		if err != nil {
-			// handle error
-			fmt.Println(err)
-			os.Exit(2)
+			return false
 		}
-		return reflect.TypeOf(value).Kind() == reflect.Int
+		if value < 0 {
+			return false
+		}
+		return true
 	}); registerValidationError != nil {
 		fmt.Println("Error registering integer validation")
 	}
