@@ -56,6 +56,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 			Message: "Invalid form data",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -69,6 +70,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 				Message: "Invalid cuisine IDs format",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 		input.CuisineIDs = cuisineIDs
@@ -95,7 +97,12 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 			err = os.MkdirAll(uploadsPath, os.ModePerm)
 			if err != nil {
 				slog.Error("Failed to create uploads directory", "error", err.Error())
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create uploads directory"})
+				c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+					Success: false,
+					Message: "Failed to create uploads directory",
+					Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+				})
+				c.Abort()
 				return
 			}
 		}
@@ -106,7 +113,12 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 		// Save the uploaded file
 		if err := c.SaveUploadedFile(input.Image, filePath); err != nil {
 			slog.Error("Error saving file", "error", err.Error())
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "status": false})
+			c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
+				Success: false,
+				Message: "Failed to save image",
+				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
+			})
+			c.Abort()
 			return
 		}
 		restaurant.Image = filePath
@@ -121,6 +133,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 			Message: "Failed to create restaurant",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -134,6 +147,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 				Message: "Failed to fetch cuisines",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 
@@ -145,6 +159,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 				Message: "Failed to associate cuisines",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 	}
@@ -157,6 +172,7 @@ func (h *RestaurantHandler) CreateRestaurant(c *gin.Context) {
 			Message: "Failed to commit transaction",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 

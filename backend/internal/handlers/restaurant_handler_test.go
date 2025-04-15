@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -11,9 +12,13 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/manjurulhoque/foodie/backend/internal/models"
+	"github.com/manjurulhoque/foodie/backend/pkg/utils"
+
+	"mime/multipart"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -73,6 +78,37 @@ func (m *MockRestaurantService) GetWorkingHours(restaurantID uint) ([]models.Wor
 func (m *MockRestaurantService) GetAllRestaurantsByOwnerID(userID uint) ([]models.Restaurant, error) {
 	args := m.Called(userID)
 	return args.Get(0).([]models.Restaurant), args.Error(1)
+}
+
+// MockDB is a mock of gorm.DB
+type MockDB struct {
+	mock.Mock
+	*gorm.DB
+}
+
+func (m *MockDB) Begin() *gorm.DB {
+	m.Called()
+	return m.DB
+}
+
+func (m *MockDB) Create(value interface{}) *gorm.DB {
+	m.Called(value)
+	return m.DB
+}
+
+func (m *MockDB) Where(query interface{}, args ...interface{}) *gorm.DB {
+	m.Called(query, args)
+	return m.DB
+}
+
+func (m *MockDB) Find(dest interface{}, conds ...interface{}) *gorm.DB {
+	m.Called(dest, conds)
+	return m.DB
+}
+
+func (m *MockDB) Model(value interface{}) *gorm.DB {
+	m.Called(value)
+	return m.DB
 }
 
 // setupTestRouter creates a test router with the given handler
@@ -203,6 +239,128 @@ func TestGetRestaurant(t *testing.T) {
 			} else {
 				assert.Equal(t, http.StatusNotFound, w.Code)
 			}
+		})
+	}
+}
+
+func TestCreateRestaurant(t *testing.T) {
+	mockService := new(MockRestaurantService)
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+
+	// Auto-migrate the database
+	db.AutoMigrate(&models.Restaurant{}, &models.Cuisine{})
+
+	mockDB := &MockDB{DB: db}
+	handler := NewRestaurantHandler(mockService, mockDB.DB)
+
+	// Create a mock context with user ID
+	gin.SetMode(gin.TestMode)
+
+	// Mock the transaction
+	mockDB.On("Begin").Return(db)
+	mockDB.On("Create", mock.Anything).Return(db)
+	mockDB.On("Where", mock.Anything, mock.Anything).Return(db)
+	mockDB.On("Find", mock.Anything, mock.Anything).Return(db)
+	mockDB.On("Model", mock.Anything).Return(db)
+
+	tests := []struct {
+		name            string
+		formData        map[string]string
+		mockSetup       func()
+		expectedCode    int
+		expectedSuccess bool
+	}{
+		{
+			name: "Success - Valid Restaurant",
+			formData: map[string]string{
+				"name":        "Test Restaurant",
+				"description": "Test Description",
+				"address":     "Test Address",
+				"phone":       "1234567890",
+				"email":       "test@example.com",
+			},
+			mockSetup: func() {
+				mockService.On("CreateRestaurant", mock.Anything).
+					Return(nil)
+			},
+			expectedCode:    http.StatusCreated,
+			expectedSuccess: true,
+		},
+		{
+			name: "Failure - Missing Required Fields",
+			formData: map[string]string{
+				"name":        "",
+				"description": "Test Description",
+				"address":     "Test Address",
+				"phone":       "1234567890",
+				"email":       "test@example.com",
+			},
+			mockSetup: func() {
+				// No mock setup needed as validation should fail before service is called
+			},
+			expectedCode:    http.StatusBadRequest,
+			expectedSuccess: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a new recorder for each test case
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Set("userId", uint(1))
+
+			tt.mockSetup()
+
+			// Create a multipart form
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+
+			// Add form fields
+			for key, value := range tt.formData {
+				_ = writer.WriteField(key, value)
+			}
+
+			// Only add image for success case
+			if tt.name == "Success - Valid Restaurant" {
+				part, _ := writer.CreateFormFile("image", "image.png")
+				part.Write([]byte("dummy image content"))
+			}
+
+			// Close the writer
+			writer.Close()
+
+			// Create the request
+			req, httpRequestError := http.NewRequest("POST", "/api/restaurants", body)
+			if httpRequestError != nil {
+				t.Fatalf("Failed to create request: %v", httpRequestError)
+			}
+			req.Header.Set("Content-Type", writer.FormDataContentType())
+
+			// Set up the context with the request
+			c.Request = req
+
+			// Call the handler directly
+			handler.CreateRestaurant(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+
+			// For failure case, we need to check the response differently
+			if tt.expectedCode == http.StatusBadRequest {
+				var errorResponse utils.GenericResponse[any]
+				err := json.Unmarshal(w.Body.Bytes(), &errorResponse)
+				// fmt.Printf("Response body for %s: %s\n", tt.name, string(w.Body.String()))
+				assert.NoError(t, err)
+				assert.False(t, errorResponse.Success)
+				assert.Contains(t, errorResponse.Message, "Invalid form data")
+				return
+			}
+
+			// For success case, unmarshal as Restaurant
+			var response utils.GenericResponse[models.Restaurant]
+			err := json.Unmarshal(w.Body.Bytes(), &response)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedSuccess, response.Success)
 		})
 	}
 }
