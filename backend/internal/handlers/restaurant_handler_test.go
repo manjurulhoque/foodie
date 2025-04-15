@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
@@ -140,6 +142,67 @@ func TestGetAllRestaurants(t *testing.T) {
 			data := response["data"].(map[string]interface{})
 			restaurants := data["data"].([]interface{})
 			assert.Equal(t, tt.expectedItems, len(restaurants))
+		})
+	}
+}
+
+func TestGetRestaurant(t *testing.T) {
+	mockService := new(MockRestaurantService)
+	mockDB := &gorm.DB{}
+	handler := NewRestaurantHandler(mockService, mockDB)
+	router := setupTestRouter(handler)
+
+	tests := []struct {
+		name          string
+		restaurantID  uint
+		mockSetup     func()
+		expectedCode  int
+		expectedFound bool
+	}{
+		{
+			name:         "Success - Found",
+			restaurantID: 1,
+			mockSetup: func() {
+				mockService.On("GetRestaurant", uint(1)).
+					Return(&models.Restaurant{BaseModel: models.BaseModel{ID: 1}, Name: "Test Restaurant"}, nil)
+			},
+			expectedCode:  http.StatusOK,
+			expectedFound: true,
+		},
+		{
+			name:         "Success - Not Found",
+			restaurantID: 2,
+			mockSetup: func() {
+				mockService.On("GetRestaurant", uint(2)).
+					Return(nil, errors.New("restaurant not found"))
+			},
+			expectedCode:  http.StatusNotFound,
+			expectedFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockSetup()
+
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("GET", "/api/restaurants/"+strconv.Itoa(int(tt.restaurantID)), nil)
+			router.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+
+			if tt.expectedFound {
+				var response map[string]interface{}
+				err := json.Unmarshal(w.Body.Bytes(), &response)
+				assert.NoError(t, err)
+				assert.True(t, response["success"].(bool))
+
+				restaurant := response["data"].(map[string]interface{})
+				assert.Equal(t, tt.restaurantID, uint(restaurant["id"].(float64)))
+				assert.Equal(t, "Test Restaurant", restaurant["name"].(string))
+			} else {
+				assert.Equal(t, http.StatusNotFound, w.Code)
+			}
 		})
 	}
 }
