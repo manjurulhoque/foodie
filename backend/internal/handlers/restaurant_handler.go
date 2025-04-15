@@ -299,11 +299,11 @@ func (h *RestaurantHandler) UpdateRestaurant(c *gin.Context) {
 
 	var restaurantInput struct {
 		ID          uint                  `form:"id" json:"id"`
-		Name        string                `form:"name" json:"name"`
+		Name        string                `form:"name" json:"name" binding:"required"`
 		Description string                `form:"description" json:"description"`
-		Address     string                `form:"address" json:"address"`
-		Phone       string                `form:"phone" json:"phone"`
-		Email       string                `form:"email" json:"email"`
+		Address     string                `form:"address" json:"address" binding:"required"`
+		Phone       string                `form:"phone" json:"phone" binding:"required"`
+		Email       string                `form:"email" json:"email" binding:"required,email"`
 		CuisineIDs  []uint                `form:"cuisine_ids[]" json:"cuisine_ids"`
 		Image       *multipart.FileHeader `form:"image" json:"image"`
 	}

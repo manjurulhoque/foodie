@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -108,6 +109,11 @@ func (m *MockDB) Find(dest interface{}, conds ...interface{}) *gorm.DB {
 
 func (m *MockDB) Model(value interface{}) *gorm.DB {
 	m.Called(value)
+	return m.DB
+}
+
+func (m *MockDB) Update(value interface{}, conditions ...interface{}) *gorm.DB {
+	m.Called(value, conditions)
 	return m.DB
 }
 
@@ -359,6 +365,135 @@ func TestCreateRestaurant(t *testing.T) {
 			// For success case, unmarshal as Restaurant
 			var response utils.GenericResponse[models.Restaurant]
 			err := json.Unmarshal(w.Body.Bytes(), &response)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedSuccess, response.Success)
+		})
+	}
+}
+
+func TestUpdateRestaurant(t *testing.T) {
+	mockService := new(MockRestaurantService)
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+
+	// Auto-migrate the database
+	db.AutoMigrate(&models.Restaurant{}, &models.Cuisine{})
+
+	mockDB := &MockDB{DB: db}
+	handler := NewRestaurantHandler(mockService, mockDB.DB)
+
+	// Create a mock context with user ID
+	gin.SetMode(gin.TestMode)
+
+	// Mock the transaction
+	mockDB.On("Begin").Return(db)
+	mockDB.On("Create", mock.Anything).Return(db)
+	mockDB.On("Where", mock.Anything, mock.Anything).Return(db)
+	mockDB.On("Find", mock.Anything, mock.Anything).Return(db)
+	mockDB.On("Model", mock.Anything).Return(db)
+	mockDB.On("Update", mock.Anything, mock.Anything).Return(db)
+
+	// create a restaurant
+	userID := uint(1)
+	restaurant := models.Restaurant{
+		Name:        "Test Restaurant",
+		Description: "Test Description",
+		Address:     "Test Address",
+		Phone:       "1234567890",
+		Email:       "test@example.com",
+		UserID:      &userID,
+	}
+	db.Create(&restaurant)
+
+	tests := []struct {
+		name            string
+		restaurantID    uint
+		formData        map[string]string
+		mockSetup       func()
+		expectedCode    int
+		expectedSuccess bool
+	}{
+		{
+			name:         "Success - Valid Restaurant",
+			restaurantID: 1,
+			formData: map[string]string{
+				"name":        "Test Restaurant",
+				"description": "Test Description",
+				"address":     "Test Address",
+				"phone":       "1234567890",
+				"email":       "test@example.com",
+			},
+			mockSetup: func() {
+				mockService.On("UpdateRestaurant", mock.Anything, uint(1)).
+					Return(nil)
+			},
+			expectedCode:    http.StatusOK,
+			expectedSuccess: true,
+		},
+		{
+			name:         "Failure - Missing Required Fields",
+			restaurantID: 1,
+			formData: map[string]string{
+				"name":        "",
+				"description": "Test Description",
+				"address":     "Test Address",
+				"phone":       "1234567890",
+				"email":       "test@example.com",
+			},
+			mockSetup: func() {
+				// No mock setup needed as validation should fail before service is called
+			},
+			expectedCode:    http.StatusBadRequest,
+			expectedSuccess: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a new recorder for each test case
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Set("userId", uint(1))
+
+			tt.mockSetup()
+
+			// Create a multipart form
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+
+			// Add form fields
+			for key, value := range tt.formData {
+				_ = writer.WriteField(key, value)
+			}
+
+			// Only add image for success case
+			if tt.name == "Success - Valid Restaurant" {
+				part, _ := writer.CreateFormFile("image", "image.png")
+				part.Write([]byte("dummy image content"))
+			}
+
+			// Close the writer
+			writer.Close()
+
+			// Create the request with the restaurant ID in the path
+			req, httpRequestError := http.NewRequest("PUT", fmt.Sprintf("/api/restaurants/%d", tt.restaurantID), body)
+			if httpRequestError != nil {
+				t.Fatalf("Failed to create request: %v", httpRequestError)
+			}
+			req.Header.Set("Content-Type", writer.FormDataContentType())
+
+			// Set up the context with the request and parameters
+			c.Request = req
+			c.Params = []gin.Param{{Key: "id", Value: strconv.FormatUint(uint64(tt.restaurantID), 10)}}
+
+			// Call the handler directly
+			handler.UpdateRestaurant(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+
+			// For success case, unmarshal as Restaurant
+			var response utils.GenericResponse[any]
+			err := json.Unmarshal(w.Body.Bytes(), &response)
+			// fmt.Printf("Response body for %s: %s\n", tt.name, string(w.Body.String()))
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedSuccess, response.Success)
 		})
