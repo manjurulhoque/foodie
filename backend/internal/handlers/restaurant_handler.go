@@ -470,6 +470,7 @@ func (h *RestaurantHandler) DeleteRestaurant(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -479,6 +480,7 @@ func (h *RestaurantHandler) DeleteRestaurant(c *gin.Context) {
 			Message: "Failed to delete restaurant",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -497,6 +499,7 @@ func (h *RestaurantHandler) GetRestaurantsByCuisine(c *gin.Context) {
 			Message: "Invalid cuisine id",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -507,6 +510,7 @@ func (h *RestaurantHandler) GetRestaurantsByCuisine(c *gin.Context) {
 			Message: "Failed to get restaurants",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -533,6 +537,7 @@ func (h *RestaurantHandler) UpdateWorkingHours(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -543,6 +548,7 @@ func (h *RestaurantHandler) UpdateWorkingHours(c *gin.Context) {
 			Message: "Invalid request body",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -552,6 +558,7 @@ func (h *RestaurantHandler) UpdateWorkingHours(c *gin.Context) {
 			Message: "Failed to update working hours",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -577,6 +584,7 @@ func (h *RestaurantHandler) GetWorkingHours(c *gin.Context) {
 			Message: "Invalid request",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -587,6 +595,7 @@ func (h *RestaurantHandler) GetWorkingHours(c *gin.Context) {
 			Message: "Failed to get working hours",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -616,6 +625,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Invalid restaurant ID",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -629,6 +639,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Invalid request body",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -641,6 +652,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 				Message: "User not found",
 				Errors:  []utils.ErrorDetail{{Message: "No user found with this email"}},
 			})
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
@@ -648,6 +660,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Error finding user",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -660,6 +673,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 				Message: "Restaurant not found",
 				Errors:  []utils.ErrorDetail{{Message: "Restaurant not found"}},
 			})
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusInternalServerError, utils.GenericResponse[any]{
@@ -667,6 +681,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Error finding restaurant",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -682,6 +697,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 				Message: "Error updating user role",
 				Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 			})
+			c.Abort()
 			return
 		}
 	}
@@ -694,6 +710,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Error updating restaurant owner",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
@@ -705,6 +722,7 @@ func (h *RestaurantHandler) UpdateRestaurantOwner(c *gin.Context) {
 			Message: "Error committing transaction",
 			Errors:  []utils.ErrorDetail{{Message: err.Error()}},
 		})
+		c.Abort()
 		return
 	}
 
