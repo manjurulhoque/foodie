@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
-import { useGetRestaurantMenuItemsQuery } from "@/store/reducers/menu/api";
+import { useGetRestaurantMenuItemsQuery } from "@/store/reducers/owner/api";
 import AddMenuItemDialog from "@/components/dialog/add-menu-item-dialog";
 
 export default function RestaurantMenuPage() {
@@ -36,7 +36,7 @@ export default function RestaurantMenuPage() {
                     </Button>
                 </div>
                 <DataTable
-                    columns={columns}
+                    columns={columns as any}
                     data={menuItems?.data || []}
                     isLoading={isLoading}
                 />

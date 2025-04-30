@@ -4,8 +4,8 @@ export interface ErrorDetail {
 }
 
 export interface Response<T> {
-    data: T;
-    message: string;
     success: boolean;
-    errors: ErrorDetail[];
+    message: string;
+    data: T;
+    errors?: ErrorDetail[];
 }
