@@ -20,6 +20,7 @@ import {
     Plus,
     BarChart2,
 } from "lucide-react";
+import Link from "next/link";
 
 const data = [
     { name: "Mon", revenue: 4000, orders: 2400 },
@@ -103,61 +104,69 @@ export default function OwnerDashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Add New Menu Items
-                        </CardTitle>
-                        <Plus className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Add new dishes and drinks to your menu
-                        </p>
-                    </CardContent>
-                </Card>
+                <Link href="/owner/menu/new">
+                    <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Add New Menu Items
+                            </CardTitle>
+                            <Plus className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                                Add new dishes and drinks to your menu
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
 
-                <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Update Prices
-                        </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Modify prices for existing menu items
-                        </p>
-                    </CardContent>
-                </Card>
+                <Link href="/owner/menu/prices">
+                    <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Update Prices
+                            </CardTitle>
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                                Modify prices for existing menu items
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
 
-                <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Manage Staff
-                        </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Add, remove, or update staff members
-                        </p>
-                    </CardContent>
-                </Card>
+                <Link href="/owner/staff">
+                    <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                Manage Staff
+                            </CardTitle>
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                                Add, remove, or update staff members
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
 
-                <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            View Reports
-                        </CardTitle>
-                        <BarChart2 className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Access detailed business analytics
-                        </p>
-                    </CardContent>
-                </Card>
+                <Link href="/owner/reports">
+                    <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                View Reports
+                            </CardTitle>
+                            <BarChart2 className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">
+                                Access detailed business analytics
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
