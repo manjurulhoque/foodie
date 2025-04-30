@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { Order } from "@/models/order.interface";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "react-hot-toast";
 import UpdateOrderStatusDialog from "@/components/dialog/update-order-status-dialog";
 import { useGetOwnerOrdersQuery } from "@/store/reducers/owner/api";
 
