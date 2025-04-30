@@ -7,11 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCreateMenuItemMutation } from "@/store/reducers/owner/api";
+import { toast } from "react-hot-toast";
 
 export default function NewMenuItemPage() {
     const router = useRouter();
-    const [createMenuItem, { isLoading }] = useCreateMenuItemMutation();
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -35,7 +34,6 @@ export default function NewMenuItemPage() {
         }
 
         try {
-            await createMenuItem(formDataToSend).unwrap();
             toast.success("Menu item created successfully");
             router.push("/owner/menu");
         } catch (error) {
@@ -152,9 +150,7 @@ export default function NewMenuItemPage() {
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Creating..." : "Create Menu Item"}
-                            </Button>
+                            <Button type="submit">Create Menu Item</Button>
                         </div>
                     </form>
                 </CardContent>

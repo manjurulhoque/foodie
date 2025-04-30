@@ -25,20 +25,9 @@ export const OwnerApi = createApi({
         }),
         // Menu Item Endpoints
         getRestaurantMenuItems: builder.query<Response<MenuItem[]>, number>({
-            query: (restaurantId) => `owner/menu/${restaurantId}`,
+            query: (restaurantId) => `restaurants/${restaurantId}/menu`,
             providesTags: ["MenuItem"],
         }),
-
-        createMenuItem: builder.mutation<Response<MenuItem>, FormData>({
-            query: (data) => ({
-                url: "owner/menu",
-                method: "POST",
-                body: data,
-                formData: true,
-            }),
-            invalidatesTags: ["MenuItem"],
-        }),
-
         updateMenuItem: builder.mutation<
             Response<MenuItem>,
             { id: number; data: FormData }
@@ -51,7 +40,6 @@ export const OwnerApi = createApi({
             }),
             invalidatesTags: ["MenuItem"],
         }),
-
         deleteMenuItem: builder.mutation<void, number>({
             query: (id) => ({
                 url: `owner/menu/${id}`,
@@ -67,7 +55,6 @@ export const {
     useGetOwnerOrdersQuery,
     useUpdateOrderStatusMutation,
     useGetRestaurantMenuItemsQuery,
-    useCreateMenuItemMutation,
     useUpdateMenuItemMutation,
     useDeleteMenuItemMutation,
 } = OwnerApi;
